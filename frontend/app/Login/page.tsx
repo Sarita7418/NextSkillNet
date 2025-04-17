@@ -20,14 +20,12 @@ export default function LoginPage() {
       <main className={styles.main}>
         <div className={styles.card}>
           <h1>INICIAR SESIÓN</h1>
-
           <button className={styles.googleButton}>
             Iniciar con Google
           </button>
           <button className={styles.appleButton}>
             Iniciar con Apple
           </button>
-
           <span className={styles.separator}>O</span>
 
           <input
@@ -47,13 +45,11 @@ export default function LoginPage() {
             Mantenerme conectado
           </label>
 
-          <button className={styles.submitButton}>
-            Iniciar sesión
-          </button>
-
-          {/* Link corregido sin <a> interno */}
-          <Link href="/Institucional" className={styles.homeLink}>
-            Ir a Home
+          {/* Aquí el botón envuelto en Link */}
+          <Link href="/Institucional">
+            <button className={styles.submitButton}>
+              Iniciar sesión
+            </button>
           </Link>
         </div>
       </main>
