@@ -1,0 +1,66 @@
+.Footer{
+    background-color: rgba(0, 35, 100, 1);
+    color: white;
+}
+
+.menuFooter{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: 5px;
+    border-bottom: 2px solid white;
+}
+
+.menuFooter div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 200;
+    width: 100%;
+}
+
+.AcercaFooter{
+    display: flex;
+    flex-direction: row;
+    padding: 10px 100px 10px 100px;
+    border-bottom: 1px solid white;
+    justify-content: space-evenly;
+}
+
+.AcercaFooter a {
+    display: block;       
+    text-align: center;   
+    width: 20%;         
+    padding: 4px 0;
+}
+
+.Contactos{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 12px 0 12px 0;
+}
+
+.RedesSociales div{
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+    padding: 2px 20px 0 20px;
+}
+
+.TelMail{
+    display: flex;
+    flex-direction: row;
+}
+
+.TelMail p{
+    margin: 0 25px 0 10px;    
+}
+
+.MarcaF{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
