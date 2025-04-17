@@ -1,0 +1,62 @@
+/* Contenedor general de la sección */
+.features-skillnet {
+    display: flex;
+    align-items: center; /* Centra verticalmente ambas columnas */
+    justify-content: space-between;
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    gap: 10px;
+  }
+  
+  /* Columna izquierda: título */
+  .features-left {
+    flex: 0 0 40%;
+  }
+  
+  .features-left h2 {
+    font-size: 1.8rem;
+    text-align: left;
+    color: #063C91; /* Color del título */
+    margin: 0;
+  }
+  
+  /* Columna derecha: tarjetas */
+  .features-right {
+    flex: 0 0 60%;
+    min-height: 200px; /* Altura mínima para forzar el estiramiento vertical */
+    display: flex;
+    align-items: stretch;  /* Hace que los hijos se estiren verticalmente */
+  }
+  
+  /* Contenedor de las tarjetas: se disponen en una sola fila */
+  .features-cards {
+    display: flex;
+    gap: 25px;
+    flex-direction: row; /* Se ubican lado a lado */
+    justify-content: flex-start;
+    flex-wrap: nowrap; /* Forzamos que no se apilen, aunque en pantallas muy pequeñas puedes necesitar wrap */
+    justify-content: center; /* Centra verticalmente el contenido */
+    text-align: center;      /* Centra horizontalmente el texto */
+  }
+
+  /* Cada tarjeta individual */
+  .feature-card {
+    background-color: #063C91;
+    color: #FFFFFF;
+    border-radius: 8px;
+    padding: 20px;
+    flex: 0 0 150px; /* Ancho fijo para garantizar que se muestren en fila */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .feature-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+  
+  .feature-card p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  

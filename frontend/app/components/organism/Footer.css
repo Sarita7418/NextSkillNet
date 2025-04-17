@@ -1,0 +1,109 @@
+/* Contenedor general */
+.footer {
+    background-color: #0C2056;  /* Azul más oscuro */
+    color: #FFFFFF;
+    width: 100%;
+    font-family: sans-serif;
+  }
+  
+  /* --- Enlaces de la parte superior --- */
+  .footer-top {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 20px;
+  }
+  
+  .footer-links {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .footer-links a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+  
+  .footer-links a:hover {
+    color: #00AEEF;
+  }
+  
+  /* --- Parte inferior con tres columnas --- */
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* Redes sociales */
+  .social-section p {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+  }
+  
+  .social-icons a {
+    margin-right: 12px;
+    font-size: 18px;
+    color: #FFFFFF;
+    transition: color 0.3s;
+  }
+  
+  .social-icons a:hover {
+    color: #00AEEF;
+  }
+  
+  /* Contacto */
+  .contact-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .contact-section a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+  
+  .contact-section a:hover {
+    color: #00AEEF;
+  }
+  
+  .contact-section .icon {
+    margin-right: 6px;
+    font-size: 16px;
+  }
+  
+  /* Copyright + logo */
+  .copy-section {
+    text-align: right;
+    font-size: 12px;
+  }
+  
+  .copy-section img {
+    display: block;
+    height: 24px;
+    margin-top: 6px;
+  }
+  
+  /* --- Responsive (opcional) --- */
+  @media (max-width: 768px) {
+    .footer-bottom {
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+    .copy-section {
+      text-align: center;
+    }
+  }
+  
