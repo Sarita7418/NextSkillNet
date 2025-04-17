@@ -47,6 +47,7 @@ function Footer() {
           <div className="TelMail">
             <Image src={telefono} alt="Teléfono" />
             <p>+591 76599447</p>
+            <p>Dirección: EMI Irpavi</p>
             <Image src={mail} alt="Correo electrónico" />
             <p>cybertigres@skillnet</p>
           </div>
