@@ -59,4 +59,43 @@
     font-size: 20px;
     line-height: 1.4;
   }
+  @media screen and (max-width: 768px) {
+
+    /* Ajustes para FeaturesSkillNet */
+    .features-skillnet {
+      flex-direction: column !important;   /* columnas apiladas */
+      height: auto !important;              /* altura automática */
+      padding: 20px 10px !important;
+    }
+  
+    .features-left, .features-right {
+      flex: 1 1 auto !important;
+      width: 100% !important;
+    }
+  
+    .features-left h2 {
+      text-align: center !important;        /* centramos el título */
+      font-size: 1.8rem !important;
+    }
+  
+    .features-cards {
+      flex-wrap: wrap !important;           /* permitir que bajen las tarjetas */
+      justify-content: center !important;
+      gap: 1rem !important;
+    }
+  
+    .feature-card {
+      flex: 1 1 80% !important;              /* tarjetas ocupan casi todo el ancho */
+      max-width: 300px !important;
+      margin: 0 auto;                        /* centrado */
+    }
+  
+    .feature-card h3 {
+      font-size: 1.5rem !important;
+    }
+  
+    .feature-card p {
+      font-size: 1rem !important;
+    }
+  }
   
