@@ -22,7 +22,7 @@ const Header: React.FC = () => {
         <nav className="nav">
           <ul>
             <li>
-              <a href="/">
+              <a href="/Inicio">
                 <FaHome className="icon" />
                 <span>Inicio</span>
               </a>

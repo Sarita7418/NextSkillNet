@@ -1,0 +1,32 @@
+.notif-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+  }
+  
+  .notif-list li {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 0.5rem;
+    align-items: center;
+    background: #dff2df;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .notif-icon {
+    color: #063C91;
+    font-size: 1.25rem;
+  }
+  
+  .notif-text {
+    font-size: 0.9rem;
+    color: #063C91;
+  }
+  
+  .notif-time {
+    font-size: 0.8rem;
+    color: #666;
+  }
+  

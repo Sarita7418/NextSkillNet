@@ -1,0 +1,13 @@
+.main-layout {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .right-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  

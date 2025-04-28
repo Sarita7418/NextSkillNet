@@ -1,0 +1,12 @@
+.messages-container {
+    width: 280px;
+    background: #f0f0f0;
+    padding: 1rem;
+    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+  }
+  
+  .messages-container h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: #063C91;
+  }
