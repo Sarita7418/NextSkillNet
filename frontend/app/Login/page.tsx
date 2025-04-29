@@ -1,42 +1,90 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
+import Footer from '../components/organism/Footer';
+import Header from '../components/organism/Header';
 
 export default function LoginPage() {
+  const [nombre, setNombre] = useState('');
+  const [contraseña, setContraseña] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Manejadores para actualizar el estado de los inputs
+  const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNombre(e.target.value);
+  };
+
+  const handleContraseñaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContraseña(e.target.value);
+  };
+
+  // Función para manejar el submit del formulario
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true); // Activar loading
+    setError(''); // Limpiar error previo
+
+    try {
+      console.log('Nombre:', nombre);
+      console.log('Contraseña:', contraseña);
+      // Hacer la solicitud de login
+      const response = await fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre,  // Usamos el nombre en lugar del correo
+          contraseña,
+        }),
+      });
+
+      // Verificar si la respuesta es exitosa
+      const data = await response.json();
+
+      if (response.ok) {
+        // Mostrar mensaje de éxito con alert
+        alert('Login exitoso!');
+      } else {
+        // Si hubo un error, mostrar mensaje con alert
+        alert('Credenciales incorrectas!');
+      }
+    } catch (error) {
+      setError('Hubo un problema al conectar con el servidor');
+      alert('Error al conectar con el servidor!');
+    } finally {
+      setIsLoading(false); // Desactivar loading
+    }
+  };
+
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <Image
-          src="/logo2.svg"
-          alt="Logo SkillNet"
-          width={120}
-          height={40}
-          priority
-        />
-      </header>
+      <Header />
 
       <main className={styles.main}>
         <div className={styles.card}>
           <h1>INICIAR SESIÓN</h1>
-          <button className={styles.googleButton}>
-            Iniciar con Google
-          </button>
-          <button className={styles.appleButton}>
-            Iniciar con Apple
-          </button>
+          <button className={styles.googleButton}>Iniciar con Google</button>
+          <button className={styles.appleButton}>Iniciar con Apple</button>
           <span className={styles.separator}>O</span>
 
           <input
             className={styles.inputField}
             type="text"
-            placeholder="Correo electrónico o teléfono"
+            placeholder="Nombre"
+            value={nombre}
+            onChange={handleNombreChange}
           />
           <input
             className={styles.inputField}
             type="password"
             placeholder="Contraseña"
+            value={contraseña}
+            onChange={handleContraseñaChange}
           />
 
           <p className={styles.forgot}>¿Olvidó su contraseña?</p>
@@ -45,29 +93,20 @@ export default function LoginPage() {
             Mantenerme conectado
           </label>
 
-          {/* Aquí el botón envuelto en Link */}
-          <Link href="/Institucional">
-            <button className={styles.submitButton}>
-              Iniciar sesión
-            </button>
-          </Link>
+          {/* Mostrar mensaje de error si existe */}
+          {error && <p className={styles.errorMessage}>{error}</p>}
+
+          <button
+            className={styles.submitButton}
+            onClick={handleSubmit}
+            disabled={isLoading} // Deshabilitar botón mientras carga
+          >
+            {isLoading ? 'Cargando...' : 'Iniciar sesión'}
+          </button>
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.topLinks}>
-          <p>Acerca de</p>
-          <p>Política de privacidad</p>
-          <p>Condiciones de uso</p>
-          <p>Accesibilidad</p>
-        </div>
-        <div className={styles.bottomInfo}>
-          <p>Nuestras redes sociales</p>
-          <p>+591 777798626</p>
-          <p>cybertigres@skillnet.com</p>
-          <p>© SkillNet project 2025</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
