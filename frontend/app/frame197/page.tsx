@@ -1,14 +1,14 @@
 'use client';
 
 import Header2 from '../components/organism/Header2';
-import IniciarSesion from '../components/organism/IniciarSesion';
+import RegisterForm from '../components/organism/RegisterForm';
 import Footer from '../components/organism/Footer';
 
-export default function LoginPage() {
+export default function Frame197Page() {
   return (
     <div>
         <Header2 />
-        <IniciarSesion/>
+        <RegisterForm/>
        <Footer/>
     
     </div>

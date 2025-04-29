@@ -1,14 +1,14 @@
 'use client';
 
 import Header2 from '../components/organism/Header2';
-import IniciarSesion from '../components/organism/IniciarSesion';
+import RegistrationNotice from '../components/organism/RegistrationNotice';
 import Footer from '../components/organism/Footer';
 
-export default function LoginPage() {
+export default function InicioPage() {
   return (
     <div>
         <Header2 />
-        <IniciarSesion/>
+        <RegistrationNotice/>
        <Footer/>
     
     </div>
