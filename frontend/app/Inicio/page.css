@@ -1,13 +1,135 @@
+/* app/Inicio/page.css */
+
+/*--------------------------------*/
+/* 1. ESTILOS POR DEFECTO (PC)    */
+/*--------------------------------*/
 .main-layout {
     display: flex;
     gap: 1rem;
     padding: 1rem;
-  }
-  
-  .right-section {
+}
+
+.messages-container {
+    flex: 0 0 280px;
+    background: #f0f0f0;
+    padding: 1rem;
+}
+
+.right-section {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    padding: 1rem;
+}
+
+/* Ajustes para el carrusel (modo escritorio) */
+.cards-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+/*--------------------------------*/
+/* 2. ESTILOS MÓVIL (≤768px)      */
+/*--------------------------------*/
+@media screen and (max-width: 768px) {
+
+  /* --------- LAYOUT INICIO ---------- */
+  .main-layout {
+    flex-direction: column;
+    gap: 0;
+    padding: 0.5rem;
+  }
+
+  .messages-container {
+    width: 100%;
+    flex: none;
+    margin-bottom: 1rem;
+  }
+
+  .right-section {
+    width: 100%;
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+
+  /* --------- CAROUSEL ---------- */
+  .carousel {
+    justify-content: center !important;
+    gap: 0.5rem !important;
   }
   
+  .cards-wrapper {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+    overflow-x: auto !important;
+    padding: 0.5rem 0 !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    -webkit-overflow-scrolling: touch; /* mejora en iOS */
+    -ms-overflow-style: none; /* IE y Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .cards-wrapper::-webkit-scrollbar {
+    display: none; /* Ocultar scroll en Chrome/Safari */
+  }
+
+  .card {
+    flex: 0 0 380px !important;
+    width: 380px !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+
+  .arrow {
+    flex-shrink: 0 !important;
+    padding: 0.25rem !important;
+  }
+
+  /* --------- FOOTER ---------- */
+  .Footer {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 1rem !important;
+  }
+
+  .Footer > * {
+    flex: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .AcercaFooter {
+    flex-direction: column !important;
+    padding: 1rem !important;
+  }
+
+  .Contactos {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    padding: 1rem 0 !important;
+  }
+
+  .TelMail,
+  .RedesSociales {
+    justify-content: center !important;
+  }
+}
+
+/*--------------------------------*/
+/* 3. BREAKPOINTS MÁS PEQUEÑOS    */
+/*--------------------------------*/
+@media screen and (max-width: 480px) {
+  .card {
+    flex: 1 1 calc((100% - 0.5rem) / 2) !important;
+    width: calc((100% - 0.5rem) / 2) !important;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .card {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+  }
+}
