@@ -20,7 +20,7 @@
     text-align: center;
     color: #FFFFFF;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 60px;
     font-size: 60px;
     width: 1000px;
   }
@@ -45,7 +45,7 @@
     padding: 20px;
     font-size: 30px;
     border-radius: 20px;
-    margin-top: 80px;
+    margin-top: 20px;
   }
 
   .hero-overlay button:hover{
@@ -54,6 +54,6 @@
     padding: 20px;
     font-size: 30px;
     border-radius: 20px;
-    margin-top: 80px;
+    margin-top: 20px;
   }
   

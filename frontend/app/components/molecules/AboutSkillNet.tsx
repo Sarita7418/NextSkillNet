@@ -21,7 +21,6 @@ const AboutSkillNet: React.FC = () => {
             reclutamiento de talento con herramientas tecnológicas intuitivas.
           </p>
           <div className="about-text-footer">
-            <a href="#" className="app-link">Conoce nuestra aplicación</a>
             <span className="project-note">© SkillNet project 2025</span>
             <img src="/logo2.svg" alt="Logo SkillNet" className="about-logo" />
           </div>

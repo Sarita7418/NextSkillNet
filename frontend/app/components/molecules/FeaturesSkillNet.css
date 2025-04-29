@@ -2,7 +2,7 @@
 .features-skillnet {
     display: flex;
     align-items: center; /* Centra verticalmente ambas columnas */
-    justify-content: center;
+    justify-content: flex-start;
     gap: 30px;
     padding: 40px 20px;
     max-width: 100%;
@@ -12,7 +12,7 @@
   /* Columna izquierda: título */
   .features-left {
     flex: 0 0 20%;
-    
+    margin-left: 70px;
   }
   
   .features-left h2 {
@@ -32,6 +32,7 @@
   
   /* Contenedor de las tarjetas: se disponen en una sola fila */
   .features-cards {
+  
     display: flex;
     justify-content: space-between;
     flex-direction: row; /* Se ubican lado a lado */
@@ -42,6 +43,7 @@
 
   /* Cada tarjeta individual */
   .feature-card {
+    margin: 0 10px;
     background-color: #063C91;
     color: #FFFFFF;
     border-radius: 15px;
