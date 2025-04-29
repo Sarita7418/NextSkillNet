@@ -1,68 +1,68 @@
-/* Header de ancho completo, fondo azul oscuro */
+/* src/components/organism/Header.css */
 .header {
-    background-color: #143D8D;
-    width: 100%;
-  }
-  
-  /* Contenedor centrado, flex para logo + nav + búsqueda */
-  .header-container {
-    height: 60px;          /* altura fija */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  /* Logo con fondo blanco y sin márgenes */
-  .logo {
-    background-color: #FFFFFF;
-    padding: 5px;
-  }
-  .logo img {
-    display: block;
-    height: 50px;
-  }
-  
-  /* Menú horizontal */
-  .nav ul {
-    list-style: none;
-    display: flex;
-    gap: 120px;    /* espacio entre items */
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Cada enlace: icono encima, texto debajo */
-  .nav li a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: #FFFFFF;
-    font-weight: 500;
-    transition: color 0.3s;
-  }
-  .nav li a .icon {
-    font-size: 20px;
-    margin-bottom: 2px;
-  }
-  .nav li a span {
-    font-size: 14px;
-  }
-  .nav li a:hover {
-    color: #00AEEF;
-  }
-  
-  /* Caja de búsqueda simple */
-  .search input {
-    height: 32px;
-    border-radius: 16px;
-    border: none;
-    padding: 0 12px;
-    font-size: 14px;
-    background-color: white;
-    margin-right: 14px;
-  }
-  .search input:focus {
-    outline: none;
-  }
-  
+  background-color: #143D8D;
+  width: 100%;
+}
+
+.header-container {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.logo {
+  background-color: #FFFFFF;
+  padding: 5px;
+}
+.logo img {
+  display: block;
+  height: 50px;
+}
+
+.nav ul {
+  list-style: none;
+  display: flex;
+  gap: 120px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav li a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #FFFFFF;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav li a .icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.nav li a span {
+  font-size: 14px;
+}
+
+.nav li a:hover {
+  color: #00AEEF;
+}
+
+/* Contenedor y estilo del avatar */
+.profile-avatar-container {
+  margin-right: 14px;
+}
+
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* Responsive móvil: mantén tus media queries existentes */

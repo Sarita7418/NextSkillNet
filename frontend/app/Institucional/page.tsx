@@ -1,5 +1,5 @@
 'use client';
-
+import './page.css'
 import React from 'react';
 import Header from '../components/organism/Header';
 import HeroImage from '../components/molecules/HeroImage';

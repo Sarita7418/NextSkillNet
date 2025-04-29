@@ -1,3 +1,4 @@
+// src/components/organism/Header.tsx
 import React from 'react';
 import { 
   FaHome, 
@@ -12,7 +13,6 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header-container">
-        
         {/* Logo pegado a la izquierda */}
         <div className="logo">
           <img src="/logo2.svg" alt="Logo SkillNet" />
@@ -22,7 +22,7 @@ const Header: React.FC = () => {
         <nav className="nav">
           <ul>
             <li>
-              <a href="/">
+              <a href="/Inicio">
                 <FaHome className="icon" />
                 <span>Inicio</span>
               </a>
@@ -54,11 +54,14 @@ const Header: React.FC = () => {
           </ul>
         </nav>
 
-        {/* Caja de búsqueda a la derecha */}
-        <div className="search">
-          <input type="text" placeholder="Buscar" />
+        {/* Icono de perfil en círculo */}
+        <div className="profile-avatar-container">
+          <img 
+            src="/user-avatar.png" 
+            alt="Perfil de usuario" 
+            className="profile-avatar" 
+          />
         </div>
-
       </div>
     </header>
   );

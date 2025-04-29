@@ -1,24 +1,110 @@
 /* src/components/molecules/AboutSkillNet.css */
 .about-container {
-    max-width: 100%;
-    height: 100vh;
-    padding: 40px 100px;
-    text-align: center;
-    display: flex;
+  width: 100%;
+  height: 100vh;
+  padding: 40px 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.about-text-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* Centra todo el contenido en la columna */
+  text-align: center;
+}
+
+.about-text-column h2 {
+  font-size: 70px;
+  margin: 20px 0;
+  color: #143D8D;
+}
+
+.about-text-column p {
+  font-size: 25px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.about-text-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.app-link {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #063C91;
+  text-decoration: none;
+}
+
+.project-note {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #CBD5E0;
+  margin-top: 8px;
+}
+
+.about-logo {
+  margin-top: 8px;
+  width: 77px;
+  height: 24px;
+}
+
+.about-image-column {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.about-image-column img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive móvil */
+@media (max-width: 768px) {
+  .about-container {
+    padding: 20px;
+    height: auto;
+  }
+  .about-inner {
     flex-direction: column;
-    justify-content: center;
   }
-  
-  .about-container h2 {
-    font-size: 70px;
-    margin: 20px 0;
-    color: #143D8D;
+  .about-text-column h2 {
+    font-size: 48px;
   }
-  
-  .about-container p {
-    font-size: 25px;
-    margin-bottom: 16px;
-    line-height: 1.5;
-    color: #333; /* Ajusta según tu preferencia */
+  .about-text-column p {
+    font-size: 18px;
   }
-  
+  .about-text-footer {
+    margin-top: 16px;
+  }
+  .app-link {
+    font-size: 18px;
+  }
+  .project-note {
+    font-size: 14px;
+  }
+  .about-logo {
+    margin-top: 12px;
+  }
+  .about-image-column img {
+    margin-top: 20px;
+  }
+}
