@@ -1,9 +1,9 @@
-.Footer{
+.Footer {
     background-color: rgba(0, 35, 100, 1);
     color: white;
 }
 
-.menuFooter{
+.menuFooter {
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -11,7 +11,7 @@
     border-bottom: 2px solid white;
 }
 
-.menuFooter div{
+.menuFooter div {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -20,7 +20,7 @@
     width: 100%;
 }
 
-.AcercaFooter{
+.AcercaFooter {
     display: flex;
     flex-direction: row;
     padding: 10px 100px 10px 100px;
@@ -29,39 +29,108 @@
 }
 
 .AcercaFooter a {
-    display: block;       
-    text-align: center;   
-    width: 20%;         
+    display: block;
+    text-align: center;
+    width: 20%;
     padding: 4px 0;
 }
 
-.Contactos{
+.Contactos {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 80px;
-    padding: 12px 0 12px 0;
+    padding: 12px 0;
 }
 
-.RedesSociales div{
+.RedesSociales div {
     display: flex;
     flex-direction: row;
-    justify-content:space-between;
+    justify-content: space-between;
     padding: 2px 20px 0 20px;
 }
 
-.TelMail{
+.TelMail {
     display: flex;
     flex-direction: row;
 }
 
-.TelMail p{
-    margin: 0 25px 0 10px;    
+.TelMail p {
+    margin: 0 25px 0 10px;
 }
 
-.MarcaF{
+.MarcaF {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+    .AcercaFooter {
+        flex-direction: column;
+        padding: 10px 20px;
+    }
+
+    .AcercaFooter a {
+        width: 80%;
+        margin-bottom: 10px;
+    }
+
+    .Contactos {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px 0;
+    }
+
+    .RedesSociales div {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+    .TelMail {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .TelMail p {
+        margin: 5px 0;
+    }
+
+    .MenuFooter {
+        padding: 5px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .Footer {
+        padding: 20px;
+    }
+
+    .menuFooter div {
+        font-size: 14px;
+    }
+
+    .AcercaFooter a {
+        width: 100%;
+    }
+
+    .Contactos {
+        gap: 10px;
+    }
+
+    .RedesSociales div {
+        display: flex;
+    flex-direction: row; 
+    justify-content: space-between;
+    padding: 2px 20px 0 20px;
+    align-items: center; 
+    gap: 10px; 
+    }
+
+    .MarcaF {
+        font-size: 14px;
+    }
 }
