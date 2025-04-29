@@ -1,4 +1,5 @@
-// src/components/organism/Header.tsx
+'use client';
+
 import React from 'react';
 import { 
   FaHome, 
@@ -10,43 +11,52 @@ import {
 import './Header.css';
 
 const Header: React.FC = () => {
+  const handleClick = () => {
+    alert("Para acceder a nuestros servicios debe iniciar sesión.");
+    window.location.href = "/Login"; // Redirige a la página de Login
+  };
+
   return (
     <header className="header">
       <div className="header-container">
         {/* Logo pegado a la izquierda */}
         <div className="logo">
-          <img src="/logo2.svg" alt="Logo SkillNet" />
+          <img 
+            src="/logo2.svg" 
+            alt="Logo SkillNet" 
+            onClick={handleClick} // Hacer clic en el logo también muestra el alert
+          />
         </div>
 
         {/* Navegación con iconos encima del texto */}
         <nav className="nav">
           <ul>
             <li>
-              <a href="/Inicio">
+              <a href="/Inicio" onClick={(e) => { e.preventDefault(); handleClick(); }}>
                 <FaHome className="icon" />
                 <span>Inicio</span>
               </a>
             </li>
             <li>
-              <a href="/notif">
+              <a href="/notif" onClick={(e) => { e.preventDefault(); handleClick(); }}>
                 <FaBell className="icon" />
                 <span>Notificaciones</span>
               </a>
             </li>
             <li>
-              <a href="/doc">
+              <a href="/doc" onClick={(e) => { e.preventDefault(); handleClick(); }}>
                 <FaFileAlt className="icon" />
                 <span>Documentos</span>
               </a>
             </li>
             <li>
-              <a href="/admin">
+              <a href="/admin" onClick={(e) => { e.preventDefault(); handleClick(); }}>
                 <FaCogs className="icon" />
                 <span>Administración</span>
               </a>
             </li>
             <li>
-              <a href="/cont">
+              <a href="/cont" onClick={(e) => { e.preventDefault(); handleClick(); }}>
                 <FaUsers className="icon" />
                 <span>Contactos</span>
               </a>
@@ -60,6 +70,7 @@ const Header: React.FC = () => {
             src="/user-avatar.png" 
             alt="Perfil de usuario" 
             className="profile-avatar" 
+            onClick={handleClick} // Al hacer clic en la imagen también muestra el alert
           />
         </div>
       </div>

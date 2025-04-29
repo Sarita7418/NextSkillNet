@@ -67,9 +67,8 @@ export default function LoginPage() {
 
       <main className={styles.main}>
         <div className={styles.card}>
-          <h1>INICIAR SESIÓN</h1>
+          <h1>Bienvenido/a a Skillnet</h1>
           <button className={styles.googleButton}>Iniciar con Google</button>
-          <button className={styles.appleButton}>Iniciar con Apple</button>
           <span className={styles.separator}>O</span>
 
           <input

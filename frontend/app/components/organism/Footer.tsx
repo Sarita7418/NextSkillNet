@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
@@ -13,35 +13,56 @@ import logo from "@/public/logo1 1.svg";
 import "./Footer.css";
 
 function Footer() {
+  const handleLinkClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevenir el comportamiento por defecto del enlace
+    alert("Para acceder a nuestros servicios debe iniciar sesión.");
+    window.location.href = "/Login"; // Redirigir a la página de Login
+  };
+
   return (
     <footer className="Footer">
       <div className="menuFooter">
         <h2>Navegar por Skillnet</h2>
         <div>
-          <Link href="/">Inicio</Link>
-          <Link href="/notificaciones">Notificaciones</Link>
-          <Link href="/documentos">Documentos</Link>
-          <Link href="/admin">Administración</Link>
+          <Link href="/" onClick={handleLinkClick}>
+            Inicio
+          </Link>
+          <Link href="/notificaciones" onClick={handleLinkClick}>
+            Notificaciones
+          </Link>
+          <Link href="/documentos" onClick={handleLinkClick}>
+            Documentos
+          </Link>
+          <Link href="/admin" onClick={handleLinkClick}>
+            Administración
+          </Link>
         </div>
       </div>
 
       <div className="generalFooter">
         <div className="AcercaFooter">
-          <Link href="/acerca">Acerca de</Link>
-          <Link href="/privacidad">Política de privacidad</Link>
-          <Link href="/condiciones">Condiciones de uso</Link>
-          <Link href="/accesibilidad">Accesibilidad</Link>
+          <Link href="/acerca" onClick={handleLinkClick}>
+            Acerca de
+          </Link>
+          <Link href="/privacidad" onClick={handleLinkClick}>
+            Política de privacidad
+          </Link>
+          <Link href="/condiciones" onClick={handleLinkClick}>
+            Condiciones de uso
+          </Link>
+          <Link href="/accesibilidad" onClick={handleLinkClick}>
+            Accesibilidad
+          </Link>
         </div>
 
         <div className="Contactos">
           <div className="RedesSociales">
             <p>Nuestras redes sociales</p>
             <div>
-                <Image src={facebook} alt="Facebook" />
-            <Image src={instagram} alt="Instagram" />
-            <Image src={youtube} alt="YouTube" />
+              <Image src={facebook} alt="Facebook" />
+              <Image src={instagram} alt="Instagram" />
+              <Image src={youtube} alt="YouTube" />
             </div>
-            
           </div>
 
           <div className="TelMail">
