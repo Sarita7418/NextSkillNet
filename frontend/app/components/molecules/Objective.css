@@ -3,22 +3,69 @@
   max-width: 100%;
   height: 110vh;
   padding: 40px 100px;
-  text-align: center;
+  background-color: #063C91;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.objective-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.objective-image-column {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.objective-image-column img {
+  max-width: 100%;
+  height: auto;
+}
+
+.objective-text-column {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-    background-color: #063C91;
-    color: #ffffff;
+  align-items: center;       /* Centra horizontalmente */
+  justify-content: center;   /* Centra verticalmente */
+  text-align: center;
+  padding: 0 20px;
+}
+
+.objective-text-column h2 {
+  font-size: 70px;
+  margin-bottom: 20px;
+}
+
+.objective-text-column p {
+  font-size: 25px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* Responsive móvil */
+@media (max-width: 768px) {
+  .objective-container {
+    padding: 20px;
+    height: auto;
   }
-  
-  .objective-container h2 {
-    font-size: 70px;
-    margin: 20px 0;
+  .objective-inner {
+    flex-direction: column;
   }
-  
-  .objective-container p {
-    font-size: 25px;
-    margin-bottom: 16px;
-    line-height: 1.5;
+  .objective-text-column h2 {
+    font-size: 48px;
   }
-  
+  .objective-text-column p {
+    font-size: 18px;
+  }
+  .objective-image-column img {
+    margin-bottom: 20px;
+  }
+}

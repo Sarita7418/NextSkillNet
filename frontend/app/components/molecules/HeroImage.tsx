@@ -5,7 +5,7 @@ import './HeroImage.css';
 const HeroImage: React.FC = () => {
   return (
     <div className="hero-container">
-      <img className="hero-image" src="/hero.svg" alt="Banner principal" />
+      <img className="hero-image" src="/herov3.png" alt="Banner principal" />
       <div className="hero-overlay">
         <p>Conectamos talento con oportunidades, impulsamos tu futuro.</p>
         <button onClick={() => {

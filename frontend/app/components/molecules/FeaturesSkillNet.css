@@ -46,7 +46,7 @@
     color: #FFFFFF;
     border-radius: 15px;
     padding: 20px;
-    flex: 0 0 280px; /* Ancho fijo para garantizar que se muestren en fila */
+    flex: 0 0 300px; /* Ancho fijo para garantizar que se muestren en fila */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
@@ -98,4 +98,10 @@
       font-size: 1rem !important;
     }
   }
-  
+  /* src/components/molecules/FeaturesSkillNet.css */
+.feature-icon {
+  display: block;
+  margin: 0 auto 16px;
+  width:200px;
+  height: auto;
+}
