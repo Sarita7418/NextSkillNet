@@ -49,6 +49,7 @@ export default function LoginPage() {
       if (response.ok) {
         // Mostrar mensaje de éxito con alert
         alert('Login exitoso!');
+        window.location.href = '/Inicio';
       } else {
         // Si hubo un error, mostrar mensaje con alert
         alert('Credenciales incorrectas!');
@@ -68,8 +69,7 @@ export default function LoginPage() {
       <main className={styles.main}>
         <div className={styles.card}>
           <h1>Bienvenido/a a Skillnet</h1>
-          <button className={styles.googleButton}>Iniciar con Google</button>
-          <span className={styles.separator}>O</span>
+
 
           <input
             className={styles.inputField}
@@ -102,6 +102,14 @@ export default function LoginPage() {
           >
             {isLoading ? 'Cargando...' : 'Iniciar sesión'}
           </button>
+          <span className={styles.separator}>O</span>
+          <button
+            className={styles.googleButton}
+            onClick={() => window.location.href = '/frame197'}
+          >
+            Crear una cuenta
+          </button>
+
         </div>
       </main>
 

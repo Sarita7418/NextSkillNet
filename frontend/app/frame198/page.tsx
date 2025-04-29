@@ -1,16 +1,15 @@
 'use client';
 
-import Header2 from '../components/organism/Header2';
+import Header from '../components/organism/Header';
 import LoginForm from '../components/organism/LoginForm';
 import Footer from '../components/organism/Footer';
 
 export default function Frame198Page() {
   return (
     <div>
-        <Header2 />
+        <Header/>
         <LoginForm/>
-       <Footer/>
-    
+        <Footer/>
     </div>
   );
 }
