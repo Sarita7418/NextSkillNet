@@ -14,9 +14,6 @@ use App\Http\Middleware\VerifyCsrfToken;
 |
 */
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/testRequest', [AuthController::class, 'testRequest']);
-Route::post('/register', [AuthController::class, 'register']);
-
 
 Route::get('/', function () {
     return view('welcome');

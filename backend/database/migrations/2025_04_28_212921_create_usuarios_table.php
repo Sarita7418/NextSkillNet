@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('usuarios', function (Blueprint $table) {
+        Schema::create('usuariosxdxd', function (Blueprint $table) {
             $table->id();                      // id automático
             $table->string('nombre');           // campo nombre
             $table->string('apellido');         // campo apellido
