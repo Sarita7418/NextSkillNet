@@ -105,7 +105,7 @@ export default function LoginPage() {
           <span className={styles.separator}>O</span>
           <button
             className={styles.googleButton}
-            onClick={() => window.location.href = '/frame197'}
+            onClick={() => window.location.href = '/nuevoUsuario'}
           >
             Crear una cuenta
           </button>
