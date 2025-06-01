@@ -20,7 +20,7 @@ function Footer() {
   };
 
   return (
-    <footer className="Footer">
+    <footer id="Footer" className="Footer">
       <div className="menuFooter">
         <h2>Navegar por Skillnet</h2>
         <div>

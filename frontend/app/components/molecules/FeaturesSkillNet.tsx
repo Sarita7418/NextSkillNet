@@ -5,7 +5,7 @@ import './FeaturesSkillNet.css';
 
 const FeaturesSkillNet: React.FC = () => {
   return (
-    <section className="features-skillnet">
+    <section id="features-skillnet"className="features-skillnet">
       {/* Columna izquierda: título */}
       <div className="features-left">
         <h2>Algunas de las características más importantes de SkillNet</h2>

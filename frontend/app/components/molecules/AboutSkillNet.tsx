@@ -4,7 +4,7 @@ import './AboutSkillNet.css';
 
 const AboutSkillNet: React.FC = () => {
   return (
-    <section className="about-container">
+    <section id="about-container" className="about-container">
       <div className="about-inner">
         {/* Columna izquierda: texto y footer */}
         <div className="about-text-column">
