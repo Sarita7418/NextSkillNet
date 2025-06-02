@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
 import Footer from '../components/organism/Footer';
-import Header from '../components/organism/Header';
+import HeaderMain from '../components/organism/HeaderMain';
 
 export default function LoginPage() {
   const [nombre, setNombre] = useState('');
@@ -64,7 +64,7 @@ export default function LoginPage() {
 
   return (
     <div className={styles.container}>
-      <Header />
+      <HeaderMain />
 
       <main className={styles.main}>
         <div className={styles.card}>
