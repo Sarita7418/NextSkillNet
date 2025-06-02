@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { 
-  FaHome, 
-  FaBell, 
-  FaFileAlt, 
-  FaCogs, 
-  FaUsers 
+import {
+  FaHome,
+  FaBell,
+  FaFileAlt,
+  FaCogs,
+  FaUsers
 } from 'react-icons/fa';
 import './HeaderMain.css';
 
@@ -26,8 +26,8 @@ const HeaderMain: React.FC = () => {
         {/* Logo pegado a la izquierda */}
         <div className="logo">
           <a href="/Institucional">
-            <img 
-              src="/logo2.svg" 
+            <img
+              src="/logo2.svg"
               alt="Logo SkillNet"
             />
           </a>
@@ -45,7 +45,7 @@ const HeaderMain: React.FC = () => {
             </li>
             <li>
               {/* Scroll a sección "about-container" */}
-              <button 
+              <button
                 type="button"
                 className="nav-button"
                 onClick={() => scrollToSection('about-container')}
@@ -56,7 +56,7 @@ const HeaderMain: React.FC = () => {
             </li>
             <li>
               {/* Scroll a sección "objective-container" */}
-              <button 
+              <button
                 type="button"
                 className="nav-button"
                 onClick={() => scrollToSection('objective-container')}
@@ -67,7 +67,7 @@ const HeaderMain: React.FC = () => {
             </li>
             <li>
               {/* Scroll a sección "features-container" */}
-              <button 
+              <button
                 type="button"
                 className="nav-button"
                 onClick={() => scrollToSection('features-skillnet')}
@@ -78,7 +78,7 @@ const HeaderMain: React.FC = () => {
             </li>
             <li>
               {/* Scroll a sección "footer" */}
-              <button 
+              <button
                 type="button"
                 className="nav-button"
                 onClick={() => scrollToSection('Footer')}
@@ -90,15 +90,10 @@ const HeaderMain: React.FC = () => {
           </ul>
         </nav>
 
-        {/* Icono de perfil en círculo */}
-        <div className="profile-avatar-container">
-          <a href="/Login">
-            <img 
-              src="/user-avatar.png" 
-              alt="Perfil de usuario" 
-              className="profile-avatar"
-            />
-          </a>
+        {/* Botones de registro e inicio de sesión */}
+        <div className="auth-buttons">
+          <a href="/frame197" className="btn-register">Registrarse</a>
+          <a href="/Login" className="btn-login">Iniciar Sesión</a>
         </div>
       </div>
     </header>

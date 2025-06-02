@@ -1,6 +1,19 @@
 .header {
   background-color: #143D8D;
   width: 100%;
+  position: fixed;
+  /* ✅ Esto mantiene el header fijo */
+  top: 0;
+  /* ✅ Pegado arriba */
+  left: 0;
+  z-index: 1000;
+  /* ✅ Asegura que esté encima de otros elementos */
+}
+
+main,
+.page-content {
+  padding-top: 60px;
+  /* mismo alto que el header */
 }
 
 .header-container {
@@ -83,9 +96,11 @@
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  color: #FFFFFF;         /* texto blanco */
+  color: #FFFFFF;
+  /* texto blanco */
   font-weight: 500;
-  font-size: 14px;        /* tamaño del texto */
+  font-size: 14px;
+  /* tamaño del texto */
   transition: color 0.3s;
   cursor: pointer;
   font-family: inherit;
@@ -97,7 +112,43 @@
 }
 
 .nav li a:hover {
-  color: #00AEEF;         /* mismo hover azul */
+  color: #00AEEF;
+  /* mismo hover azul */
 }
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-register,
+.btn-login {
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.btn-register {
+  background-color: white;
+  color: #143D8D;
+  border: 2px solid #143D8D;
+}
+
+.btn-register:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-login {
+  background-color: #143D8D;
+  color: white;
+  border: 2px solid #143D8D;
+}
+
+.btn-login:hover {
+  background-color: #0e2e6a;
+}
+
 
 /* Responsive: Mantén tus media queries si las tienes */
