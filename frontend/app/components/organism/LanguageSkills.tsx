@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './LanguagesSection.css'; // Importa el archivo CSS
+import './LanguageSkills.css'; // Archivo CSS específico para idiomas
 
 // Define la interfaz para los datos de cada idioma
 interface Language {
@@ -17,7 +17,7 @@ interface Language {
   }[];
 }
 
-// Datos iniciales de ejemplo
+// Datos iniciales de ejemplo para idiomas
 const initialLanguagesData: Language[] = [
   {
     id: 'spanish',
@@ -25,9 +25,7 @@ const initialLanguagesData: Language[] = [
     level: 'Nativo',
     cefrLevel: 'Native',
     description: 'Como hablante nativo, poseo fluidez profesional completa, permitiéndome comunicar eficazmente en todos los contextos, desde conversaciones informales hasta entornos empresariales y académicos formales.',
-    proof: [
-      { type: 'Experiencia', name: 'Nativo' }
-    ],
+    proof: [{ type: 'Experiencia', name: 'Nativo' }],
   },
   {
     id: 'english',
@@ -40,7 +38,7 @@ const initialLanguagesData: Language[] = [
         type: 'Certificado',
         name: 'Certificado de Finalización - Programa de Inglés Avanzado CBA',
         year: 2022,
-        url: 'https://ejemplo.com/certificado_ingles_cba.pdf', // Reemplaza con tu URL real
+        url: 'https://ejemplo.com/certificado_ingles_cba.pdf', // ¡Reemplaza con tu URL real!
       },
     ],
   },
@@ -55,34 +53,32 @@ const initialLanguagesData: Language[] = [
         type: 'Certificado',
         name: 'Certificado de Finalización - Curso Básico de Portugués ICBB',
         year: 2024,
-        url: 'https://ejemplo.com/certificado_portugues_icbb.pdf', // Reemplaza con tu URL real
+        url: 'https://ejemplo.com/certificado_portugues_icbb.pdf', // ¡Reemplaza con tu URL real!
       },
     ],
   },
 ];
 
-const LanguagesSection: React.FC = () => {
+const LanguageSkills: React.FC = () => {
   const [languages, setLanguages] = useState<Language[]>(initialLanguagesData);
   const [activeLanguageId, setActiveLanguageId] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editingLanguage, setEditingLanguage] = useState<Language | null>(null);
 
   const handleCardClick = (id: string) => {
-    setActiveLanguageId(activeLanguageId === id ? null : id); // Alternar visibilidad
+    setActiveLanguageId(activeLanguageId === id ? null : id);
   };
 
   const handleAddEditClick = (lang?: Language) => {
-    setEditingLanguage(lang || null); // Si se pasa un idioma, es para editar; si no, es para añadir
+    setEditingLanguage(lang || null);
     setShowModal(true);
   };
 
   const handleSaveLanguage = (newLanguage: Language) => {
     if (editingLanguage) {
-      // Editar idioma existente
-      setLanguages(languages.map(lang => lang.id === newLanguage.id ? newLanguage : lang));
+      setLanguages(languages.map((lang) => (lang.id === newLanguage.id ? newLanguage : lang)));
     } else {
-      // Añadir nuevo idioma
-      setLanguages([...languages, { ...newLanguage, id: `lang-${Date.now()}` }]); // ID único
+      setLanguages([...languages, { ...newLanguage, id: `lang-${Date.now()}` }]);
     }
     setShowModal(false);
     setEditingLanguage(null);
@@ -90,49 +86,59 @@ const LanguagesSection: React.FC = () => {
 
   const handleDeleteLanguage = (id: string) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este idioma?')) {
-      setLanguages(languages.filter(lang => lang.id !== id));
-      setActiveLanguageId(null); // Cerrar tarjeta si está abierta
+      setLanguages(languages.filter((lang) => lang.id !== id));
+      setActiveLanguageId(null);
     }
   };
 
   return (
-    <section className="languages-section">
-      <h2 className="languages-title">Mis Habilidades Lingüísticas</h2>
-      <p className="languages-subtitle">
-        Una ventana a mi dominio de diferentes idiomas, respaldado por certificaciones y experiencias.
-      </p>
+    <section className="language-skills-section">
+      <h3 className="section-title">Idiomas</h3>
+      <p className="section-subtitle">Mi dominio de distintas lenguas y las certificaciones que lo avalan.</p>
 
-      <div className="languages-actions">
-        <button className="add-language-btn" onClick={() => handleAddEditClick()}>
-          + Añadir Nuevo Idioma
+      <div className="skills-actions">
+        <button className="add-skill-btn" onClick={() => handleAddEditClick()}>
+          + Añadir Idioma
         </button>
       </div>
 
-      <div className="languages-grid">
+      <div className="skills-grid">
         {languages.map((lang) => (
           <div
             key={lang.id}
-            className={`language-card ${activeLanguageId === lang.id ? 'active' : ''}`}
+            className={`skill-card language-card ${activeLanguageId === lang.id ? 'active' : ''}`}
             onClick={() => handleCardClick(lang.id)}
           >
-            <div className="language-card-front">
-              <h3>{lang.name}</h3>
+            <div className="skill-card-front">
+              <h4>{lang.name}</h4>
               <span className={`level-badge ${lang.cefrLevel?.toLowerCase() || ''}`}>
                 {lang.cefrLevel ? `${lang.cefrLevel} - ` : ''}{lang.level}
               </span>
               <div className="card-actions">
-                <button className="edit-btn" onClick={(e) => { e.stopPropagation(); handleAddEditClick(lang); }}>
+                <button
+                  className="edit-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddEditClick(lang);
+                  }}
+                >
                   Editar
                 </button>
-                <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteLanguage(lang.id); }}>
+                <button
+                  className="delete-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteLanguage(lang.id);
+                  }}
+                >
                   Eliminar
                 </button>
               </div>
             </div>
-            <div className="language-card-back">
-              <h4>Descripción:</h4>
+            <div className="skill-card-back">
+              <h5>Descripción:</h5>
               <p>{lang.description}</p>
-              <h4>Comprobantes:</h4>
+              <h5>Comprobantes:</h5>
               <ul className="proof-list">
                 {lang.proof.map((p, index) => (
                   <li key={index}>
@@ -164,9 +170,9 @@ const LanguagesSection: React.FC = () => {
   );
 };
 
-export default LanguagesSection;
+export default LanguageSkills;
 
-// --- Componente Modal para el Formulario (en el mismo archivo o en uno separado) ---
+// --- Componente Modal para el Formulario de Idiomas ---
 
 interface LanguageFormModalProps {
   language: Language | null;

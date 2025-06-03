@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import './UsuarioMenu.css';
 import ExperienciaLaboral from './organism/ExperianciaLaboral';
 import Educacion from './organism/Educacion';
-import LanguagesSection from './organism/LanguagesSection';
+import SkillsSection from './organism/SkillsSection';
 
 function UsuarioMenu() {
   const [tab, setTab] = useState<'resumen' | 'documentos' | 'experiencia' | 'educacion' | 'habilidades' | 'cuenta'>('resumen');
@@ -78,7 +78,7 @@ function UsuarioMenu() {
           <Educacion />
         )}
         {tab === 'habilidades' && (
-          <LanguagesSection />
+          <SkillsSection />
         )}
         {tab === 'cuenta' && (
           <div>

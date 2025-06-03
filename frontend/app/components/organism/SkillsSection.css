@@ -1,22 +1,55 @@
-/* Sección Contenedora */
-.languages-section {
+/* Estilos para la sección principal que contiene ambas habilidades */
+.main-skills-section {
   padding: 60px 20px;
   background-color: #f8f9fa; /* Un fondo suave */
   text-align: center;
-  font-family: 'Poppins', sans-serif; /* Fuente moderna y legible */
+  font-family: 'Poppins', sans-serif;
   color: #333;
 }
 
-.languages-title {
-  font-size: 2.8em;
+.main-skills-title {
+  font-size: 3.2em; /* Título principal más grande */
+  margin-bottom: 20px;
+  color: #2c3e50;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 15px;
+}
+
+.main-skills-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 120px; /* Subrayado más largo */
+  height: 5px; /* Más grueso */
+  background-color: #3498db;
+  border-radius: 3px;
+}
+
+.main-skills-subtitle {
+  font-size: 1.3em;
+  color: #555;
+  margin-bottom: 60px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* Estilos comunes para los títulos de sub-sección */
+.section-title {
+  font-size: 2.5em; /* Título para 'Idiomas' y 'Habilidades Profesionales' */
+  margin-top: 60px; /* Espacio entre secciones */
   margin-bottom: 15px;
-  color: #2c3e50; /* Un azul oscuro elegante */
+  color: #2c3e50;
   position: relative;
   display: inline-block;
   padding-bottom: 10px;
 }
 
-.languages-title::after {
+.section-title::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -24,26 +57,27 @@
   transform: translateX(-50%);
   width: 80px;
   height: 4px;
-  background-color: #3498db; /* Un azul vibrante como subrayado */
+  background-color: #7f8c8d; /* Un gris sutil para diferenciar */
   border-radius: 2px;
 }
 
-.languages-subtitle {
-  font-size: 1.2em;
-  color: #555;
-  margin-bottom: 50px;
-  max-width: 700px;
+.section-subtitle {
+  font-size: 1.1em;
+  color: #666;
+  margin-bottom: 40px;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
-/* Acciones (Botón Añadir) */
-.languages-actions {
+
+/* Estilos para los botones de acción (Añadir) */
+.skills-actions {
   margin-bottom: 40px;
 }
 
-.add-language-btn {
+.add-skill-btn {
   background-color: #28a745; /* Verde para añadir */
   color: white;
   padding: 12px 25px;
@@ -55,86 +89,85 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.add-language-btn:hover {
+.add-skill-btn:hover {
   background-color: #218838;
   transform: translateY(-2px);
 }
 
-/* Contenedor de la Rejilla de Tarjetas */
-.languages-grid {
+/* Estilos de la rejilla de tarjetas (común para ambas secciones) */
+.skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Columnas responsivas */
-  gap: 30px; /* Espacio entre tarjetas */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Estilos de la Tarjeta Individual */
-.language-card {
+/* Estilos de la tarjeta base (común para ambas secciones) */
+.skill-card {
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-height: 180px; /* Altura mínima para las tarjetas */
+  min-height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  perspective: 1000px; /* Para el efecto 3D de volteo */
-  padding: 20px; /* Padding interno */
+  perspective: 1000px;
+  padding: 20px;
 }
 
-.language-card:hover {
-  transform: translateY(-10px); /* Ligeramente hacia arriba al pasar el mouse */
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* Sombra más intensa */
+.skill-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
-/* Efecto de volteo de la tarjeta */
-.language-card-front,
-.language-card-back {
+/* Efecto de volteo (común para ambas secciones) */
+.skill-card-front,
+.skill-card-back {
   position: absolute;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden; /* Oculta la parte trasera cuando no está volteada */
-  transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); /* Transición suave */
+  backface-visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 20px;
-  box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
+  box-sizing: border-box;
 }
 
-.language-card-front {
+.skill-card-front {
   transform: rotateY(0deg);
   z-index: 2;
   background-color: #ffffff;
   border-radius: 12px;
 }
 
-.language-card-back {
+.skill-card-back {
   transform: rotateY(180deg);
   z-index: 1;
-  background-color: #f0f8ff; /* Un azul muy claro para el reverso */
+  background-color: #f0f8ff;
   color: #333;
   text-align: left;
   border-radius: 12px;
-  overflow-y: auto; /* Para permitir scroll si el contenido es largo */
+  overflow-y: auto;
 }
 
-/* Cuando la tarjeta está activa (volteada) */
-.language-card.active .language-card-front {
+.skill-card.active .skill-card-front {
   transform: rotateY(-180deg);
 }
 
-.language-card.active .language-card-back {
+.skill-card.active .skill-card-back {
   transform: rotateY(0deg);
 }
 
-/* Estilos de los botones de acción en la tarjeta frontal */
+/* Acciones (Editar/Eliminar) en la tarjeta (común para ambas secciones) */
 .card-actions {
   position: absolute;
   bottom: 15px;
@@ -143,15 +176,16 @@
   gap: 10px;
   opacity: 0;
   transition: opacity 0.3s ease;
+  z-index: 3; /* Asegura que los botones sean clickeables en la tarjeta frontal */
 }
 
-.language-card:hover .card-actions,
-.language-card.active .card-actions { /* Mostrar también cuando está activa */
+.skill-card:hover .card-actions,
+.skill-card.active .card-actions {
   opacity: 1;
 }
 
 .edit-btn, .delete-btn {
-  background-color: #007bff; /* Azul para editar */
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -166,16 +200,15 @@
 }
 
 .delete-btn {
-  background-color: #dc3545; /* Rojo para eliminar */
+  background-color: #dc3545;
 }
 
 .delete-btn:hover {
   background-color: #c82333;
 }
 
-
-/* Estilos del Contenido de la Tarjeta */
-.language-card-front h3 {
+/* Estilos de los títulos y textos dentro de las tarjetas (común) */
+.skill-card-front h4 {
   font-size: 1.8em;
   margin-bottom: 10px;
   color: #3498db;
@@ -192,17 +225,7 @@
   text-transform: uppercase;
 }
 
-/* Colores para los niveles CEFR */
-.level-badge.native { background-color: #27ae60; } /* Verde para Nativo */
-.level-badge.c2 { background-color: #8e44ad; } /* Púrpura para C2 */
-.level-badge.c1 { background-color: #e67e22; } /* Naranja para C1 */
-.level-badge.b2 { background-color: #3498db; } /* Azul para B2 */
-.level-badge.b1 { background-color: #f1c40f; } /* Amarillo para B1 */
-.level-badge.a2 { background-color: #e74c3c; } /* Rojo para A2 */
-.level-badge.a1 { background-color: #9b59b6; } /* Morado más suave para A1 */
-
-
-.language-card-back h4 {
+.skill-card-back h5 {
   font-size: 1.3em;
   margin-bottom: 10px;
   color: #2c3e50;
@@ -210,26 +233,27 @@
   padding-bottom: 5px;
 }
 
-.language-card-back p {
+.skill-card-back p {
   font-size: 0.95em;
   line-height: 1.6;
   margin-bottom: 15px;
   color: #444;
 }
 
-.proof-list {
+/* Estilos de las listas de comprobantes/proyectos */
+.proof-list, .project-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.proof-list li {
+.proof-list li, .project-list li {
   margin-bottom: 8px;
   font-size: 0.9em;
   color: #555;
   display: flex;
   align-items: center;
-  flex-wrap: wrap; /* Para manejar textos largos y enlaces */
+  flex-wrap: wrap;
 }
 
 .proof-list li strong {
@@ -237,11 +261,11 @@
   color: #333;
 }
 
-.proof-link {
+.proof-link, .project-list li a {
   display: inline-block;
   margin-left: 10px;
   padding: 5px 10px;
-  background-color: #2ecc71; /* Verde esmeralda */
+  background-color: #2ecc71;
   color: #fff;
   text-decoration: none;
   border-radius: 5px;
@@ -249,8 +273,8 @@
   transition: background-color 0.2s ease;
 }
 
-.proof-link:hover {
-  background-color: #27ae60; /* Verde más oscuro al pasar el mouse */
+.proof-link:hover, .project-list li a:hover {
+  background-color: #27ae60;
 }
 
 .proof-image {
@@ -261,18 +285,18 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Estilos del Modal --- */
+/* --- Estilos del Modal (Común para ambos modales) --- */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente oscuro */
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Asegura que esté por encima de todo */
+  z-index: 1000;
 }
 
 .modal-content {
@@ -282,8 +306,8 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 600px;
-  max-height: 90vh; /* Altura máxima para evitar desbordamiento */
-  overflow-y: auto; /* Permite scroll si el formulario es largo */
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -304,7 +328,7 @@
   color: #555;
   margin-bottom: 8px;
   font-weight: 600;
-  text-align: left; /* Alineación a la izquierda para labels */
+  text-align: left;
 }
 
 .form-group input[type="text"],
@@ -312,7 +336,7 @@
 .form-group input[type="url"],
 .form-group textarea,
 .form-group select {
-  width: calc(100% - 20px); /* Ajuste para padding */
+  width: calc(100% - 20px);
   padding: 12px 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -331,7 +355,7 @@
 }
 
 .form-group textarea {
-  resize: vertical; /* Permitir redimensionar verticalmente */
+  resize: vertical;
   min-height: 80px;
 }
 
@@ -351,7 +375,7 @@
 
 .proof-inputs {
   display: flex;
-  flex-wrap: wrap; /* Permitir que los inputs se envuelvan */
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 15px;
   align-items: center;
@@ -359,13 +383,13 @@
 
 .proof-inputs input,
 .proof-inputs select {
-  flex: 1; /* Distribuye el espacio equitativamente */
-  min-width: 120px; /* Ancho mínimo para cada input */
+  flex: 1;
+  min-width: 120px;
   padding: 10px;
 }
 
 .add-proof-btn {
-  background-color: #6c757d; /* Gris para añadir comprobante */
+  background-color: #6c757d;
   color: white;
   border: none;
   border-radius: 5px;
@@ -415,7 +439,7 @@
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end; /* Alinear botones a la derecha */
+  justify-content: flex-end;
   gap: 15px;
   margin-top: 30px;
 }
@@ -430,7 +454,7 @@
 }
 
 .save-btn {
-  background-color: #28a745; /* Verde para guardar */
+  background-color: #28a745;
   color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -441,7 +465,7 @@
 }
 
 .cancel-btn {
-  background-color: #6c757d; /* Gris para cancelar */
+  background-color: #6c757d;
   color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -451,53 +475,44 @@
   transform: translateY(-2px);
 }
 
-/* Responsividad */
+/* Responsividad general */
 @media (max-width: 768px) {
-  .languages-title {
-    font-size: 2.2em;
+  .main-skills-title {
+    font-size: 2.5em;
   }
-
-  .languages-subtitle {
+  .main-skills-subtitle {
+    font-size: 1.1em;
+  }
+  .section-title {
+    font-size: 2em;
+  }
+  .section-subtitle {
     font-size: 1em;
-    margin-bottom: 30px;
   }
-
-  .languages-grid {
-    grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
+  .skills-grid {
+    grid-template-columns: 1fr;
     padding: 0 15px;
   }
-
   .modal-content {
     width: 95%;
     padding: 20px;
   }
-
   .proof-inputs {
-    flex-direction: column; /* Apila los inputs en móvil */
+    flex-direction: column;
     align-items: stretch;
   }
   .proof-inputs input,
   .proof-inputs select {
-    width: 100%; /* Ocupa todo el ancho disponible */
+    width: 100%;
     min-width: unset;
   }
 }
 
 @media (max-width: 480px) {
-  .languages-section {
+  .main-skills-section {
     padding: 40px 10px;
   }
-
-  .language-card-front h3 {
-    font-size: 1.5em;
-  }
-
-  .level-badge {
-    font-size: 0.85em;
-    padding: 6px 12px;
-  }
-
-  .add-language-btn, .save-btn, .cancel-btn {
+  .add-skill-btn, .save-btn, .cancel-btn {
     padding: 10px 15px;
     font-size: 1em;
   }
