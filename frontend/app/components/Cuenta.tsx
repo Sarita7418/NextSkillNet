@@ -130,7 +130,7 @@ function Cuenta() {
   // Cerrar sesión
   const handleCerrarSesion = () => {
     localStorage.removeItem('usuario');
-    window.location.href = '/login'; // O la ruta de login que tengas
+    window.location.href = '/Login'; // O la ruta de login que tengas
   };
 
   return (

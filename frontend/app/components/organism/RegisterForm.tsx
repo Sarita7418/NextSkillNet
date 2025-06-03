@@ -113,8 +113,8 @@ const RegisterForm: React.FC = () => {
               value={contraseña}
               onChange={(e) => setContraseña(e.target.value)}
             />
-            <button type="button" className="password-toggle" onClick={() => setShowPassword1(!showPassword1)}>
-              {showPassword1 ? "○" : "⦿"}
+            <button type="button" className="password-toggle" onClick={() => setShowPassword1(!showPassword1)} aria-label={showPassword1 ? "Ocultar contraseña" : "Mostrar contraseña"}>
+              {showPassword1 ? "👁️" : "🙈"}
             </button>
           </div>
         </div>
@@ -127,8 +127,8 @@ const RegisterForm: React.FC = () => {
               value={confirmarContraseña}
               onChange={(e) => setConfirmarContraseña(e.target.value)}
             />
-            <button type="button" className="password-toggle" onClick={() => setShowPassword2(!showPassword2)}>
-              {showPassword2 ? "○" : "⦿"}
+            <button type="button" className="password-toggle" onClick={() => setShowPassword2(!showPassword2)} aria-label={showPassword2 ? "Ocultar contraseña" : "Mostrar contraseña"}>
+              {showPassword2 ? "👁️" : "🙈"}
             </button>
           </div>
         </div>
