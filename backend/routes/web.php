@@ -15,7 +15,10 @@ use App\Http\Middleware\VerifyCsrfToken;
 */
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-
+Route::post('/entrevistas/agendar', [AuthController::class, 'agendarEntrevista']);
+Route::get('/entrevistas', [AuthController::class, 'listarEntrevistas']);
+Route::post('/convocatorias/crear', [AuthController::class, 'crearConvocatoria']);
+Route::get('/convocatorias', [AuthController::class, 'listarConvocatorias']);
 
 Route::get('/', function () {
     return view('welcome');

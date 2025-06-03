@@ -25,6 +25,7 @@ export default function InicioPage() {
           <CarouselCards />
         </section>
       </div>
+      
 
       <Footer />
     </>
