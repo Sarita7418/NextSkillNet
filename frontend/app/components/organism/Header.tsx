@@ -9,6 +9,7 @@ import {
   FaUsers 
 } from 'react-icons/fa';
 import './Header.css';
+import { FaBriefcase } from "react-icons/fa";
 
 const Header: React.FC = () => {
   const handleClick = () => {
@@ -44,9 +45,9 @@ const Header: React.FC = () => {
               </a>
             </li>
             <li>
-              <a href="/doc" onClick={(e) => { e.preventDefault(); handleClick(); }}>
-                <FaFileAlt className="icon" />
-                <span>Documentos</span>
+              <a href="/Candidatos" onClick={(e) => { e.preventDefault(); handleClick(); }}>
+                <FaBriefcase className="icon" />
+                <span>Candidatos</span>
               </a>
             </li>
             <li>

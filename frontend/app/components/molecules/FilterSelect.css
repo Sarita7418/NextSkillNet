@@ -1,0 +1,50 @@
+/* components/molecules/FilterSelect.css */
+.filter-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-blue);
+  margin: 0;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-field {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+}
+
+.select-field:focus {
+  outline: none;
+  border-color: var(--secondary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.select-field:disabled {
+  background: var(--light-gray);
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  pointer-events: none;
+}

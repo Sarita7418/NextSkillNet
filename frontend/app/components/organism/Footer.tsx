@@ -34,8 +34,8 @@ function Footer() {
               <Link href="/notificaciones" onClick={handleLinkClick} className="footer-link">
                 Notificaciones
               </Link>
-              <Link href="/documentos" onClick={handleLinkClick} className="footer-link">
-                Documentos
+              <Link href="/can" onClick={handleLinkClick} className="footer-link">
+                Candidatos
               </Link>
               <Link href="/admin" onClick={handleLinkClick} className="footer-link">
                 Administración
@@ -72,7 +72,7 @@ function Footer() {
               </div>
               <div className="contact-item">
                 <Image src={mail} alt="Correo electrónico" className="contact-icon" />
-                <span>cybertigres@skillnet</span>
+                <span>cybertigres@skillnet.org</span>
               </div>
               <div className="contact-item location">
                 <span>📍 EMI Irpavi</span>

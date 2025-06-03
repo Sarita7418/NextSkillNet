@@ -1,0 +1,305 @@
+/* components/molecules/CandidateCard.css */
+.candidate-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.candidate-card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+  border-color: var(--light-blue);
+}
+
+.candidate-card.selected {
+  border-color: var(--secondary-blue);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.02) 0%, rgba(135, 206, 235, 0.05) 100%);
+}
+
+.candidate-card.expanded {
+  transform: none;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card-checkbox-container {
+  margin-top: 4px;
+}
+
+.card-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--secondary-blue);
+  cursor: pointer;
+}
+
+.candidate-info {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.candidate-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.candidate-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin: 0 0 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.candidate-position {
+  font-size: 0.95rem;
+  color: var(--secondary-blue);
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.candidate-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  flex-wrap: wrap;
+}
+
+.candidate-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-badges {
+  margin-top: 4px;
+}
+
+.card-content {
+  margin-bottom: 16px;
+}
+
+.skills-section {
+  margin-bottom: 12px;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.salary-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.salary-label {
+  color: #6c757d;
+}
+
+.salary-amount {
+  font-weight: 600;
+  color: var(--success-color);
+}
+
+.expanded-content {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  animation: expandContent 0.3s ease-out;
+}
+
+@keyframes expandContent {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.contact-info {
+  margin-bottom: 16px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.contact-icon {
+  width: 20px;
+  text-align: center;
+}
+
+.contact-text {
+  color: #495057;
+}
+
+.all-skills h4 {
+  font-size: 0.9rem;
+  color: var(--primary-blue);
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.card-actions button {
+  flex: 1;
+  min-width: 80px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #f1f3f4;
+  font-size: 0.8rem;
+}
+
+.registration-date {
+  color: #6c757d;
+}
+
+.expand-toggle {
+  background: none;
+  border: none;
+  color: var(--secondary-blue);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.expand-toggle:hover {
+  background: rgba(0, 102, 204, 0.1);
+}
+
+/* Estados especiales */
+.candidate-card.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.candidate-card.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .candidate-card {
+    padding: 16px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .candidate-info {
+    width: 100%;
+  }
+  
+  .candidate-meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .card-badges {
+    align-self: flex-start;
+    margin-top: 0;
+  }
+  
+  .salary-info {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+  
+  .skills-list {
+    justify-content: center;
+  }
+  
+  .card-actions {
+    justify-content: center;
+  }
+  
+  .card-footer {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .candidate-card {
+    padding: 12px;
+  }
+  
+  .candidate-name {
+    font-size: 1rem;
+  }
+  
+  .candidate-position {
+    font-size: 0.9rem;
+  }
+  
+  .candidate-meta {
+    font-size: 0.8rem;
+  }
+  
+  .card-actions button {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}

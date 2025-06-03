@@ -1,0 +1,73 @@
+/* components/molecules/SortControls.css */
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sort-by {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-blue);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--secondary-blue);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+.sort-order-btn {
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sort-order-btn:hover {
+  background: var(--light-gray);
+  border-color: var(--secondary-blue);
+}
+
+.sort-order-btn:focus {
+  outline: none;
+  border-color: var(--secondary-blue);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+.sort-order-btn.asc {
+  color: var(--success-color);
+}
+
+.sort-order-btn.desc {
+  color: var(--secondary-blue);
+}

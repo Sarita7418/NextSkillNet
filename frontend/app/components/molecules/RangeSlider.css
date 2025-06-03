@@ -1,0 +1,115 @@
+/* components/molecules/RangeSlider.css */
+.range-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.range-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-blue);
+  margin: 0;
+}
+
+.range-values {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.range-value {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--secondary-blue);
+  background: var(--light-gray);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.range-separator {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.slider-container {
+  position: relative;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.slider-track {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+.slider-range {
+  position: absolute;
+  height: 4px;
+  background: var(--gradient-blue);
+  border-radius: 2px;
+}
+
+.slider-input {
+  position: absolute;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  pointer-events: auto;
+}
+
+.slider-input::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--white);
+  border: 2px solid var(--secondary-blue);
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.slider-input::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--white);
+  border: 2px solid var(--secondary-blue);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.slider-input:disabled {
+  cursor: not-allowed;
+}
+
+.slider-input:disabled::-webkit-slider-thumb {
+  background: var(--light-gray);
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.slider-input:disabled::-moz-range-thumb {
+  background: var(--light-gray);
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
+.slider-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
