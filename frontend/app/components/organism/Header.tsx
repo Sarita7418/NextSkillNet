@@ -12,8 +12,7 @@ import './Header.css';
 
 const Header: React.FC = () => {
   const handleClick = () => {
-    alert("Para acceder a nuestros servicios debe iniciar sesión.");
-    window.location.href = "/Login"; // Redirige a la página de Login
+    window.location.href = "/PerfilUsuario"; // Redirige a la página de Login
   };
 
   return (

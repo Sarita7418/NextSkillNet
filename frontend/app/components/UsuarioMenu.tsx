@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import './UsuarioMenu.css';
+import Resumen from './Resumen';
 
 function UsuarioMenu() {
   const [tab, setTab] = useState<'resumen' | 'documentos' | 'experiencia' | 'educacion' | 'habilidades' | 'cuenta'>('resumen');
@@ -10,9 +11,6 @@ function UsuarioMenu() {
     <div className="usuario-menu-container" style={{ display: 'flex', height: '100vh' }}>
       {/* Menú lateral */}
       <aside className="usuario-menu" style={{ width: '220px', borderRight: '1px solid #ddd', padding: '20px', boxSizing: 'border-box' }}>
-        <div className="usuario-menu__logo">
-          <h2>MiApp</h2>
-        </div>
 
         <nav className="usuario-menu__nav">
           <ul className="usuario-menu__list" style={{ listStyle: 'none', padding: 0 }}>
@@ -60,8 +58,7 @@ function UsuarioMenu() {
       >
         {tab === 'resumen' && (
           <div>
-            <h2>Resumen</h2>
-            <p>Aquí va la información del resumen...</p>
+            <Resumen />
           </div>
         )}
         {tab === 'documentos' && (

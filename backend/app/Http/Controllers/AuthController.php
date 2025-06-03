@@ -10,58 +10,71 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
-    //Metodo del Login
     public function login(Request $request)
-    {
+{
+    try {
+        // Validación con el nombre correcto de campos
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string',
+            'contrasena' => 'required|string',
+        ]);
 
-
-
-        try {
-            // Validación básica
-            $validator = Validator::make($request->all(), [
-                'nombre' => 'required|string',
-                'contraseña' => 'required|string',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'error' => 'Datos incorrectos',
-                    'message' => $validator->errors()
-                ], 400);
-            }
-
-            // Buscar persona por nombre
-            $persona = DB::table('personas')
-                ->whereRaw('LOWER(nombre) = ?', [strtolower($request->nombre)])
-                ->first();
-
-            if (!$persona) {
-                return response()->json(['message' => 'Usuario no encontrado'], 404);
-            }
-
-            // Buscar usuario asociado con esa persona y esa contraseña
-            $usuario = DB::table('usuarios')
-                ->where('id_persona', $persona->id_persona)
-                ->where('contrasena', $request->contraseña)
-                ->first();
-
-            if (!$usuario) {
-                return response()->json(['message' => 'Credenciales incorrectas'], 401);
-            }
-
+        if ($validator->fails()) {
             return response()->json([
-                'message' => 'Login exitoso',
-                'persona' => $persona,
-                'usuario' => $usuario
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error interno',
-                'error' => $e->getMessage()
-            ], 500);
+                'error' => 'Datos incorrectos',
+                'message' => $validator->errors()
+            ], 400);
         }
 
+        // Buscar persona por nombre (sin tilde)
+        $persona = DB::table('personas')
+            ->whereRaw('LOWER(nombre) = ?', [strtolower($request->nombre)])
+            ->first();
+
+        if (!$persona) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        // Buscar usuario con la contraseña correcta (sin tilde)
+        $usuario = DB::table('usuarios')
+            ->where('id_persona', $persona->id_persona)
+            ->where('contrasena', $request->contrasena)
+            ->first();
+
+        if (!$usuario) {
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+        }
+
+        // Obtener correos
+        $correos = DB::table('correo')
+            ->where('id_persona', $persona->id_persona)
+            ->pluck('descripcion');
+
+        // Construir usuario completo para enviar al frontend
+        $usuarioCompleto = [
+            'id_usuario' => $usuario->id_usuario,
+            'nombre' => $persona->nombre,
+            'apellido' => $persona->apellido,
+            'fecha_nacimiento' => $persona->fecha_nacimiento,
+            'id_genero' => $persona->id_genero,
+            'estado_empleado' => $persona->estado_empleado,
+            'correos' => $correos,
+            'id_rol' => $usuario->id_rol,
+        ];
+
+        return response()->json([
+            'message' => 'Login exitoso',
+            'usuario' => $usuarioCompleto
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error interno',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
+
 
     //Metodo del Registro
 
@@ -134,6 +147,59 @@ class AuthController extends Controller
         }
     }
 
+    //Actualizar datos de usuario
 
+    public function actualizarDatos(Request $request)
+{
+    try {
+        $request->validate([
+            'id_usuario' => 'required|integer',
+            'nombre' => 'required|string',
+            'apellido' => 'required|string',
+            'correo' => 'required|email',
+            'fecha_nacimiento' => 'required|date',
+            'genero' => 'required|integer',
+            'estado_empleado' => 'required|in:0,1',
+        ]);
+
+        $usuario = DB::table('usuarios')->where('id_usuario', $request->id_usuario)->first();
+        if (!$usuario) {
+            Log::error('Usuario no encontrado: id_usuario=' . $request->id_usuario);
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        $persona = DB::table('personas')->where('id_persona', $usuario->id_persona)->first();
+        if (!$persona) {
+            Log::error('Persona no encontrada: id_persona=' . $usuario->id_persona);
+            return response()->json(['message' => 'Persona no encontrada'], 404);
+        }
+
+        DB::table('personas')->where('id_persona', $persona->id_persona)->update([
+            'nombre' => $request->nombre,
+            'apellido' => $request->apellido,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'id_genero' => $request->genero,
+            'estado_empleado' => $request->estado_empleado,
+        ]);
+
+        $updated = DB::table('correo')->where('id_persona', $persona->id_persona)->update([
+            'descripcion' => $request->correo,
+        ]);
+
+        if ($updated === 0) {
+            Log::warning('No se actualizó ningún correo para id_persona=' . $persona->id_persona);
+            // Opcional: insertar si no existe
+            // DB::table('correo')->insert([...])
+        }
+
+        return response()->json(['message' => 'Datos actualizados correctamente']);
+    } catch (\Exception $e) {
+        Log::error('Error en actualizarDatos: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Error interno',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
 }

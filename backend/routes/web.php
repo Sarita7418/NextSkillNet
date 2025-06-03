@@ -15,6 +15,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 */
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/actualizar', [AuthController::class, 'actualizarDatos']);
 
 
 Route::get('/', function () {

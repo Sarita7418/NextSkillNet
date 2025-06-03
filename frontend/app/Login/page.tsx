@@ -38,8 +38,8 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          nombre,  // Usamos el nombre en lugar del correo
-          contraseña,
+          nombre,
+          contrasena: contraseña, // ojo aquí, contrasena sin tilde
         }),
       });
 
@@ -47,7 +47,7 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Mostrar mensaje de éxito con alert
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
         alert('Login exitoso!');
         window.location.href = '/Inicio';
       } else {
