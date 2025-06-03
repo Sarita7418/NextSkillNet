@@ -1,4 +1,6 @@
 // utils/exportUtils.ts
+import * as XLSX from 'xlsx';
+
 interface Candidate {
   id: string;
   name: string;
@@ -37,10 +39,10 @@ const formatSalary = (salary: number): string => {
   return `Bs. ${salary.toLocaleString('es-ES')}`;
 };
 
-// Exportar a Excel
+// NUEVA FUNCIÓN - Exportar a Excel con formato profesional
 export const exportToExcel = (candidates: Candidate[]): void => {
   try {
-    // Preparar datos para Excel
+    // Preparar datos para Excel de manera ordenada
     const excelData = candidates.map((candidate, index) => ({
       'N°': index + 1,
       'Nombre': candidate.name,
@@ -56,34 +58,56 @@ export const exportToExcel = (candidates: Candidate[]): void => {
       'Fecha de Registro': formatDate(candidate.createdAt)
     }));
 
-    // Crear CSV (compatible con Excel)
-    const csvHeaders = Object.keys(excelData[0]).join(',');
-    const csvRows = excelData.map(row => 
-      Object.values(row).map(value => 
-        typeof value === 'string' && value.includes(',') 
-          ? `"${value}"` 
-          : value
-      ).join(',')
-    );
-    
-    const csvContent = [csvHeaders, ...csvRows].join('\n');
-    
-    // Añadir BOM para caracteres especiales en Excel
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { 
-      type: 'text/csv;charset=utf-8;' 
+    // Crear workbook y worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(excelData);
+
+    // Configurar anchos de columnas para mejor presentación
+    const colWidths = [
+      { wch: 5 },   // N°
+      { wch: 25 },  // Nombre
+      { wch: 30 },  // Email
+      { wch: 15 },  // Teléfono
+      { wch: 20 },  // Posición
+      { wch: 12 },  // Experiencia
+      { wch: 40 },  // Habilidades
+      { wch: 20 },  // Ubicación
+      { wch: 15 },  // Salario
+      { wch: 15 },  // Disponibilidad
+      { wch: 25 },  // Educación
+      { wch: 15 }   // Fecha
+    ];
+    ws['!cols'] = colWidths;
+
+    // Agregar la hoja al workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Candidatos');
+
+    // Crear hoja de resumen
+    const summaryData = [
+      ['Resumen de Candidatos', ''],
+      ['Total de Candidatos', candidates.length],
+      ['Fecha de Exportación', formatDate(new Date())],
+      ['', ''],
+      ['Estadísticas por Posición', ''],
+    ];
+
+    // Calcular estadísticas por posición
+    const positionStats = candidates.reduce((acc, candidate) => {
+      acc[candidate.position] = (acc[candidate.position] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    Object.entries(positionStats).forEach(([position, count]) => {
+      summaryData.push([position, count]);
     });
-    
-    // Crear enlace de descarga
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `candidatos_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+    const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+    summaryWs['!cols'] = [{ wch: 30 }, { wch: 15 }];
+    XLSX.utils.book_append_sheet(wb, summaryWs, 'Resumen');
+
+    // Generar y descargar archivo Excel
+    const fileName = `candidatos_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
     
     console.log('Excel exportado exitosamente');
   } catch (error) {
@@ -92,7 +116,7 @@ export const exportToExcel = (candidates: Candidate[]): void => {
   }
 };
 
-// Exportar a PDF
+// TU FUNCIÓN ORIGINAL DE PDF - SIN CAMBIOS
 export const exportToPDF = (candidates: Candidate[]): void => {
   try {
     // Crear contenido HTML para el PDF
