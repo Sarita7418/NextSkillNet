@@ -20,3 +20,6 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/', function () {
     return view('welcome');
 });
+
+//para subir archivos
+Route::post('/subir-curriculum', [AuthController::class, 'subirCurriculum']);
