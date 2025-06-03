@@ -1,46 +1,167 @@
-.uploader-container {
-  background-color: #fff;
-  padding: 2rem;
-  max-width: 500px;
-  margin: 2rem auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* src/components/pages/SubirDocumento.css */
+
+.subir-documento-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 35px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
-.uploader-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
+.main-title {
   text-align: center;
+  color: #007bff;
+  font-size: 2.8em;
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
 }
 
-.upload-button {
-  background-color: #0066cc;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 1rem;
+.subtitle {
+  text-align: center;
+  color: #666;
+  font-size: 1.2em;
+  margin-bottom: 40px;
+  line-height: 1.6;
 }
 
-.upload-button:hover {
-  background-color: #0052a3;
-}
-
-.dropdown {
-  width: 100%;
-  padding: 0.6rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-.dropdown-label {
+.section-title {
+  font-size: 1.8em;
+  color: #007bff;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e6ed;
   font-weight: 600;
-  margin-bottom: 0.3rem;
+  text-align: center; /* Centrar el título de la sección */
+}
+
+/* --- Sección de Subida --- */
+.upload-section {
+  background-color: #f0f8ff; /* Fondo azul claro para la sección de subida */
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.08);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
   display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+  font-size: 1em;
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1em;
+  color: #555;
+  background-color: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  -webkit-appearance: none; /* Oculta la flecha nativa en algunos navegadores */
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c757d'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); /* Flecha SVG personalizada */
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 18px;
+}
+
+.form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+.btn-upload {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 30px auto 0 auto;
+  padding: 15px 25px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-upload:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+}
+
+/* --- Sección de Documentos Subidos --- */
+.uploaded-docs-section {
+  padding: 30px;
+  background-color: #fdfdfd; /* Fondo muy claro para la sección de docs */
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.no-docs-message {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  font-size: 1.1em;
+  padding: 30px;
+  background-color: #f0f0f0;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.documentos-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .subir-documento-container {
+    padding: 25px;
+    margin: 20px auto;
+  }
+
+  .main-title {
+    font-size: 2.2em;
+  }
+
+  .subtitle {
+    font-size: 1em;
+  }
+
+  .section-title {
+    font-size: 1.5em;
+  }
+
+  .upload-section, .uploaded-docs-section {
+    padding: 20px;
+  }
+
+  .btn-upload {
+    padding: 12px 20px;
+    font-size: 1em;
+  }
+
+  .documentos-list-grid {
+    grid-template-columns: 1fr; /* Una columna en móviles */
+  }
 }

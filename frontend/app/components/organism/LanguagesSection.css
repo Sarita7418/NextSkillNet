@@ -1,0 +1,504 @@
+/* Sección Contenedora */
+.languages-section {
+  padding: 60px 20px;
+  background-color: #f8f9fa; /* Un fondo suave */
+  text-align: center;
+  font-family: 'Poppins', sans-serif; /* Fuente moderna y legible */
+  color: #333;
+}
+
+.languages-title {
+  font-size: 2.8em;
+  margin-bottom: 15px;
+  color: #2c3e50; /* Un azul oscuro elegante */
+  position: relative;
+  display: inline-block;
+  padding-bottom: 10px;
+}
+
+.languages-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background-color: #3498db; /* Un azul vibrante como subrayado */
+  border-radius: 2px;
+}
+
+.languages-subtitle {
+  font-size: 1.2em;
+  color: #555;
+  margin-bottom: 50px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* Acciones (Botón Añadir) */
+.languages-actions {
+  margin-bottom: 40px;
+}
+
+.add-language-btn {
+  background-color: #28a745; /* Verde para añadir */
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-language-btn:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+/* Contenedor de la Rejilla de Tarjetas */
+.languages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Columnas responsivas */
+  gap: 30px; /* Espacio entre tarjetas */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Estilos de la Tarjeta Individual */
+.language-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 180px; /* Altura mínima para las tarjetas */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px; /* Para el efecto 3D de volteo */
+  padding: 20px; /* Padding interno */
+}
+
+.language-card:hover {
+  transform: translateY(-10px); /* Ligeramente hacia arriba al pasar el mouse */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* Sombra más intensa */
+}
+
+/* Efecto de volteo de la tarjeta */
+.language-card-front,
+.language-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* Oculta la parte trasera cuando no está volteada */
+  transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); /* Transición suave */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
+}
+
+.language-card-front {
+  transform: rotateY(0deg);
+  z-index: 2;
+  background-color: #ffffff;
+  border-radius: 12px;
+}
+
+.language-card-back {
+  transform: rotateY(180deg);
+  z-index: 1;
+  background-color: #f0f8ff; /* Un azul muy claro para el reverso */
+  color: #333;
+  text-align: left;
+  border-radius: 12px;
+  overflow-y: auto; /* Para permitir scroll si el contenido es largo */
+}
+
+/* Cuando la tarjeta está activa (volteada) */
+.language-card.active .language-card-front {
+  transform: rotateY(-180deg);
+}
+
+.language-card.active .language-card-back {
+  transform: rotateY(0deg);
+}
+
+/* Estilos de los botones de acción en la tarjeta frontal */
+.card-actions {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  display: flex;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.language-card:hover .card-actions,
+.language-card.active .card-actions { /* Mostrar también cuando está activa */
+  opacity: 1;
+}
+
+.edit-btn, .delete-btn {
+  background-color: #007bff; /* Azul para editar */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 12px;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #dc3545; /* Rojo para eliminar */
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+
+/* Estilos del Contenido de la Tarjeta */
+.language-card-front h3 {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+  color: #3498db;
+}
+
+.level-badge {
+  display: inline-block;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.95em;
+  font-weight: bold;
+  color: #fff;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+
+/* Colores para los niveles CEFR */
+.level-badge.native { background-color: #27ae60; } /* Verde para Nativo */
+.level-badge.c2 { background-color: #8e44ad; } /* Púrpura para C2 */
+.level-badge.c1 { background-color: #e67e22; } /* Naranja para C1 */
+.level-badge.b2 { background-color: #3498db; } /* Azul para B2 */
+.level-badge.b1 { background-color: #f1c40f; } /* Amarillo para B1 */
+.level-badge.a2 { background-color: #e74c3c; } /* Rojo para A2 */
+.level-badge.a1 { background-color: #9b59b6; } /* Morado más suave para A1 */
+
+
+.language-card-back h4 {
+  font-size: 1.3em;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 5px;
+}
+
+.language-card-back p {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #444;
+}
+
+.proof-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.proof-list li {
+  margin-bottom: 8px;
+  font-size: 0.9em;
+  color: #555;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Para manejar textos largos y enlaces */
+}
+
+.proof-list li strong {
+  margin-right: 5px;
+  color: #333;
+}
+
+.proof-link {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #2ecc71; /* Verde esmeralda */
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 0.85em;
+  transition: background-color 0.2s ease;
+}
+
+.proof-link:hover {
+  background-color: #27ae60; /* Verde más oscuro al pasar el mouse */
+}
+
+.proof-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Estilos del Modal --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegura que esté por encima de todo */
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh; /* Altura máxima para evitar desbordamiento */
+  overflow-y: auto; /* Permite scroll si el formulario es largo */
+  position: relative;
+}
+
+.modal-content h3 {
+  font-size: 2em;
+  color: #3498db;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1em;
+  color: #555;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-align: left; /* Alineación a la izquierda para labels */
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="url"],
+.form-group textarea,
+.form-group select {
+  width: calc(100% - 20px); /* Ajuste para padding */
+  padding: 12px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1em;
+  color: #333;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.form-group textarea {
+  resize: vertical; /* Permitir redimensionar verticalmente */
+  min-height: 80px;
+}
+
+.proof-section {
+  border: 1px dashed #ccc;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 30px;
+  background-color: #fcfcfc;
+}
+
+.proof-section h4 {
+  font-size: 1.2em;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.proof-inputs {
+  display: flex;
+  flex-wrap: wrap; /* Permitir que los inputs se envuelvan */
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.proof-inputs input,
+.proof-inputs select {
+  flex: 1; /* Distribuye el espacio equitativamente */
+  min-width: 120px; /* Ancho mínimo para cada input */
+  padding: 10px;
+}
+
+.add-proof-btn {
+  background-color: #6c757d; /* Gris para añadir comprobante */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-proof-btn:hover {
+  background-color: #5a6268;
+}
+
+.current-proofs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.current-proofs-list li {
+  background-color: #e9ecef;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+  color: #333;
+}
+
+.remove-proof-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 0.75em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.remove-proof-btn:hover {
+  background-color: #c82333;
+}
+
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end; /* Alinear botones a la derecha */
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.save-btn, .cancel-btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.save-btn {
+  background-color: #28a745; /* Verde para guardar */
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.save-btn:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.cancel-btn {
+  background-color: #6c757d; /* Gris para cancelar */
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-btn:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .languages-title {
+    font-size: 2.2em;
+  }
+
+  .languages-subtitle {
+    font-size: 1em;
+    margin-bottom: 30px;
+  }
+
+  .languages-grid {
+    grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
+    padding: 0 15px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .proof-inputs {
+    flex-direction: column; /* Apila los inputs en móvil */
+    align-items: stretch;
+  }
+  .proof-inputs input,
+  .proof-inputs select {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .languages-section {
+    padding: 40px 10px;
+  }
+
+  .language-card-front h3 {
+    font-size: 1.5em;
+  }
+
+  .level-badge {
+    font-size: 0.85em;
+    padding: 6px 12px;
+  }
+
+  .add-language-btn, .save-btn, .cancel-btn {
+    padding: 10px 15px;
+    font-size: 1em;
+  }
+}
