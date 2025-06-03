@@ -164,13 +164,12 @@ class AuthController extends Controller
 
         $usuario = DB::table('usuarios')->where('id_usuario', $request->id_usuario)->first();
         if (!$usuario) {
-            Log::error('Usuario no encontrado: id_usuario=' . $request->id_usuario);
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
 
         $persona = DB::table('personas')->where('id_persona', $usuario->id_persona)->first();
         if (!$persona) {
-            Log::error('Persona no encontrada: id_persona=' . $usuario->id_persona);
+            
             return response()->json(['message' => 'Persona no encontrada'], 404);
         }
 
@@ -187,14 +186,11 @@ class AuthController extends Controller
         ]);
 
         if ($updated === 0) {
-            Log::warning('No se actualizó ningún correo para id_persona=' . $persona->id_persona);
-            // Opcional: insertar si no existe
-            // DB::table('correo')->insert([...])
+
         }
 
         return response()->json(['message' => 'Datos actualizados correctamente']);
     } catch (\Exception $e) {
-        Log::error('Error en actualizarDatos: ' . $e->getMessage());
         return response()->json([
             'message' => 'Error interno',
             'error' => $e->getMessage()

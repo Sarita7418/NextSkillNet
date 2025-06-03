@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import './UsuarioMenu.css';
 import Resumen from './Resumen';
+import Habilidades from './Habilidades';
+import Cuenta from './Cuenta';
 
 function UsuarioMenu() {
   const [tab, setTab] = useState<'resumen' | 'documentos' | 'experiencia' | 'educacion' | 'habilidades' | 'cuenta'>('resumen');
@@ -81,29 +83,12 @@ function UsuarioMenu() {
         )}
         {tab === 'habilidades' && (
           <div>
-            <h2>Habilidades e idiomas</h2>
-            <p>Gestión de habilidades y lenguas.</p>
+            <Habilidades/>
           </div>
         )}
         {tab === 'cuenta' && (
           <div>
-            <h2>Cuenta</h2>
-            <button type="button" style={{ marginRight: 10, padding: '10px 15px' }}>
-              Cambiar contraseña
-            </button>
-            <button
-              type="button"
-              style={{
-                backgroundColor: '#f44336',
-                color: 'white',
-                padding: '10px 15px',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              Cerrar sesión
-            </button>
+            <Cuenta/>
           </div>
         )}
       </main>
