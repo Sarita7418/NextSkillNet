@@ -1,5 +1,5 @@
 "useclient";
-
+import EnviarArchivo from './organism/EnviarArchivo';
 import React, { useState } from 'react';
 import './UsuarioMenu.css';
 
@@ -65,11 +65,9 @@ function UsuarioMenu() {
           </div>
         )}
         {tab === 'documentos' && (
-          <div>
-            <h2>Documentos</h2>
-            <p>Subir y ver documentos.</p>
-          </div>
+          <EnviarArchivo />
         )}
+
         {tab === 'experiencia' && (
           <div>
             <h2>Experiencia laboral</h2>

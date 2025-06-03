@@ -29,7 +29,7 @@ const RegisterForm: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
     setError('');
 
     if (contraseña !== confirmarContraseña) {
@@ -52,8 +52,15 @@ const RegisterForm: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Usuario registrado con éxito');
-        router.push('/Inicio');
+        const token = data.token;
+
+        if (token) {
+          localStorage.setItem('token', token); // ✅ Guarda el token
+          alert('Usuario registrado con éxito');
+          router.push('/Inicio'); // Redirige a página principal
+        } else {
+          alert('No se recibió token del servidor');
+        }
       } else {
         alert(data.message || 'Error al registrar');
       }
