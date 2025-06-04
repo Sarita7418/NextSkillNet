@@ -1,0 +1,154 @@
+.header {
+  background-color: #143D8D;
+  width: 100%;
+  position: fixed;
+  /* ✅ Esto mantiene el header fijo */
+  top: 0;
+  /* ✅ Pegado arriba */
+  left: 0;
+  z-index: 1000;
+  /* ✅ Asegura que esté encima de otros elementos */
+}
+
+main,
+.page-content {
+  padding-top: 60px;
+  /* mismo alto que el header */
+}
+
+.header-container {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.logo {
+  background-color: #FFFFFF;
+  padding: 5px;
+}
+
+.logo img {
+  display: block;
+  height: 50px;
+  cursor: pointer;
+}
+
+/* Nav lista horizontal con espacio entre ítems */
+.nav ul {
+  list-style: none;
+  display: flex;
+  gap: 120px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Estilo para los botones en lugar de enlaces */
+.nav-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+}
+
+.nav-button:focus {
+  outline: none;
+}
+
+.nav-button .icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.nav-button span {
+  font-size: 14px;
+}
+
+/* Efecto hover igual que en los links */
+.nav-button:hover {
+  color: #00AEEF;
+}
+
+/* Contenedor y estilo del avatar */
+.profile-avatar-container {
+  margin-right: 14px;
+}
+
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.nav li a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #FFFFFF;
+  /* texto blanco */
+  font-weight: 500;
+  font-size: 14px;
+  /* tamaño del texto */
+  transition: color 0.3s;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nav li a .icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.nav li a:hover {
+  color: #00AEEF;
+  /* mismo hover azul */
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-register,
+.btn-login {
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.btn-register {
+  background-color: white;
+  color: #143D8D;
+  border: 2px solid #143D8D;
+}
+
+.btn-register:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-login {
+  background-color: #143D8D;
+  color: white;
+  border: 2px solid #143D8D;
+}
+
+.btn-login:hover {
+  background-color: #0e2e6a;
+}
+
+
+/* Responsive: Mantén tus media queries si las tienes */

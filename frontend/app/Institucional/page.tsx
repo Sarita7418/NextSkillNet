@@ -1,7 +1,7 @@
 'use client';
 import './page.css'
 import React from 'react';
-import Header from '../components/organism/Header';
+import HeaderMain from '../components/organism/HeaderMain';
 import HeroImage from '../components/molecules/HeroImage';
 import AboutSkillNet from '../components/molecules/AboutSkillNet';
 import Objective from '../components/molecules/Objective';
@@ -12,7 +12,7 @@ import Footer from '../components/organism/Footer';
 const Institucional = () => {
   return (
     <div>
-      <Header />
+      <HeaderMain />
 
       <HeroImage />
       <AboutSkillNet />

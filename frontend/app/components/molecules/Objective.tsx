@@ -4,7 +4,7 @@ import './Objective.css';
 
 const Objective: React.FC = () => {
   return (
-    <section className="objective-container">
+    <section  id="objective-container"className="objective-container">
       <div className="objective-inner">
         {/* Columna izquierda: imagen */}
         <div className="objective-image-column">
