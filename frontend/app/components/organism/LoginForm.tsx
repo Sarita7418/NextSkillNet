@@ -12,6 +12,7 @@ const LoginForm: React.FC = () => {
   const [contraseña, setContraseña] = useState('');
   const [confirmarContraseña, setConfirmarContraseña] = useState('');
   const [registerData, setRegisterData] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const storedData = localStorage.getItem('registerData');
@@ -26,23 +27,31 @@ const LoginForm: React.FC = () => {
       return;
     }
 
+    // Validación básica de campos esenciales
+    const { nombre, apellido, fechaNacimiento, genero, estadoEmpleado, correo } = registerData;
+    if (!nombre || !apellido || !fechaNacimiento || !genero || !estadoEmpleado || !correo) {
+      alert('Datos incompletos en el registro. Por favor vuelva a registrarse.');
+      return;
+    }
+
     if (contraseña !== confirmarContraseña) {
       alert('Las contraseñas no coinciden.');
       return;
     }
 
     const finalData = {
-      nombre: registerData.nombre,
-      apellido: registerData.apellido,
-      fecha_nacimiento: registerData.fechaNacimiento,
-      genero: registerData.genero,
-      estado_civil: registerData.estadoCivil,
-      correo: registerData.correo,
-      contraseña: contraseña
+      nombre,
+      apellido,
+      fecha_nacimiento: fechaNacimiento,
+      genero,
+      estado_empleado: estadoEmpleado, // ✅ Corrección aquí
+      correo,
+      contraseña
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/register', { // Cambia si tu endpoint es diferente
+      setIsSubmitting(true);
+      const response = await fetch('http://127.0.0.1:8000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,14 +64,15 @@ const LoginForm: React.FC = () => {
         const data = await response.json();
         alert('Usuario registrado exitosamente!');
         localStorage.removeItem('registerData');
-        // Redireccionar a la página de inicio o a otra página
-        window.location.href = '/Inicio'; // Cambia esto según tu ruta
+        window.location.href = '/Inicio'; // Cambia según tu ruta
       } else {
-        alert('Error en el registro.');
+        alert('Error en el registro. Verifica los datos o intenta más tarde.');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error de conexión.');
+      alert('Error de conexión. Intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -70,7 +80,6 @@ const LoginForm: React.FC = () => {
     <div className="login-container">
       <div className="form-container">
         <div className="login-form">
-
           <div className="form-field">
             <label>Contraseña</label>
             <div className="password-field">
@@ -107,16 +116,18 @@ const LoginForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Botón para crear la cuenta */}
-          <button className="create-button" type="button" onClick={handleSubmit}>
-            Crear cuenta
+          <button 
+            className="create-button" 
+            type="button" 
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'}
           </button>
-          
         </div>
       </div>
 
       <Image src={bienvenida} alt="Bienvenida" width={500} height={500} />
-
     </div>
   );
 };

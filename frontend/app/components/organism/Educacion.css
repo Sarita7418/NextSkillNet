@@ -1,0 +1,305 @@
+/* src/components/pages/Educacion.css */
+
+.educacion-container {
+  max-width: 950px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.educacion-titulo {
+  text-align: center;
+  color: #007bff;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.educacion-subtitulo {
+  text-align: center;
+  color: #666;
+  font-size: 1.1em;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+/* --- Tabs / Pestañas --- */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e0e6ed;
+  overflow-x: auto; /* Permite scroll horizontal en pantallas muy pequeñas si hay muchas pestañas */
+  -webkit-overflow-scrolling: touch; /* Mejora el scroll en iOS */
+}
+
+.tab-button {
+  padding: 15px 25px;
+  border: none;
+  background-color: transparent;
+  color: #555; /* Color por defecto del texto de la pestaña inactiva */
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease, border-bottom 0.3s ease, background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap; /* Evita que el texto de la pestaña se rompa en varias líneas */
+}
+
+.tab-button:hover {
+  color: #02101f; /* Color del texto al pasar el ratón */
+  background-color: #f0f8ff; /* Fondo sutil al pasar el ratón */
+}
+
+.tab-button.active {
+  background-color: #041f3b; /* Fondo azul vibrante cuando la pestaña está activa */
+  color: #FFFFFF; /* ¡TEXTO BLANCO PARA UN CONTRASTE CLARO! */
+  border-bottom: 3px solid #007bff; /* Mantenemos el borde para el efecto visual */
+}
+
+.tab-button.active:hover {
+  background-color: #0056b3; /* Un azul un poco más oscuro al pasar el ratón sobre la pestaña activa */
+  color: #FFFFFF; /* Mantiene el texto blanco */
+}
+
+/* Ajuste del color del icono dentro de la pestaña activa */
+.tab-button.active svg {
+    color: #FFFFFF; /* Hace que el icono también sea blanco */
+}
+
+
+.tab-content-wrapper {
+  margin-top: 30px;
+}
+
+.tab-content {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Botón de Añadir Item --- */
+.btn-add-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto 30px auto;
+  padding: 12px 20px;
+  background-color: #28a745; /* Verde para añadir */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+}
+
+.btn-add-item:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.btn-add-item svg {
+  margin-right: 8px;
+}
+
+/* --- Grid de Tarjetas (Estudios y Logros) --- */
+.education-grid, .achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+/* --- Tarjetas (Estudios y Logros) --- */
+.education-card, .achievement-card {
+  background-color: #f9fbfd;
+  border: 1px solid #e0e6ed;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.education-card:hover, .achievement-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.icon-study, .icon-achievement {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+/* Colores para iconos de estudio */
+.icon-study.university { color: #007bff; }
+.icon-study.master { color: #6f42c1; }
+.icon-study.doctorate { color: #dc3545; }
+.icon-study.technical { color: #fd7e14; }
+
+/* Colores para iconos de logro */
+.icon-achievement.award { color: #ffc107; }
+.icon-achievement.publication { color: #17a2b8; }
+.icon-achievement.scholarship { color: #6610f2; }
+.icon-achievement.course, .icon-achievement.certification { color: #20c997; }
+.icon-achievement.exterior { color: #6c757d; }
+
+
+.header-info {
+  flex-grow: 1;
+}
+
+.card-title {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #007bff;
+  margin: 0;
+}
+
+.card-subtitle {
+  font-size: 0.95em;
+  color: #555;
+  margin: 0;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-action {
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  line-height: 1;
+}
+
+.btn-edit { color: #28a745; }
+.btn-edit:hover { background-color: #e6ffe6; transform: scale(1.1); }
+.btn-delete { color: #dc3545; }
+.btn-delete:hover { background-color: #ffe6e6; transform: scale(1.1); }
+
+.card-dates {
+  font-size: 0.9em;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+/* --- Detalles Expandibles --- */
+.card-details {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.card-description {
+  font-size: 0.85em;
+  color: #666;
+  line-height: 1.6;
+  text-align: justify;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn-expand {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-expand:hover {
+  background-color: #eaf6ff;
+}
+
+/* --- Mensajes de No Items --- */
+.no-items {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  font-size: 1.1em;
+  padding: 30px;
+  background-color: #f0f8ff;
+  border: 1px dashed #cceeff;
+  border-radius: 8px;
+  margin-top: 30px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .educacion-container {
+    padding: 20px;
+    margin: 20px auto;
+  }
+
+  .educacion-titulo {
+    font-size: 2em;
+  }
+
+  .tab-button {
+    font-size: 0.95em;
+    padding: 12px 15px;
+    gap: 5px;
+  }
+
+  .education-grid, .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-add-item {
+    font-size: 0.9em;
+    padding: 10px 15px;
+  }
+
+  .card-title {
+    font-size: 1.2em;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tab-button {
+    border-bottom: 1px solid #e0e6ed;
+    justify-content: center;
+  }
+  .tab-button.active {
+    border-bottom: 3px solid #007bff;
+  }
+}

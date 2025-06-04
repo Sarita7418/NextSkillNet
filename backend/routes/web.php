@@ -50,3 +50,6 @@ Route::post('/usuario/actualizar_contrasena', [CuentaController::class, 'actuali
 Route::get('/', function () {
     return view('welcome');
 });
+
+//para subir archivos
+Route::post('/subir-curriculum', [AuthController::class, 'subirCurriculum']);

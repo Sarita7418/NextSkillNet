@@ -1,0 +1,16 @@
+/* No se necesitan muchos estilos aquí si SkillSection.css ya maneja lo común.
+   Este archivo es para estilos ÚNICOS de la sección de idiomas si los hubiera. */
+
+/* Colores para los niveles CEFR - específicos de idiomas */
+.language-card .level-badge.native { background-color: #27ae60; } /* Verde para Nativo */
+.language-card .level-badge.c2 { background-color: #8e44ad; } /* Púrpura para C2 */
+.language-card .level-badge.c1 { background-color: #e67e22; } /* Naranja para C1 */
+.language-card .level-badge.b2 { background-color: #3498db; } /* Azul para B2 */
+.language-card .level-badge.b1 { background-color: #f1c40f; } /* Amarillo para B1 */
+.language-card .level-badge.a2 { background-color: #e74c3c; } /* Rojo para A2 */
+.language-card .level-badge.a1 { background-color: #9b59b6; } /* Morado más suave para A1 */
+
+/* Si necesitas algún ajuste visual específico para la tarjeta de idioma */
+.language-card .skill-card-front h4 {
+  color: #3498db; /* Un azul característico para idiomas */
+}

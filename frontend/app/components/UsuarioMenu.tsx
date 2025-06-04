@@ -1,10 +1,13 @@
 "useclient";
-
+import EnviarArchivo from './organism/EnviarArchivo';
 import React, { useState } from 'react';
 import './UsuarioMenu.css';
 import Resumen from './Resumen';
 import Habilidades from './Habilidades';
 import Cuenta from './Cuenta';
+import ExperienciaLaboral from './organism/ExperianciaLaboral';
+import Educacion from './organism/Educacion';
+import SkillsSection from './organism/SkillsSection';
 
 function UsuarioMenu() {
   const [tab, setTab] = useState<'resumen' | 'documentos' | 'experiencia' | 'educacion' | 'habilidades' | 'cuenta'>('resumen');
@@ -64,22 +67,14 @@ function UsuarioMenu() {
           </div>
         )}
         {tab === 'documentos' && (
-          <div>
-            <h2>Documentos</h2>
-            <p>Subir y ver documentos.</p>
-          </div>
+          <EnviarArchivo />
         )}
+
         {tab === 'experiencia' && (
-          <div>
-            <h2>Experiencia laboral</h2>
-            <p>Historial y gestión de trabajos.</p>
-          </div>
+          <ExperienciaLaboral />
         )}
         {tab === 'educacion' && (
-          <div>
-            <h2>Educación</h2>
-            <p>Formación académica y técnica.</p>
-          </div>
+          <Educacion />
         )}
         {tab === 'habilidades' && (
           <div>

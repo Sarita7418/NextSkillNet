@@ -196,6 +196,44 @@ class AuthController extends Controller
             'error' => $e->getMessage()
         ], 500);
     }
-}
+}    //metodo para curriculums
+    public function subirCurriculum(Request $request)
+    {
+        try {
+            $request->validate([
+                'cv' => 'required|file|mimes:pdf,docx,jpg,jpeg,png|max:2048',
+                'id_persona' => 'required|integer',
+                'id_tipoDocumento' => 'required|integer',
+                'id_formatoDocumento' => 'required|integer',
+            ]);
+
+            // Guardar archivo
+            $ruta = $request->file('cv')->store('curriculums');
+
+            // Insertar en la tabla documentos
+            DB::table('documentos')->insert([
+                'fecha_hor_carga' => now(),
+                'estado' => 'activo', // o el valor que uses para documentos válidos
+                'recurso' => $ruta,
+                'id_tipoDocumento' => $request->id_tipoDocumento,
+                'id_formatoDocumento' => $request->id_formatoDocumento,
+                'id_persona' => $request->id_persona
+            ]);
+
+            return response()->json([
+                'message' => 'Documento subido correctamente',
+                'path' => $ruta
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al subir el documento',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
 
 }
