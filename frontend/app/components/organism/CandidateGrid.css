@@ -1,0 +1,250 @@
+/* components/organism/CandidateGrid.css */
+.candidate-grid {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.grid-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.results-info h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin: 0 0 8px 0;
+}
+
+.results-info p {
+  color: #6c757d;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.filtered-note {
+  color: var(--secondary-blue);
+  font-weight: 500;
+}
+
+.grid-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--light-blue);
+  border-radius: 8px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selected-count {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary-blue);
+}
+
+.bulk-action-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.export-btn {
+  background: var(--white);
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
+}
+
+.export-btn:hover {
+  background: var(--primary-blue);
+  color: var(--white);
+}
+
+.contact-btn {
+  background: var(--success-color);
+  color: var(--white);
+}
+
+.contact-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.select-all-row {
+  padding: 16px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.select-all-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--primary-blue);
+  font-weight: 500;
+}
+
+.select-all-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.select-all-checkbox input[type="checkbox"]:checked + .checkmark {
+  background: var(--secondary-blue);
+  border-color: var(--secondary-blue);
+}
+
+.select-all-checkbox input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  color: var(--white);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.candidates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  padding: 24px;
+  min-height: 400px;
+}
+
+.grid-footer {
+  padding: 20px 24px;
+  border-top: 1px solid var(--border-color);
+  background: #f8f9fa;
+  display: flex;
+  justify-content: center;
+}
+
+/* Estados de carga */
+.candidates-grid.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .candidates-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 20px;
+  }
+  
+  .grid-header {
+    padding: 20px;
+  }
+  
+  .grid-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .bulk-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .candidates-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .grid-header {
+    padding: 16px;
+  }
+  
+  .results-info h2 {
+    font-size: 1.3rem;
+  }
+  
+  .results-info p {
+    font-size: 0.9rem;
+  }
+  
+  .bulk-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .bulk-action-btn {
+    flex: 1;
+    min-width: 80px;
+  }
+  
+  .select-all-row {
+    padding: 12px 16px;
+  }
+  
+  .grid-footer {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-header {
+    padding: 12px;
+  }
+  
+  .candidates-grid {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .results-info h2 {
+    font-size: 1.2rem;
+  }
+  
+  .bulk-actions {
+    padding: 6px 12px;
+  }
+  
+  .bulk-action-btn {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+}

@@ -1,141 +1,257 @@
-.Footer {
-    background-color: rgba(0, 35, 100, 1);
-    color: white;
+/* Variables CSS para consistencia de colores */
+:root {
+  --primary-blue: #002366;
+  --secondary-blue: #0066cc;
+  --light-blue: #87ceeb;
+  --white: #ffffff;
+  --light-gray: #f8f9fa;
+  --border-color: rgba(255, 255, 255, 0.2);
 }
 
-.menuFooter {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    padding: 8px 0;
-    border-bottom: 2px solid white;
+.footer {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #003d82 100%);
+  color: var(--white);
+  padding: 0;
+  margin-top: auto;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.menuFooter div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-weight: 200;
-    width: 100%;
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 40px 20px;
 }
 
-.AcercaFooter {
-    display: flex;
-    flex-direction: row;
-    padding: 10px 100px 10px 100px;
-    border-bottom: 1px solid white;
-    justify-content: space-evenly;
+.footer-main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
 }
 
-.AcercaFooter a {
-    display: block;
-    text-align: center;
-    width: 20%;
-    padding: 4px 0;
+.footer-column {
+  display: flex;
+  flex-direction: column;
 }
 
-.Contactos {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 80px;
-    padding: 0 0 25px 0;
-    margin-bottom: 0;
+.footer-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--light-blue);
+  position: relative;
+  padding-bottom: 8px;
 }
 
-.RedesSociales div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 2px 20px 0 20px;
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: var(--light-blue);
+  border-radius: 2px;
 }
 
-.TelMail {
-    display: flex;
-    flex-direction: row;
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.TelMail p {
-    margin: 0 25px 0 10px;
+.footer-link {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 300;
+  transition: all 0.3s ease;
+  padding: 4px 0;
+  position: relative;
 }
 
-.MarcaF {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.footer-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background: var(--light-blue);
+  transition: width 0.3s ease;
 }
 
-footer{
-    padding: 0;
+.footer-link:hover {
+  color: var(--light-blue);
+  transform: translateX(5px);
 }
 
-/* Media Queries para Responsividad */
+.footer-link:hover::before {
+  width: 100%;
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  font-weight: 300;
+  transition: transform 0.2s ease;
+}
+
+.contact-item:hover {
+  transform: translateX(3px);
+}
+
+.contact-icon {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+.location {
+  margin-top: 5px;
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.social-link:hover {
+  background: var(--light-blue);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(135, 206, 235, 0.3);
+}
+
+.social-link img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  transition: filter 0.3s ease;
+}
+
+.social-link:hover img {
+  filter: brightness(0) invert(0);
+}
+
+.footer-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 40px 0 30px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+.footer-copyright {
+  font-size: 0.9rem;
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  height: 30px;
+  width: auto; 
+  opacity: 1;
+}
+
+/* Responsividad mejorada */
 @media (max-width: 768px) {
-    .AcercaFooter {
-        flex-direction: column;
-        padding: 10px 20px;
-    }
-
-    .AcercaFooter a {
-        width: 80%;
-        margin-bottom: 10px;
-    }
-
-    .Contactos {
-        flex-direction: column;
-        gap: 20px;
-        padding: 20px 0;
-    }
-
-    .RedesSociales div {
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px 0;
-    }
-
-    .TelMail {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .TelMail p {
-        margin: 5px 0;
-    }
-
-    .MenuFooter {
-        padding: 5px 0;
-    }
+  .footer-container {
+    padding: 40px 20px 20px;
+  }
+  
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+  
+  .footer-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .social-links {
+    justify-content: center;
+  }
+  
+  .contact-item {
+    justify-content: center;
+  }
 }
 
 @media (max-width: 480px) {
-    .Footer {
-        padding: 20px;
-    }
-
-    .menuFooter div {
-        font-size: 14px;
-    }
-
-    .AcercaFooter a {
-        width: 100%;
-    }
-
-    .Contactos {
-        gap: 10px;
-    }
-
-    .RedesSociales div {
-        display: flex;
-    flex-direction: row; 
-    justify-content: space-between;
-    padding: 2px 20px 0 20px;
-    align-items: center; 
-    gap: 10px; 
-    }
-
-    .MarcaF {
-        font-size: 14px;
-    }
+  .footer-container {
+    padding: 30px 15px 15px;
+  }
+  
+  .footer-main {
+    gap: 25px;
+  }
+  
+  .footer-title {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+  }
+  
+  .footer-link {
+    font-size: 0.9rem;
+  }
+  
+  .contact-item {
+    font-size: 0.9rem;
+  }
+  
+  .footer-copyright {
+    font-size: 0.8rem;
+  }
+  
+  .social-link {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .social-link img {
+    width: 18px;
+    height: 18px;
+  }
 }

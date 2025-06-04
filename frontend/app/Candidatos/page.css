@@ -1,0 +1,578 @@
+/* =============================================================================
+   VARIABLES GLOBALES Y BASE STYLES
+   ============================================================================= */
+:root {
+  /* Colores principales */
+  --primary-blue: #002366;
+  --secondary-blue: #0066cc;
+  --light-blue: #87ceeb;
+  --white: #ffffff;
+  --light-gray: #f8f9fa;
+  --border-color: #e1e8ed;
+  
+  /* Sombras */
+  --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+  
+  /* Gradientes */
+  --gradient-blue: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+  
+  /* Colores de estado */
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  
+  /* Espacios base */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 40px;
+  
+  /* Bordes */
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+}
+
+/* =============================================================================
+   BASE LAYOUT COMPONENTS
+   ============================================================================= */
+
+/* Contenedor principal de la página */
+.candidatos-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--light-gray);
+}
+
+/* Área principal de contenido */
+.candidatos-main {
+  flex: 1;
+  padding-bottom: var(--spacing-3xl);
+}
+
+/* Contenedor base con máximo ancho */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  position: relative;
+}
+
+/* =============================================================================
+   HEADER SECTION
+   ============================================================================= */
+
+/* Header principal de la página */
+.page-header {
+  background: var(--gradient-blue);
+  color: var(--white);
+  padding: 60px 0 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Patrón de fondo decorativo */
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+  opacity: 0.1;
+}
+
+/* Título principal */
+.page-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+  background: linear-gradient(45deg, var(--white), var(--light-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtítulo */
+.page-subtitle {
+  font-size: 1.2rem;
+  font-weight: 300;
+  text-align: center;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* =============================================================================
+   CONTENT LAYOUT SYSTEM
+   ============================================================================= */
+
+/* Layout principal con sidebar y contenido */
+.content-layout {
+  grid-template-columns: 350px 1fr;
+  position: relative;
+  z-index: 2;
+  align-items: start;
+}
+
+/* Sidebar de filtros */
+.filters-sidebar {
+  position: sticky;
+  top: var(--spacing-lg);
+  height: fit-content;
+  max-height: calc(100vh - 40px);
+  
+}
+
+/* Área principal de contenido */
+.candidates-content {
+  min-height: 600px;
+  background: var(--white);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-light);
+  margin-top: var(--spacing-lg);
+}
+
+/* =============================================================================
+   CANDIDATE GRID SYSTEM
+   ============================================================================= */
+
+/* Contenedor del grid de candidatos */
+.candidate-grid-container {
+  width: 100%;
+}
+
+/* Grid de candidatos */
+.candidate-grid-container .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-lg);
+}
+
+/* =============================================================================
+   LOADING STATES
+   ============================================================================= */
+
+/* Contenedor de estado de carga */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px var(--spacing-lg);
+  text-align: center;
+  background: var(--white);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-light);
+}
+
+.loading-container p {
+  margin-top: var(--spacing-lg);
+  color: var(--primary-blue);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* =============================================================================
+   RESPONSIVE DESIGN - DESKTOP FIRST APPROACH
+   ============================================================================= */
+
+/* XL Desktop (1600px+) */
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1500px;
+  }
+  
+  .content-layout {
+    grid-template-columns: 400px 1fr;
+    gap: var(--spacing-3xl);
+  }
+  
+  .candidates-content {
+    padding: var(--spacing-3xl);
+  }
+  
+  .candidate-grid-container .grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 28px;
+  }
+}
+
+/* Large Desktop (1440px-1599px) */
+@media (min-width: 1440px) and (max-width: 1599px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  .content-layout {
+    grid-template-columns: 380px 1fr;
+    gap: 36px;
+  }
+  
+  .candidates-content {
+    padding: 36px;
+  }
+  
+  .candidate-grid-container .grid {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 26px;
+  }
+}
+
+/* Standard Desktop (1200px-1439px) */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .container {
+    max-width: 1200px;
+  }
+  
+  .content-layout {
+    grid-template-columns: 350px 1fr;
+    gap: var(--spacing-2xl);
+  }
+  
+  .candidates-content {
+    padding: var(--spacing-2xl);
+  }
+  
+  .candidate-grid-container .grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--spacing-xl);
+  }
+}
+
+/* Small Desktop (max-1199px) */
+@media (max-width: 1199px) {
+  .container {
+    max-width: 1000px;
+  }
+  
+  .content-layout {
+    grid-template-columns: 300px 1fr;
+    gap: var(--spacing-xl);
+    margin-top: -40px;
+  }
+  
+  .candidates-content {
+    padding: var(--spacing-xl);
+    margin-top: 0;
+  }
+  
+  .candidate-grid-container .grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+  }
+}
+
+/* Tablet Landscape (max-1024px) */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .content-layout {
+    grid-template-columns: 260px 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .page-title {
+    font-size: 2.5rem;
+  }
+  
+  .candidates-content {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* Tablet Portrait (max-768px) */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .page-header {
+    padding: var(--spacing-3xl) 0 60px;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+  }
+  
+  .content-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: -20px;
+  }
+  
+  .filters-sidebar {
+    position: static;
+    order: 1;
+    max-height: none;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .candidates-content {
+    order: 2;
+    padding: var(--spacing-md);
+    margin-top: 0;
+  }
+  
+  .candidate-grid-container .grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+  }
+}
+
+/* Mobile (max-480px) */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .page-header {
+    padding: 30px 0 50px;
+  }
+  
+  .page-title {
+    font-size: 1.8rem;
+  }
+  
+  .page-subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .content-layout {
+    gap: 0;
+    margin-top: -15px;
+  }
+  
+  .candidates-content {
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .candidate-grid-container .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+  }
+}
+
+/* Extra Small Mobile (max-360px) */
+@media (max-width: 360px) {
+  .container {
+    padding: 0 10px;
+  }
+  
+  .page-title {
+    font-size: 1.6rem;
+  }
+  
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .candidates-content {
+    padding: 10px;
+  }
+}
+
+/* =============================================================================
+   MOBILE SPECIFIC OPTIMIZATIONS
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  /* Filtros adaptables en móvil */
+  .filters-sidebar .search-filters {
+    position: relative;
+    width: 100%;
+  }
+  
+  .filters-content {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .filter-group + .filter-group {
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--spacing-md);
+  }
+}
+
+/* =============================================================================
+   ACCESSIBILITY & PERFORMANCE
+   ============================================================================= */
+
+/* Reducir animaciones para usuarios que lo prefieren */
+@media (prefers-reduced-motion: reduce) {
+  .filters-content {
+    scroll-behavior: auto;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================================================
+   PRINT STYLES
+   ============================================================================= */
+
+@media print {
+  .filters-sidebar {
+    display: none;
+  }
+  
+  .content-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-header {
+    background: none !important;
+    color: black !important;
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .candidates-content {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+
+
+/* Contenedor de botones de exportación */
+.export-buttons-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Estilos base para botones de exportación */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  min-width: 90px;
+  height: 38px;
+}
+
+.export-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.export-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.export-btn:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón Excel */
+.export-btn-excel {
+  background-color: #10b981;
+  color: white;
+  border-color: #059669;
+}
+
+.export-btn-excel:not(:disabled):hover {
+  background-color: #059669;
+  border-color: #047857;
+}
+
+.export-btn-excel:not(:disabled):active {
+  background-color: #047857;
+}
+
+/* Botón PDF */
+.export-btn-pdf {
+  background-color: #dc2626;
+  color: white;
+  border-color: #b91c1c;
+}
+
+.export-btn-pdf:not(:disabled):hover {
+  background-color: #b91c1c;
+  border-color: #991b1b;
+}
+
+.export-btn-pdf:not(:disabled):active {
+  background-color: #991b1b;
+}
+
+/* Iconos SVG */
+.export-btn svg {
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* Responsivo */
+@media (max-width: 640px) {
+  .export-buttons-container {
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .export-btn {
+    flex: 1;
+    min-width: auto;
+  }
+}
+
+/* Animación de carga para botones deshabilitados */
+.export-btn:disabled {
+  position: relative;
+  overflow: hidden;
+}
+
+.export-btn:disabled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}

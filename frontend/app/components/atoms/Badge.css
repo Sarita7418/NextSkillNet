@@ -1,0 +1,76 @@
+/* components/atoms/Badge.css */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.badge-small {
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+.badge-medium {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+.badge-large {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.badge-primary {
+  background: var(--primary-blue);
+  color: var(--white);
+}
+
+.badge-secondary {
+  background: var(--secondary-blue);
+  color: var(--white);
+}
+
+.badge-success {
+  background: var(--success-color);
+  color: var(--white);
+}
+
+.badge-warning {
+  background: var(--warning-color);
+  color: #212529;
+}
+
+.badge-danger {
+  background: var(--danger-color);
+  color: var(--white);
+}
+
+.badge-info {
+  background: var(--light-blue);
+  color: var(--primary-blue);
+}
+
+.badge-neutral {
+  background: var(--light-gray);
+  color: #6c757d;
+  border-color: var(--border-color);
+}
+
+.badge-outline {
+  background: transparent;
+  color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.badge:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
+}
