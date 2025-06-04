@@ -49,7 +49,7 @@ export default function LoginPage() {
       if (response.ok) {
         localStorage.setItem('usuario', JSON.stringify(data.usuario));
         alert('Login exitoso!');
-        window.location.href = '/Inicio';
+        window.location.href = '/PerfilUsuario';
       } else {
         // Si hubo un error, mostrar mensaje con alert
         alert('Credenciales incorrectas!');

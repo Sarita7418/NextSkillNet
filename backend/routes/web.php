@@ -6,6 +6,7 @@ use App\Http\Controllers\HabilidadController;
 use App\Http\Controllers\IdiomaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CuentaController;
+use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,6 +50,11 @@ Route::post('/entrevistas/agendar', [AuthController::class, 'agendarEntrevista']
 Route::get('/entrevistas', [AuthController::class, 'listarEntrevistas']);
 Route::post('/convocatorias/crear', [AuthController::class, 'crearConvocatoria']);
 Route::get('/convocatorias', [AuthController::class, 'listarConvocatorias']);
+
+// routes/api.php
+Route::get('/admin/usuarios', [AdminController::class, 'listarUsuarios']);
+
+
 
 Route::get('/', function () {
     return view('welcome');

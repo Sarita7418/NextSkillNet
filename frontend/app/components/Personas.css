@@ -1,0 +1,67 @@
+.personas-container {
+  padding: 30px;
+  background-color: #f8f9fb;
+}
+
+.titulo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #143D8D;
+  margin-bottom: 20px;
+}
+
+.usuarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.usuario-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(20, 61, 141, 0.1);
+}
+
+.usuario-card h3 {
+  margin: 0 0 10px;
+  color: #143D8D;
+}
+
+.usuario-card p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.acciones {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn-editar,
+.btn-toggle {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-editar {
+  background-color: #143D8D;
+  color: white;
+}
+
+.btn-toggle {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn-toggle:hover {
+  background-color: #999;
+}
