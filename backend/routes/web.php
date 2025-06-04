@@ -45,7 +45,10 @@ Route::get('/politicos_ubicacion/paises', [CuentaController::class, 'getPaises']
 Route::get('/politicos_ubicacion/ciudades/{idPais}', [CuentaController::class, 'getCiudades']);
 Route::post('/usuario/solicitar_representante', [CuentaController::class, 'solicitarRepresentante']);
 Route::post('/usuario/actualizar_contrasena', [CuentaController::class, 'actualizarContrasena']);
-
+Route::post('/entrevistas/agendar', [AuthController::class, 'agendarEntrevista']);
+Route::get('/entrevistas', [AuthController::class, 'listarEntrevistas']);
+Route::post('/convocatorias/crear', [AuthController::class, 'crearConvocatoria']);
+Route::get('/convocatorias', [AuthController::class, 'listarConvocatorias']);
 
 Route::get('/', function () {
     return view('welcome');
