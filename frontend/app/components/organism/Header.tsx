@@ -1,69 +1,61 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FaHome,
   FaBell,
   FaFileAlt,
   FaCogs,
-  FaUsers
+  FaUsers,
+  FaBriefcase
 } from 'react-icons/fa';
 import './Header.css';
-import { FaBriefcase } from "react-icons/fa";
 
 const Header: React.FC = () => {
-  const handleClick = () => {
-    window.location.href = "/PerfilUsuario"; // Redirige a la página de Login
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
+  const [rol, setRol] = useState('');
+
+  useEffect(() => {
+    const usuarioStr = localStorage.getItem('usuario');
+    if (usuarioStr) {
+      const usuario = JSON.parse(usuarioStr);
+      setNombre(usuario.nombre || '');
+      setApellido(usuario.apellido || '');
+      setRol(convertirRol(usuario.rol));
+    }
+  }, []);
+
+  const convertirRol = (rolId: number) => {
+    switch (rolId) {
+      case 1: return 'Usuario';
+      case 2: return 'Representante';
+      case 3: return 'Administrador';
+      case 4: return 'Aspirante a Representante';
+      default: return 'Desconocido';
+    }
   };
 
   return (
     <header className="header">
       <div className="header-container">
-        {/* Logo pegado a la izquierda */}
+        {/* Logo */}
         <div className="logo">
-          <img
-            src="/logo2.svg"
-            alt="Logo SkillNet"
-          />
+          <img src="/logo2.svg" alt="Logo SkillNet" />
         </div>
 
-        {/* Navegación con iconos encima del texto */}
+        {/* Navegación */}
         <nav className="nav">
           <ul>
-            <li>
-              <a href="/Inicio" onClick={(e) => { e.preventDefault(); }}>
-                <FaHome className="icon" />
-                <span>Inicio</span>
-              </a>
-            </li>
-            <li>
-              <a href="/notif" onClick={(e) => { e.preventDefault(); }}>
-                <FaBell className="icon" />
-                <span>Notificaciones</span>
-              </a>
-            </li>
-            <li>
-              <a href="/Candidatos" onClick={(e) => { e.preventDefault(); handleClick(); }}>
-                <FaBriefcase className="icon" />
-                <span>Candidatos</span>
-              </a>
-            </li>
-            <li>
-              <a href="/admin" onClick={(e) => { e.preventDefault(); }}>
-                <FaCogs className="icon" />
-                <span>Administración</span>
-              </a>
-            </li>
-            <li>
-              <a href="/cont" onClick={(e) => { e.preventDefault(); }}>
-                <FaUsers className="icon" />
-                <span>Contactos</span>
-              </a>
-            </li>
+            <li><a href="/Inicio"><FaHome className="icon" /><span>Inicio</span></a></li>
+            <li><a href="/notif"><FaBell className="icon" /><span>Notificaciones</span></a></li>
+            <li><a href="/Candidatos"><FaBriefcase className="icon" /><span>Candidatos</span></a></li>
+            <li><a href="/admin"><FaCogs className="icon" /><span>Administración</span></a></li>
+            <li><a href="/cont"><FaUsers className="icon" /><span>Contactos</span></a></li>
           </ul>
         </nav>
 
-        {/* Icono de perfil en círculo */}
+        {/* Perfil */}
         <div className="profile-avatar-container">
           <a href="/PerfilUsuario">
             <img
@@ -72,8 +64,11 @@ const Header: React.FC = () => {
               className="profile-avatar"
             />
           </a>
+          <div className="profile-info">
+            <strong>{nombre} {apellido}</strong>
+            <span className="rol-text">{rol}</span>
+          </div>
         </div>
-
       </div>
     </header>
   );

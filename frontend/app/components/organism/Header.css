@@ -65,4 +65,24 @@
   cursor: pointer;
 }
 
+
+.profile-avatar-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.rol-text {
+  font-size: 0.75rem;
+  color: #666;
+}
+
 /* Responsive móvil: mantén tus media queries existentes */
