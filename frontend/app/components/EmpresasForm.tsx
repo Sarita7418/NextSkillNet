@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import './organism/RegisterForm.css';
 
 interface Item {
   id: number;
@@ -21,22 +20,27 @@ interface EmpresaFormProps {
   ciudadInicial: string;
 }
 
-const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, areaInicial, ciudadInicial }) => {
+const EmpresasForm: React.FC<EmpresaFormProps> = ({
+  id_empresa, nombreInicial, areaInicial, ciudadInicial
+}) => {
   const router = useRouter();
 
+  // Estados
   const [nombre, setNombre] = useState(nombreInicial || '');
   const [areas, setAreas] = useState<Item[]>([]);
   const [ciudades, setCiudades] = useState<Item[]>([]);
   const [areaSeleccionada, setAreaSeleccionada] = useState(areaInicial ? areaInicial.toString() : '');
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState(ciudadInicial ? ciudadInicial.toString() : '');
-
-  // Representantes
   const [showAddRep, setShowAddRep] = useState(false);
   const [usuarios, setUsuarios] = useState<User[]>([]);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<string>('');
-
   const [error, setError] = useState('');
 
+  // Validación visual
+  const [touched, setTouched] = useState<{ [k: string]: boolean }>({});
+  const [errors, setErrors] = useState<{ [k: string]: string }>({});
+
+  // Cargar áreas y ciudades al montar
   useEffect(() => {
     fetch('http://127.0.0.1:8000/subdominios/areas')
       .then(res => res.json())
@@ -46,6 +50,7 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, a
       .then((data: Item[]) => setCiudades(data));
   }, []);
 
+  // Cargar usuarios solo si añade representante
   useEffect(() => {
     if (showAddRep) {
       fetch('http://127.0.0.1:8000/admin/usuarios')
@@ -54,11 +59,32 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, a
     }
   }, [showAddRep]);
 
-  const handleSubmit = async () => {
-    setError('');
+  // Validaciones al vuelo
+  useEffect(() => {
+    const newErrors: typeof errors = {};
+    if (touched.nombre && !nombre) newErrors.nombre = 'Campo obligatorio*';
+    if (touched.areaSeleccionada && !areaSeleccionada) newErrors.areaSeleccionada = 'Campo obligatorio*';
+    if (touched.ciudadSeleccionada && !ciudadSeleccionada) newErrors.ciudadSeleccionada = 'Campo obligatorio*';
+    if (showAddRep && touched.usuarioSeleccionado && !usuarioSeleccionado) newErrors.usuarioSeleccionado = 'Campo obligatorio*';
+    setErrors(newErrors);
+  }, [nombre, areaSeleccionada, ciudadSeleccionada, usuarioSeleccionado, touched, showAddRep]);
 
-    if (!nombre || !areaSeleccionada || !ciudadSeleccionada) {
-      setError('Completa todos los campos');
+  // Handlers
+  const handleSubmit = async () => {
+    setTouched({
+      nombre: true,
+      areaSeleccionada: true,
+      ciudadSeleccionada: true,
+      usuarioSeleccionado: showAddRep,
+    });
+
+    if (
+      !nombre ||
+      !areaSeleccionada ||
+      !ciudadSeleccionada ||
+      (showAddRep && !usuarioSeleccionado)
+    ) {
+      setError('Completa todos los campos obligatorios');
       return;
     }
 
@@ -94,24 +120,34 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, a
     }
   };
 
+  // RENDER
   return (
-    <div className="register-container">
-      <div className="form-container">
-        <div className="form-field">
-          <label>Nombre empresa</label>
+    <div className="form-container-std">
+      <div className="form-card-std">
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Nombre empresa
+            {errors.nombre && <span className="msg-error-std">{errors.nombre}</span>}
+          </label>
           <input
-            className="input"
+            className={`input-std${errors.nombre ? ' error' : ''}`}
             value={nombre}
             onChange={e => setNombre(e.target.value)}
             placeholder="Nombre de la empresa"
+            onBlur={() => setTouched(prev => ({ ...prev, nombre: true }))}
+            autoComplete="off"
           />
         </div>
-        <div className="form-field">
-          <label>Área</label>
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Área
+            {errors.areaSeleccionada && <span className="msg-error-std">{errors.areaSeleccionada}</span>}
+          </label>
           <select
-            className="input"
+            className={`select-std${errors.areaSeleccionada ? ' error' : ''}`}
             value={areaSeleccionada}
             onChange={e => setAreaSeleccionada(e.target.value)}
+            onBlur={() => setTouched(prev => ({ ...prev, areaSeleccionada: true }))}
           >
             <option value="">Seleccione un área</option>
             {areas.map(area => (
@@ -121,12 +157,16 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, a
             ))}
           </select>
         </div>
-        <div className="form-field">
-          <label>Ciudad</label>
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Ciudad
+            {errors.ciudadSeleccionada && <span className="msg-error-std">{errors.ciudadSeleccionada}</span>}
+          </label>
           <select
-            className="input"
+            className={`select-std${errors.ciudadSeleccionada ? ' error' : ''}`}
             value={ciudadSeleccionada}
             onChange={e => setCiudadSeleccionada(e.target.value)}
+            onBlur={() => setTouched(prev => ({ ...prev, ciudadSeleccionada: true }))}
           >
             <option value="">Seleccione una ciudad</option>
             {ciudades.map(ciudad => (
@@ -139,8 +179,8 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, a
 
         <button
           type="button"
-          className="create-button"
-          style={{ margin: '10px 0', width: '100%' }}
+          className="btn-save-std"
+          style={{ margin: '0', width: '100%' }}
           onClick={() => setShowAddRep(true)}
           disabled={showAddRep}
         >
@@ -148,12 +188,16 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, a
         </button>
 
         {showAddRep && (
-          <div className="form-field">
-            <label>Selecciona representante</label>
+          <div className="form-group-std">
+            <label className="form-label-std" style={{ marginTop: '10px' }}>
+              Selecciona representante
+              {errors.usuarioSeleccionado && <span className="msg-error-std">{errors.usuarioSeleccionado}</span>}
+            </label>
             <select
-              className="input"
+              className={`select-std${errors.usuarioSeleccionado ? ' error' : ''}`}
               value={usuarioSeleccionado}
               onChange={e => setUsuarioSeleccionado(e.target.value)}
+              onBlur={() => setTouched(prev => ({ ...prev, usuarioSeleccionado: true }))}
             >
               <option value="">Selecciona una persona</option>
               {usuarios.map(u => (
@@ -165,10 +209,10 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, a
           </div>
         )}
 
-        {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
+        {error && <p style={{ color: '#e11d48', marginTop: '0.5rem' }}>{error}</p>}
 
         <button
-          className="create-button"
+          className="btn-save-std"
           type="button"
           onClick={handleSubmit}
           style={{ marginRight: '10px' }}
@@ -177,9 +221,9 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({ id_empresa, nombreInicial, a
         </button>
         <button
           type="button"
-          className="create-button"
+          className="btn-save-std"
           style={{ background: 'gray' }}
-          onClick={() => router.back()}
+          onClick={() => router.push('/Administracion')}
         >
           Cancelar
         </button>

@@ -2,11 +2,24 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import './organism/RegisterForm.css';
+import './Formularios.css';
 
 interface Item {
   id: number;
   descripcion: string;
+}
+
+// Valida edad >= 18
+function esMayorDeEdad(fechaISO: string) {
+  if (!fechaISO) return false;
+  const hoy = new Date();
+  const fecha = new Date(fechaISO);
+  let edad = hoy.getFullYear() - fecha.getFullYear();
+  const m = hoy.getMonth() - fecha.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
+    edad--;
+  }
+  return edad >= 18;
 }
 
 const RegistroFormularioA: React.FC = () => {
@@ -19,13 +32,17 @@ const RegistroFormularioA: React.FC = () => {
     genero: '',
     estadoEmpleado: '',
     correo: '',
-    id_rol: '', // <-- CAMBIA A id_rol
+    id_rol: '',
   });
   const [contraseña, setContraseña] = useState('');
   const [confirmarContraseña, setConfirmarContraseña] = useState('');
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
   const [error, setError] = useState('');
+
+  // Validaciones visuales
+  const [touched, setTouched] = useState<{ [k: string]: boolean }>({});
+  const [errors, setErrors] = useState<{ [k: string]: string }>({});
 
   // Campos para empresa
   const [nombreEmpresa, setNombreEmpresa] = useState('');
@@ -56,42 +73,88 @@ const RegistroFormularioA: React.FC = () => {
       .then((data: Item[]) => setCiudades(data));
   }, [paisSeleccionado]);
 
+  useEffect(() => {
+    const newErrors: typeof errors = {};
+    if (touched.nombre && !formData.nombre) newErrors.nombre = 'Campo obligatorio*';
+    if (touched.apellido && !formData.apellido) newErrors.apellido = 'Campo obligatorio*';
+    if (touched.fechaNacimiento && !formData.fechaNacimiento)
+      newErrors.fechaNacimiento = 'Campo obligatorio*';
+    if (
+      touched.fechaNacimiento &&
+      formData.fechaNacimiento &&
+      !esMayorDeEdad(formData.fechaNacimiento)
+    )
+      newErrors.fechaNacimiento = 'Se debe tener al menos 18 años';
+    if (touched.genero && !formData.genero) newErrors.genero = 'Campo obligatorio*';
+    if (touched.estadoEmpleado && !formData.estadoEmpleado)
+      newErrors.estadoEmpleado = 'Campo obligatorio*';
+    if (touched.correo && !formData.correo) newErrors.correo = 'Campo obligatorio*';
+    if (touched.id_rol && !formData.id_rol) newErrors.id_rol = 'Campo obligatorio*';
+    // Campos de empresa
+    if (formData.id_rol === '3') {
+      if (touched.nombreEmpresa && !nombreEmpresa) newErrors.nombreEmpresa = 'Campo obligatorio*';
+      if (touched.areaSeleccionada && !areaSeleccionada) newErrors.areaSeleccionada = 'Campo obligatorio*';
+      if (touched.paisSeleccionado && !paisSeleccionado) newErrors.paisSeleccionado = 'Campo obligatorio*';
+      if (touched.ciudadSeleccionada && !ciudadSeleccionada) newErrors.ciudadSeleccionada = 'Campo obligatorio*';
+    }
+    setErrors(newErrors);
+  }, [formData, touched, nombreEmpresa, areaSeleccionada, paisSeleccionado, ciudadSeleccionada]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setTouched(prev => ({ ...prev, [name]: true }));
+  };
+
+  // Para campos empresa
+  const handleEmpresaChange = (setter: any, key: string) => (e: any) => {
+    setter(e.target.value);
+    setTouched(prev => ({ ...prev, [key]: true }));
   };
 
   const handleSubmit = async () => {
     setError('');
-    const { nombre, apellido, fechaNacimiento, genero, estadoEmpleado, correo, id_rol } = formData;
+    setTouched({
+      nombre: true,
+      apellido: true,
+      fechaNacimiento: true,
+      genero: true,
+      estadoEmpleado: true,
+      correo: true,
+      id_rol: true,
+      nombreEmpresa: true,
+      areaSeleccionada: true,
+      paisSeleccionado: true,
+      ciudadSeleccionada: true
+    });
 
+    if (
+      !formData.nombre || !formData.apellido ||
+      !formData.fechaNacimiento || !formData.genero || !formData.estadoEmpleado ||
+      !formData.correo || !formData.id_rol ||
+      (formData.id_rol === '3' && (!nombreEmpresa || !areaSeleccionada || !paisSeleccionado || !ciudadSeleccionada)) ||
+      !esMayorDeEdad(formData.fechaNacimiento)
+    ) {
+      setError('Por favor completa todos los campos correctamente');
+      return;
+    }
     if (contraseña !== confirmarContraseña) {
       setError('Las contraseñas no coinciden');
       return;
     }
-    if (!nombre || !apellido || !fechaNacimiento || !genero || !estadoEmpleado || !correo || !id_rol) {
-      setError('Por favor completa todos los campos');
-      return;
-    }
-    if (id_rol === '3' && (!nombreEmpresa || !areaSeleccionada || !paisSeleccionado || !ciudadSeleccionada)) {
-      setError('Completa todos los campos de empresa');
-      return;
-    }
-
     try {
-      // 1. Registrar usuario
       const response = await fetch('http://127.0.0.1:8000/admin/anadir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nombre,
-          apellido,
-          fechaNacimiento,
-          genero,
-          estadoEmpleado,
-          correo,
+          nombre: formData.nombre,
+          apellido: formData.apellido,
+          fechaNacimiento: formData.fechaNacimiento,
+          genero: formData.genero,
+          estadoEmpleado: formData.estadoEmpleado,
+          correo: formData.correo,
           contraseña,
-          id_rol: parseInt(id_rol, 10)
+          id_rol: parseInt(formData.id_rol, 10)
         })
       });
       const data = await response.json();
@@ -105,8 +168,7 @@ const RegistroFormularioA: React.FC = () => {
         localStorage.setItem('authstore', JSON.stringify({ id_persona: nuevaPersonaId }));
       }
 
-      // 2. Si es representante_empresa (id_rol === '3'), registrar empresa
-      if (id_rol === '3') {
+      if (formData.id_rol === '3') {
         await fetch('http://127.0.0.1:8000/usuario/registrar_empresa', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -128,75 +190,121 @@ const RegistroFormularioA: React.FC = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="form-container">
-        <div className="form-field">
-          <label>Nombre</label>
+    <div className="form-container-std">
+      <h2 className="titulo">Añadir Usuario</h2>
+      <div className="form-card-std">
+        {/* Nombre */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Nombre
+            {errors.nombre && <span className="msg-error-std">{errors.nombre}</span>}
+          </label>
           <input
+            className={`input-std${errors.nombre ? ' error' : ''}`}
             name="nombre"
             value={formData.nombre}
             onChange={handleInputChange}
-            placeholder="Jhovanni"
+            placeholder='Ingrese su nombre'
+            onBlur={() => setTouched(prev => ({ ...prev, nombre: true }))}
+            autoComplete="off"
           />
         </div>
-        <div className="form-field">
-          <label>Apellido</label>
+        {/* Apellido */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Apellido
+            {errors.apellido && <span className="msg-error-std">{errors.apellido}</span>}
+          </label>
           <input
+            className={`input-std${errors.apellido ? ' error' : ''}`}
             name="apellido"
             value={formData.apellido}
             onChange={handleInputChange}
-            placeholder="Gutiérrez"
+            placeholder='Ingrese su apellido'
+            onBlur={() => setTouched(prev => ({ ...prev, apellido: true }))}
+            autoComplete="off"
           />
         </div>
-        <div className="form-field">
-          <label>Correo electrónico</label>
+        {/* Correo */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Correo electrónico
+            {errors.correo && <span className="msg-error-std">{errors.correo}</span>}
+          </label>
           <input
+            className={`input-std${errors.correo ? ' error' : ''}`}
             type="email"
             name="correo"
             value={formData.correo}
             onChange={handleInputChange}
-            placeholder="tucorreo@ejemplo.com"
+            placeholder='Ingrese su correo electrónico'
+            onBlur={() => setTouched(prev => ({ ...prev, correo: true }))}
+            autoComplete="off"
           />
         </div>
-        <div className="form-field">
-          <label>Fecha de Nacimiento</label>
+        {/* Fecha nacimiento */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Fecha de Nacimiento
+            {errors.fechaNacimiento && <span className="msg-error-std">{errors.fechaNacimiento}</span>}
+          </label>
           <input
+            className={`input-std${errors.fechaNacimiento ? ' error' : ''}`}
             type="date"
             name="fechaNacimiento"
             value={formData.fechaNacimiento}
             onChange={handleInputChange}
+            onBlur={() => setTouched(prev => ({ ...prev, fechaNacimiento: true }))}
           />
         </div>
-        <div className="form-field">
-          <label>Género</label>
+        {/* Género */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Género
+            {errors.genero && <span className="msg-error-std">{errors.genero}</span>}
+          </label>
           <select
+            className={`select-std${errors.genero ? ' error' : ''}`}
             name="genero"
             value={formData.genero}
             onChange={handleInputChange}
+            onBlur={() => setTouched(prev => ({ ...prev, genero: true }))}
           >
             <option value="">Seleccione género</option>
             <option value="masculino">Masculino</option>
             <option value="femenino">Femenino</option>
           </select>
         </div>
-        <div className="form-field">
-          <label>Situación Laboral</label>
+        {/* Situación laboral */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Situación Laboral
+            {errors.estadoEmpleado && <span className="msg-error-std">{errors.estadoEmpleado}</span>}
+          </label>
           <select
+            className={`select-std${errors.estadoEmpleado ? ' error' : ''}`}
             name="estadoEmpleado"
             value={formData.estadoEmpleado}
             onChange={handleInputChange}
+            onBlur={() => setTouched(prev => ({ ...prev, estadoEmpleado: true }))}
           >
             <option value="">Seleccione su situación laboral</option>
             <option value="1">Con trabajo</option>
             <option value="0">Sin trabajo</option>
           </select>
         </div>
-        <div className="form-field">
-          <label>Rol</label>
+        {/* Rol */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Rol
+            {errors.id_rol && <span className="msg-error-std">{errors.id_rol}</span>}
+          </label>
           <select
+            className={`select-std${errors.id_rol ? ' error' : ''}`}
             name="id_rol"
             value={formData.id_rol}
             onChange={handleInputChange}
+            onBlur={() => setTouched(prev => ({ ...prev, id_rol: true }))}
           >
             <option value="">Seleccione un rol</option>
             <option value="2">Administrador</option>
@@ -207,17 +315,30 @@ const RegistroFormularioA: React.FC = () => {
         {/* Campos de empresa solo si selecciona "Representante Empresa" */}
         {formData.id_rol === '3' && (
           <>
-            <div className="form-field">
-              <label>Nombre empresa</label>
+            <div className="form-group-std">
+              <label className="form-label-std">
+                Nombre empresa
+                {errors.nombreEmpresa && <span className="msg-error-std">{errors.nombreEmpresa}</span>}
+              </label>
               <input
+                className={`input-std${errors.nombreEmpresa ? ' error' : ''}`}
                 type="text"
                 value={nombreEmpresa}
-                onChange={e => setNombreEmpresa(e.target.value)}
+                onChange={handleEmpresaChange(setNombreEmpresa, 'nombreEmpresa')}
+                onBlur={() => setTouched(prev => ({ ...prev, nombreEmpresa: true }))}
               />
             </div>
-            <div className="form-field">
-              <label>Área</label>
-              <select value={areaSeleccionada} onChange={e => setAreaSeleccionada(e.target.value)}>
+            <div className="form-group-std">
+              <label className="form-label-std">
+                Área
+                {errors.areaSeleccionada && <span className="msg-error-std">{errors.areaSeleccionada}</span>}
+              </label>
+              <select
+                className={`select-std${errors.areaSeleccionada ? ' error' : ''}`}
+                value={areaSeleccionada}
+                onChange={handleEmpresaChange(setAreaSeleccionada, 'areaSeleccionada')}
+                onBlur={() => setTouched(prev => ({ ...prev, areaSeleccionada: true }))}
+              >
                 <option value="">Seleccione un área</option>
                 {areas.map(area => (
                   <option key={area.id} value={area.id}>
@@ -226,9 +347,17 @@ const RegistroFormularioA: React.FC = () => {
                 ))}
               </select>
             </div>
-            <div className="form-field">
-              <label>País</label>
-              <select value={paisSeleccionado} onChange={e => setPaisSeleccionado(e.target.value)}>
+            <div className="form-group-std">
+              <label className="form-label-std">
+                País
+                {errors.paisSeleccionado && <span className="msg-error-std">{errors.paisSeleccionado}</span>}
+              </label>
+              <select
+                className={`select-std${errors.paisSeleccionado ? ' error' : ''}`}
+                value={paisSeleccionado}
+                onChange={handleEmpresaChange(setPaisSeleccionado, 'paisSeleccionado')}
+                onBlur={() => setTouched(prev => ({ ...prev, paisSeleccionado: true }))}
+              >
                 <option value="">Seleccione un país</option>
                 {paises.map(pais => (
                   <option key={pais.id} value={pais.id}>
@@ -237,9 +366,17 @@ const RegistroFormularioA: React.FC = () => {
                 ))}
               </select>
             </div>
-            <div className="form-field">
-              <label>Ciudad</label>
-              <select value={ciudadSeleccionada} onChange={e => setCiudadSeleccionada(e.target.value)}>
+            <div className="form-group-std">
+              <label className="form-label-std">
+                Ciudad
+                {errors.ciudadSeleccionada && <span className="msg-error-std">{errors.ciudadSeleccionada}</span>}
+              </label>
+              <select
+                className={`select-std${errors.ciudadSeleccionada ? ' error' : ''}`}
+                value={ciudadSeleccionada}
+                onChange={handleEmpresaChange(setCiudadSeleccionada, 'ciudadSeleccionada')}
+                onBlur={() => setTouched(prev => ({ ...prev, ciudadSeleccionada: true }))}
+              >
                 <option value="">Seleccione una ciudad</option>
                 {ciudades.map(ciudad => (
                   <option key={ciudad.id} value={ciudad.id}>
@@ -250,47 +387,58 @@ const RegistroFormularioA: React.FC = () => {
             </div>
           </>
         )}
-        <div className="form-field">
-          <label>Contraseña</label>
-          <div className="password-field">
+        {/* Contraseña */}
+        <div className="form-group-std">
+          <label className="form-label-std">Contraseña</label>
+          <div className="password-field-std">
             <input
+              className="input-std"
               type={showPassword1 ? "text" : "password"}
               value={contraseña}
               onChange={e => setContraseña(e.target.value)}
-              placeholder="********"
+              placeholder="introducir contraseña"
+              autoComplete="new-password"
+              style={{ flex: 1 }}
             />
             <button
-              type="button"
-              className="password-toggle"
+             
+              className="password-toggle-std"
               onClick={() => setShowPassword1(!showPassword1)}
               aria-label={showPassword1 ? "Ocultar contraseña" : "Mostrar contraseña"}
+              tabIndex={-1}
             >
               {showPassword1 ? "👁️" : "🙈"}
             </button>
           </div>
         </div>
-        <div className="form-field">
-          <label>Confirmar contraseña</label>
-          <div className="password-field">
+        {/* Confirmar contraseña */}
+        <div className="form-group-std">
+          <label className="form-label-std">Confirmar contraseña</label>
+          <div className="password-field-std">
             <input
+              className="input-std"
               type={showPassword2 ? "text" : "password"}
               value={confirmarContraseña}
               onChange={e => setConfirmarContraseña(e.target.value)}
-              placeholder="********"
+              placeholder="confirmar contraseña"
+              autoComplete="new-password"
+              style={{ flex: 1 }}
             />
             <button
               type="button"
-              className="password-toggle"
+              className="password-toggle-std"
               onClick={() => setShowPassword2(!showPassword2)}
               aria-label={showPassword2 ? "Ocultar contraseña" : "Mostrar contraseña"}
+              tabIndex={-1}
             >
               {showPassword2 ? "👁️" : "🙈"}
             </button>
           </div>
         </div>
+        {/* Error general */}
         {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
         <button
-          className="create-button"
+          className="btn-save-std"
           type="button"
           onClick={handleSubmit}
         >

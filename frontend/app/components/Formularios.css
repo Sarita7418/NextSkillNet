@@ -1,0 +1,156 @@
+.form-container-std {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.form-card-std {
+  width: 100%;
+  padding: 32px 24px;
+  border-radius: 20px;
+  border: 2px solid #1e293b; /* Azul muy oscuro */
+  background: #fff;
+  box-shadow: 0 6px 32px 0 rgba(15, 23, 42, 0.11); /* sombra azul muy tenue */
+  transition: box-shadow 0.2s;
+}
+
+.form-group-std {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.form-label-std {
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #143D8D;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.input-std,
+.select-std {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  background-color: #f9fafb;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-std.error,
+.select-std.error {
+  border-color: #e11d48;
+  background-color: #fff1f2;
+}
+
+.msg-error-std {
+  color: #e11d48;
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 16px;
+  position: static;    /* ¡IMPORTANTE! para que no "salte" la altura del label */
+  right: unset;
+  top: unset;
+}
+.btn-save-std {
+  padding: 12px 20px;
+  background-color: #143D8D;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+.btn-save-std:disabled {
+  background-color: #143D8D;
+  cursor: not-allowed;
+}
+.btn-save-std:hover:enabled {
+  background-color: #143D8D;
+}
+.foto-perfil-std {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  color: #64748b;
+  user-select: none;
+  margin: 0 auto 18px auto;
+}
+
+
+
+
+
+
+.input-std,
+.select-std {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  background-color: #f9fafb;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-shadow: none !important;  /* Elimina toda sombra interna */
+}
+
+.input-std.error,
+.select-std.error {
+  border-color: #e11d48;
+  background-color: #fff1f2;
+}
+
+.password-field-std {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.password-toggle-std {
+  background: none !important;
+  border: none !important;
+  cursor: pointer;
+  font-size: 22px;
+  margin-left: -38px;
+  margin-right: 4px;
+  z-index: 2;
+  padding: 0 6px 0 6px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  box-shadow: none !important;
+  color: #22223b;
+  transition: none;
+}
+
+.password-toggle-std:hover,
+.password-toggle-std:focus,
+.password-toggle-std:active {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+

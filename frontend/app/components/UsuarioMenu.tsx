@@ -44,7 +44,7 @@ const UsuarioMenu: React.FC<UsuarioMenuProps> = ({ userId }) => {
                     cursor: 'pointer',
                     borderRadius: '4px',
                     border: 'none',
-                    backgroundColor: tab === key ? '#0078d4' : 'transparent',
+                    backgroundColor: tab === key ? '#143D8D' : 'transparent',
                     color: tab === key ? 'white' : '#555',
                     fontWeight: tab === key ? 'bold' : 'normal',
                     textAlign: 'left',

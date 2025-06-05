@@ -1,6 +1,3 @@
-/* app/Login/page.module.css */
-
-/* Reset local encapsulado si lo necesitas */
 :global(body) {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -16,7 +13,7 @@
   background-repeat: no-repeat;
 }
 
-
+/* Main layout */
 .main {
   flex: 1;
   display: flex;
@@ -25,65 +22,103 @@
   margin: 50px 0;
 }
 
+/* Card visual: igual a form-card-std */
 .card {
   background: #fff;
-  padding: 2rem;
+  padding: 32px 24px;
   width: 360px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 32px 0 rgba(15, 23, 42, 0.11);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 18px;
   text-align: center;
-  border-radius: 40px;
+  border-radius: 20px;
+  border: 2px solid #1e293b;
+  margin: 0 auto;
 }
 
-/* Botones */
-.googleButton,
-.appleButton,
-.submitButton {
-  padding: 0.75rem;
-  border: none;
-  cursor: pointer;
-  background-color: #0a3b8c;
+/* Etiquetas de campos */
+.login-label-std {
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #143D8D;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Inputs y selects igual al estándar */
+.inputField {
+  padding: 10px 12px;
+  margin: 0.5rem 0;
+  width: 100%;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  font-size: 16px;
+  outline: none;
+  box-shadow: none !important;
+  transition: border-color 0.2s;
+}
+
+.inputField.error {
+  border-color: #e11d48;
+  background-color: #fff1f2;
+}
+
+/* Mensaje de error */
+.msg-error-std {
+  color: #e11d48;
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 16px;
+  position: static;
+  right: unset;
+  top: unset;
+}
+
+/* Botones igual al sistema */
+.submitButton,
+.googleButton {
+  padding: 12px 20px;
+  background-color: #143D8D;
   color: white;
-  border-radius: 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+.submitButton:disabled,
+.googleButton:disabled {
+  background-color: #143D8D;
+  cursor: not-allowed;
+}
+.submitButton:hover:enabled,
+.googleButton:hover:enabled {
+  background-color: #143D8D;
+}
+.googleButton {
+  background-color: #0ea5e9;
+  color: white;
+  margin-top: 8px;
+}
+.googleButton:hover:enabled {
+  background-color: #2563eb;
+  color: white;
 }
 
 /* Separador “O” */
 .separator {
   font-weight: bold;
-}
-
-/* Inputs con clase local */
-.inputField {
-  padding: 3px;
-  margin: 0.5rem 0;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-}
-
-/* Texto “¿Olvidó su contraseña?” */
-.forgot {
-  font-size: 0.9rem;
-  color: #0078d4;
-  cursor: pointer;
-}
-
-/* Checkbox + etiqueta */
-.stayLogged {
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Link a Home */
-.homeLink {
-  margin-top: 0.5rem;
-  display: block;
-  color: #0078d4;
-  text-decoration: underline;
+  color: #143d8d;
+  opacity: 0.85;
+  margin: 10px 0 0 0;
 }
 
 /* Footer */
@@ -93,6 +128,33 @@
   padding: 1.5rem;
 }
 
+/* Otros elementos opcionales (por si usas estos nombres) */
+.forgot,
+.stayLogged,
+.homeLink {
+  font-size: 0.95rem;
+}
+
+.forgot {
+  color: #0078d4;
+  cursor: pointer;
+  margin: 5px 0 0 0;
+}
+
+.stayLogged {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.homeLink {
+  margin-top: 0.5rem;
+  display: block;
+  color: #0078d4;
+  text-decoration: underline;
+}
+
+/* Footer links opcionales */
 .topLinks,
 .bottomInfo {
   display: grid;
@@ -101,7 +163,6 @@
   text-align: center;
   margin-bottom: 0.5rem;
 }
-
 .bottomInfo {
   font-size: 0.9rem;
 }

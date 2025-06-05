@@ -106,7 +106,7 @@ const Header: React.FC = () => {
               </a>
             </li>
             <li>
-              <a href="/admin">
+              <a href="/Administracion">
                 <FaCogs className="icon" />
                 <span>Administración</span>
               </a>

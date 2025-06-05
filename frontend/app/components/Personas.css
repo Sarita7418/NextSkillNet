@@ -83,8 +83,7 @@
 }
 
 /* Mensajes de estado */
-.cargando,
-.error {
+.cargando {
   text-align: center;
   font-size: 1rem;
   margin-top: 40px;
@@ -109,6 +108,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 53%;
 }
 
 .btn-cancelar:hover {

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import './RegisterForm.css';
+import '../Formularios.css'; // solo tu CSS global aquí
 import bienvenida from '../../../public/image 389.svg';
 import Image from 'next/image';
 
@@ -21,64 +21,98 @@ const RegisterForm: React.FC = () => {
   const [confirmarContraseña, setConfirmarContraseña] = useState('');
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
+  const [touched, setTouched] = useState<{ [k: string]: boolean }>({});
   const [error, setError] = useState('');
+
+  // Validaciones visuales individuales
+  const errors = {
+    nombre: touched.nombre && !formData.nombre ? 'Campo obligatorio*' : '',
+    apellido: touched.apellido && !formData.apellido ? 'Campo obligatorio*' : '',
+    correo: touched.correo && !formData.correo ? 'Campo obligatorio*' : '',
+    fechaNacimiento:
+      touched.fechaNacimiento && !formData.fechaNacimiento
+        ? 'Campo obligatorio*'
+        : touched.fechaNacimiento && !mayorDe18(formData.fechaNacimiento)
+          ? 'Se debe tener al menos 18 años'
+          : '',
+    genero: touched.genero && !formData.genero ? 'Campo obligatorio*' : '',
+    estadoEmpleado: touched.estadoEmpleado && !formData.estadoEmpleado ? 'Campo obligatorio*' : '',
+    contraseña: touched.contraseña && !contraseña ? 'Campo obligatorio*' : '',
+    confirmarContraseña: touched.confirmarContraseña && !confirmarContraseña ? 'Campo obligatorio*' : '',
+  };
+
+  // Validar si la fecha corresponde a alguien de 18 años o más
+  function mayorDe18(fecha: string) {
+    if (!fecha) return false;
+    const hoy = new Date();
+    const nacimiento = new Date(fecha);
+    const edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const m = hoy.getMonth() - nacimiento.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) return edad - 1 >= 18;
+    return edad >= 18;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleBlur = (field: string) => setTouched(prev => ({ ...prev, [field]: true }));
+
   const handleSubmit = async () => {
+    setTouched({
+      nombre: true,
+      apellido: true,
+      correo: true,
+      fechaNacimiento: true,
+      genero: true,
+      estadoEmpleado: true,
+      contraseña: true,
+      confirmarContraseña: true,
+    });
     setError('');
 
-    // 1. Validar que las contraseñas coincidan
+    // Validaciones visuales antes de enviar
+    if (
+      !formData.nombre || !formData.apellido || !formData.fechaNacimiento ||
+      !formData.genero || !formData.estadoEmpleado || !formData.correo ||
+      !contraseña || !confirmarContraseña
+    ) {
+      setError('Completa todos los campos obligatorios');
+      return;
+    }
+    if (!mayorDe18(formData.fechaNacimiento)) {
+      setError('Debes tener al menos 18 años');
+      return;
+    }
     if (contraseña !== confirmarContraseña) {
       setError('Las contraseñas no coinciden');
       return;
     }
 
-    // 2. Validar campos obligatorios
-    const { nombre, apellido, fechaNacimiento, genero, estadoEmpleado, correo } = formData;
-    if (!nombre || !apellido || !fechaNacimiento || !genero || !estadoEmpleado || !correo) {
-      setError('Por favor completa todos los campos');
-      return;
-    }
-
     try {
-      // 3. Llamada al endpoint /register
       const response = await fetch('http://127.0.0.1:8000/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nombre,
-          apellido,
-          fechaNacimiento,
-          genero,
-          estadoEmpleado,
-          correo,
-          contraseña
+          ...formData,
+          contraseña,
         })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // 4. Si el registro fue exitoso, Laravel regresa algo así: { message: "Registro exitoso", id_persona: 42 }
         const nuevaPersonaId = data.id_persona;
-
         if (nuevaPersonaId) {
           localStorage.setItem(
             'authstore',
             JSON.stringify({ id_persona: nuevaPersonaId })
           );
         }
-
         alert('Usuario registrado con éxito');
         router.push('/Login');
       } else {
-        // 6. Si Laravel devolvió un error
         alert(data.message || 'Error al registrar');
       }
     } catch (err) {
@@ -88,129 +122,182 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="form-container">
-        <h2 className="form-title">¡Llena el formulario para formar parte de nosotros!</h2>
-
-        <div className="form-field">
-          <label>Nombre</label>
+    <div className="form-container-std">
+      <div className="form-card-std">
+        <h2 className="form-title" style={{ textAlign: 'center', color: '#143D8D', fontWeight: 700 , fontSize:30}}>¡Llena el formulario para formar parte de nosotros!</h2>
+        
+        {/* Nombre */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Nombre
+            {errors.nombre && <span className="msg-error-std">{errors.nombre}</span>}
+          </label>
           <input
+            className={`input-std${errors.nombre ? ' error' : ''}`}
             name="nombre"
             value={formData.nombre}
             onChange={handleInputChange}
-            placeholder="Jhovanni"
+            onBlur={() => handleBlur('nombre')}
+            placeholder="Introduce tu nombre"
+            autoComplete="off"
           />
         </div>
-
-        <div className="form-field">
-          <label>Apellido</label>
+        {/* Apellido */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Apellido
+            {errors.apellido && <span className="msg-error-std">{errors.apellido}</span>}
+          </label>
           <input
+            className={`input-std${errors.apellido ? ' error' : ''}`}
             name="apellido"
             value={formData.apellido}
             onChange={handleInputChange}
-            placeholder="Gutiérrez"
+            onBlur={() => handleBlur('apellido')}
+            placeholder="Introduce tu apellido"
+            autoComplete="off"
           />
         </div>
-
-        <div className="form-field">
-          <label>Correo electrónico</label>
+        {/* Correo */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Correo electrónico
+            {errors.correo && <span className="msg-error-std">{errors.correo}</span>}
+          </label>
           <input
+            className={`input-std${errors.correo ? ' error' : ''}`}
             type="email"
             name="correo"
             value={formData.correo}
             onChange={handleInputChange}
-            placeholder="tucorreo@ejemplo.com"
+            onBlur={() => handleBlur('correo')}
+            placeholder="Introduce tu correo electrónico"
+            autoComplete="off"
           />
         </div>
-
-        <div className="form-field">
-          <label>Fecha de Nacimiento</label>
+        {/* Fecha de Nacimiento */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Fecha de Nacimiento
+            {errors.fechaNacimiento && <span className="msg-error-std">{errors.fechaNacimiento}</span>}
+          </label>
           <input
+            className={`input-std${errors.fechaNacimiento ? ' error' : ''}`}
             type="date"
             name="fechaNacimiento"
             value={formData.fechaNacimiento}
             onChange={handleInputChange}
+            onBlur={() => handleBlur('fechaNacimiento')}
+            autoComplete="off"
           />
         </div>
-
-        <div className="form-field">
-          <label>Género</label>
+        {/* Género */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Género
+            {errors.genero && <span className="msg-error-std">{errors.genero}</span>}
+          </label>
           <select
+            className={`select-std${errors.genero ? ' error' : ''}`}
             name="genero"
             value={formData.genero}
             onChange={handleInputChange}
+            onBlur={() => handleBlur('genero')}
           >
             <option value="">Seleccione género</option>
             <option value="masculino">Masculino</option>
             <option value="femenino">Femenino</option>
           </select>
         </div>
-
-        <div className="form-field">
-          <label>Situación Laboral</label>
+        {/* Situación Laboral */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Situación Laboral
+            {errors.estadoEmpleado && <span className="msg-error-std">{errors.estadoEmpleado}</span>}
+          </label>
           <select
+            className={`select-std${errors.estadoEmpleado ? ' error' : ''}`}
             name="estadoEmpleado"
             value={formData.estadoEmpleado}
             onChange={handleInputChange}
+            onBlur={() => handleBlur('estadoEmpleado')}
           >
             <option value="">Seleccione su situación laboral</option>
             <option value="1">Con trabajo</option>
             <option value="0">Sin trabajo</option>
           </select>
         </div>
-
-        <div className="form-field">
-          <label>Contraseña</label>
-          <div className="password-field">
+        {/* Contraseña */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Contraseña
+            {errors.contraseña && <span className="msg-error-std">{errors.contraseña}</span>}
+          </label>
+          <div className="password-field-std">
             <input
+              className={`input-std${errors.contraseña ? ' error' : ''}`}
               type={showPassword1 ? "text" : "password"}
               value={contraseña}
               onChange={(e) => setContraseña(e.target.value)}
-              placeholder="********"
+              onBlur={() => handleBlur('contraseña')}
+              placeholder="Introduce tu contraseña"
+              autoComplete="new-password"
+              style={{ flex: 1 }}
             />
             <button
               type="button"
-              className="password-toggle"
+              className="password-toggle-std"
               onClick={() => setShowPassword1(!showPassword1)}
               aria-label={showPassword1 ? "Ocultar contraseña" : "Mostrar contraseña"}
+              tabIndex={-1}
             >
               {showPassword1 ? "👁️" : "🙈"}
             </button>
           </div>
         </div>
-
-        <div className="form-field">
-          <label>Confirmar contraseña</label>
-          <div className="password-field">
+        {/* Confirmar contraseña */}
+        <div className="form-group-std">
+          <label className="form-label-std">
+            Confirmar contraseña
+            {errors.confirmarContraseña && <span className="msg-error-std">{errors.confirmarContraseña}</span>}
+          </label>
+          <div className="password-field-std">
             <input
+              className={`input-std${errors.confirmarContraseña ? ' error' : ''}`}
               type={showPassword2 ? "text" : "password"}
               value={confirmarContraseña}
               onChange={(e) => setConfirmarContraseña(e.target.value)}
-              placeholder="********"
+              onBlur={() => handleBlur('confirmarContraseña')}
+              placeholder="Confirma tu contraseña"
+              autoComplete="new-password"
+              style={{ flex: 1 }}
             />
             <button
               type="button"
-              className="password-toggle"
+              className="password-toggle-std"
               onClick={() => setShowPassword2(!showPassword2)}
               aria-label={showPassword2 ? "Ocultar contraseña" : "Mostrar contraseña"}
+              tabIndex={-1}
             >
               {showPassword2 ? "👁️" : "🙈"}
             </button>
           </div>
         </div>
 
-        {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
+        {/* Mensaje de error general */}
+        {error && <p className="msg-error-std" style={{ margin: '6px 0', textAlign: 'center' }}>{error}</p>}
 
         <button
-          className="create-button"
+          className="btn-save-std"
           type="button"
           onClick={handleSubmit}
         >
           Crear cuenta
         </button>
-      </div>
-
-      <Image src={bienvenida} alt="Bienvenida" width={500} height={500} />
+      </div>{ /* Imagen de bienvenida 
+      <Image src={bienvenida} alt="Bienvenida" width={500} height={500} />*/
+      }
+      
     </div>
   );
 };

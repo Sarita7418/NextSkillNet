@@ -19,7 +19,7 @@
   margin: 0 0 30px 0;
   font-weight: bold;
   font-size: 1.8rem;
-  color: #1e40af; /* azul intenso */
+  color: #143D8D; /* azul intenso */
 }
 
 .usuario-menu__list {
@@ -39,7 +39,7 @@
   border-radius: 6px;
   border: none;
   background-color: transparent;
-  color: #3b82f6; /* azul principal */
+  color: #143D8D; /* azul principal */
   font-weight: 600;
   text-align: left;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -52,7 +52,7 @@
 
 .usuario-menu__link.active,
 .usuario-menu__link[aria-current='true'] {
-  background-color: #2563eb; /* azul más fuerte */
+  background-color: #143D8D; /* azul más fuerte */
   color: white;
   font-weight: 700;
 }
@@ -73,12 +73,12 @@
   border-radius: 6px;
   border: none;
   color: white;
-  background-color: #3b82f6;
+  background-color: #143D8D;
   transition: background-color 0.3s ease;
 }
 
 .usuario-menu-content button:hover {
-  background-color: #2563eb;
+  background-color: #143D8D;
 }
 
 .usuario-menu-content button.cerrar-sesion {

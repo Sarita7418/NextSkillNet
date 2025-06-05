@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import foto from '@/public/FotoPerfil.png';
+import './Formularios.css';
 
 interface ResumenProps {
   userId: string;
@@ -16,6 +18,18 @@ const estadosLaborales = [
   { id: 1, descripcion: 'Empleado' },
 ];
 
+function esMayorDeEdad(fechaISO: string) {
+  if (!fechaISO) return false;
+  const hoy = new Date();
+  const fecha = new Date(fechaISO);
+  let edad = hoy.getFullYear() - fecha.getFullYear();
+  const m = hoy.getMonth() - fecha.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
+    edad--;
+  }
+  return edad >= 18;
+}
+
 const Resumen: React.FC<ResumenProps> = ({ userId }) => {
   const [usuario, setUsuario] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -28,10 +42,12 @@ const Resumen: React.FC<ResumenProps> = ({ userId }) => {
   });
   const [loading, setLoading] = useState(false);
 
-  // Al montarse o cuando cambie userId, hacemos fetch al endpoint /usuario/completo/{userId}
+  // Validaciones
+  const [touched, setTouched] = useState<{ [k: string]: boolean }>({});
+  const [errors, setErrors] = useState<{ [k: string]: string }>({});
+
   useEffect(() => {
     if (!userId) return;
-
     setLoading(true);
     fetch(`http://127.0.0.1:8000/usuario/completo/${userId}`)
       .then(res => {
@@ -39,17 +55,12 @@ const Resumen: React.FC<ResumenProps> = ({ userId }) => {
         return res.json();
       })
       .then((data: any) => {
-        // data viene plano, campo "correo" ya es el primer correo o null
         setUsuario(data);
-
-        // Convertir fecha a formato yyyy-MM-dd para el input[type=date]
-        // (asumimos que data.fecha_nacimiento viene como "YYYY-MM-DD HH:MM:SS.000")
         let fechaFormateada = '';
         if (data.fecha_nacimiento) {
-          const raw = data.fecha_nacimiento.split(' ')[0]; // "YYYY-MM-DD"
+          const raw = data.fecha_nacimiento.split(' ')[0];
           fechaFormateada = raw;
         }
-
         setFormData({
           nombre: data.nombre || '',
           apellido: data.apellido || '',
@@ -65,21 +76,73 @@ const Resumen: React.FC<ResumenProps> = ({ userId }) => {
       .catch(err => {
         console.error('Error al obtener perfil completo:', err);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, [userId]);
+
+  // Validaciones
+  useEffect(() => {
+    const newErrors: typeof errors = {};
+
+    if (touched.nombre && !formData.nombre) newErrors.nombre = 'Campo obligatorio*';
+    if (touched.apellido && !formData.apellido) newErrors.apellido = 'Campo obligatorio*';
+    if (touched.correo && !formData.correo) newErrors.correo = 'Campo obligatorio*';
+    if (touched.fecha_nacimiento && !formData.fecha_nacimiento)
+      newErrors.fecha_nacimiento = 'Campo obligatorio*';
+    if (
+      touched.fecha_nacimiento &&
+      formData.fecha_nacimiento &&
+      !esMayorDeEdad(formData.fecha_nacimiento)
+    )
+      newErrors.fecha_nacimiento = 'Se debe tener al menos 18 años';
+    if (touched.genero && !formData.genero) newErrors.genero = 'Campo obligatorio*';
+    if (touched.estado_laboral && !formData.estado_laboral)
+      newErrors.estado_laboral = 'Campo obligatorio*';
+
+    setErrors(newErrors);
+  }, [formData, touched]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setTouched(prev => ({ ...prev, [name]: true }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!usuario) return;
+    // Toca todos los campos al intentar enviar
+    setTouched({
+      nombre: true,
+      apellido: true,
+      correo: true,
+      fecha_nacimiento: true,
+      genero: true,
+      estado_laboral: true,
+    });
+
+    // Validación final
+    const camposObligatorios = [
+      'nombre',
+      'apellido',
+      'correo',
+      'fecha_nacimiento',
+      'genero',
+      'estado_laboral',
+    ];
+    let hayError = false;
+    for (const campo of camposObligatorios) {
+      if (
+        !formData[campo as keyof typeof formData] ||
+        (campo === 'fecha_nacimiento' &&
+          formData.fecha_nacimiento &&
+          !esMayorDeEdad(formData.fecha_nacimiento))
+      ) {
+        hayError = true;
+        break;
+      }
+    }
+    if (hayError) return;
 
     setLoading(true);
     try {
@@ -101,7 +164,6 @@ const Resumen: React.FC<ResumenProps> = ({ userId }) => {
 
       if (res.ok) {
         alert('Datos actualizados correctamente');
-        // Actualizamos localmente el estado "usuario" y formData
         const usuarioActualizado = {
           ...usuario,
           nombre: formData.nombre,
@@ -125,226 +187,167 @@ const Resumen: React.FC<ResumenProps> = ({ userId }) => {
   if (!usuario) return <p>Cargando usuario...</p>;
 
   return (
-    <div
-      className="resumen-container"
-      style={{
-        maxWidth: 600,
-        margin: '0 auto',
-        height: '100%',
-        minHeight: '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: 20,
-        padding: '20px',
-      }}
-    >
-      {/* Foto perfil */}
-      <div
-        className="foto-perfil"
-        style={{
-          width: 150,
-          height: 150,
-          borderRadius: '50%',
-          backgroundColor: '#cbd5e1',
-          overflow: 'hidden',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontSize: 24,
-          color: '#64748b',
-          userSelect: 'none',
-        }}
-      >
-        Foto
-      </div>
-
-      <form
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 15,
-        }}
-        onSubmit={handleSubmit}
-      >
-        {/* Nombre */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="nombre" style={{ marginBottom: 6, fontWeight: 600 }}>
-            Nombre:
-          </label>
-          <input
-            id="nombre"
-            name="nombre"
-            type="text"
-            value={formData.nombre}
-            onChange={handleChange}
-            disabled={loading}
-            style={{
-              padding: '10px 12px',
-              borderRadius: 8,
-              border: '1px solid #ddd',
-              backgroundColor: '#f9fafb',
-              fontSize: 16,
-              outline: 'none',
-            }}
-          />
+    <div className="form-container-std">
+      <div className="form-card-std">
+        <div className="foto-perfil-std">
+          <img src={foto.src} alt="" />
         </div>
 
-        {/* Apellido */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="apellido" style={{ marginBottom: 6, fontWeight: 600 }}>
-            Apellido:
-          </label>
-          <input
-            id="apellido"
-            name="apellido"
-            type="text"
-            value={formData.apellido}
-            onChange={handleChange}
-            disabled={loading}
-            style={{
-              padding: '10px 12px',
-              borderRadius: 8,
-              border: '1px solid #ddd',
-              backgroundColor: '#f9fafb',
-              fontSize: 16,
-              outline: 'none',
-            }}
-          />
-        </div>
-
-        {/* Correo */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="correo" style={{ marginBottom: 6, fontWeight: 600 }}>
-            Correo electrónico:
-          </label>
-          <input
-            id="correo"
-            name="correo"
-            type="email"
-            value={formData.correo}
-            onChange={handleChange}
-            disabled={loading}
-            style={{
-              padding: '10px 12px',
-              borderRadius: 8,
-              border: '1px solid #ddd',
-              backgroundColor: '#f9fafb',
-              fontSize: 16,
-              outline: 'none',
-            }}
-          />
-        </div>
-
-        {/* Fecha de nacimiento */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="fecha_nacimiento" style={{ marginBottom: 6, fontWeight: 600 }}>
-            Fecha de nacimiento:
-          </label>
-          <input
-            id="fecha_nacimiento"
-            name="fecha_nacimiento"
-            type="date"
-            value={formData.fecha_nacimiento}
-            onChange={handleChange}
-            disabled={loading}
-            style={{
-              padding: '10px 12px',
-              borderRadius: 8,
-              border: '1px solid #ddd',
-              backgroundColor: '#f9fafb',
-              fontSize: 16,
-              outline: 'none',
-            }}
-          />
-        </div>
-
-        {/* Género */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="genero" style={{ marginBottom: 6, fontWeight: 600 }}>
-            Género:
-          </label>
-          <select
-            id="genero"
-            name="genero"
-            value={formData.genero}
-            onChange={handleChange}
-            disabled={loading}
-            style={{
-              padding: '10px 12px',
-              borderRadius: 8,
-              border: '1px solid #ddd',
-              backgroundColor: '#f9fafb',
-              fontSize: 16,
-              outline: 'none',
-            }}
-          >
-            <option value="">Seleccione un género</option>
-            {subdominiosGenero.map(g => (
-              <option key={g.id} value={g.id}>
-                {g.descripcion}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Estado laboral */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="estado_laboral" style={{ marginBottom: 6, fontWeight: 600 }}>
-            Estado laboral:
-          </label>
-          <select
-            id="estado_laboral"
-            name="estado_laboral"
-            value={formData.estado_laboral}
-            onChange={handleChange}
-            disabled={loading}
-            style={{
-              padding: '10px 12px',
-              borderRadius: 8,
-              border: '1px solid #ddd',
-              backgroundColor: '#f9fafb',
-              fontSize: 16,
-              outline: 'none',
-            }}
-          >
-            <option value="">Seleccione estado</option>
-            {estadosLaborales.map(e => (
-              <option key={e.id} value={e.id}>
-                {e.descripcion}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Botón guardar */}
-        <button
-          type="submit"
-          disabled={loading}
+        <form
           style={{
-            padding: '12px 20px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            fontWeight: 'bold',
-            fontSize: 16,
-            marginTop: 10,
-            transition: 'background-color 0.3s ease',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0,
           }}
-          onMouseEnter={e => {
-            if (!loading) e.currentTarget.style.backgroundColor = '#1e40af';
-          }}
-          onMouseLeave={e => {
-            if (!loading) e.currentTarget.style.backgroundColor = '#2563eb';
-          }}
+          onSubmit={handleSubmit}
+          noValidate
         >
-          {loading ? 'Guardando...' : 'Guardar datos'}
-        </button>
-      </form>
+          {/* Nombre */}
+          <div className="form-group-std">
+            <label className="form-label-std" htmlFor="nombre">
+              Nombre:
+              {errors.nombre && (
+                <span className="msg-error-std">{errors.nombre}</span>
+              )}
+            </label>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              className={`input-std${errors.nombre ? ' error' : ''}`}
+              value={formData.nombre}
+              onChange={handleChange}
+              disabled={loading}
+              autoComplete="off"
+              onBlur={() => setTouched(prev => ({ ...prev, nombre: true }))}
+            />
+          </div>
+
+          {/* Apellido */}
+          <div className="form-group-std">
+            <label className="form-label-std" htmlFor="apellido">
+              Apellido:
+              {errors.apellido && (
+                <span className="msg-error-std">{errors.apellido}</span>
+              )}
+            </label>
+            <input
+              id="apellido"
+              name="apellido"
+              type="text"
+              className={`input-std${errors.apellido ? ' error' : ''}`}
+              value={formData.apellido}
+              onChange={handleChange}
+              disabled={loading}
+              autoComplete="off"
+              onBlur={() => setTouched(prev => ({ ...prev, apellido: true }))}
+            />
+          </div>
+
+          {/* Correo */}
+          <div className="form-group-std">
+            <label className="form-label-std" htmlFor="correo">
+              Correo electrónico:
+              {errors.correo && (
+                <span className="msg-error-std">{errors.correo}</span>
+              )}
+            </label>
+            <input
+              id="correo"
+              name="correo"
+              type="email"
+              className={`input-std${errors.correo ? ' error' : ''}`}
+              value={formData.correo}
+              onChange={handleChange}
+              disabled={loading}
+              autoComplete="off"
+              onBlur={() => setTouched(prev => ({ ...prev, correo: true }))}
+            />
+          </div>
+
+          {/* Fecha de nacimiento */}
+          <div className="form-group-std">
+            <label className="form-label-std" htmlFor="fecha_nacimiento">
+              Fecha de nacimiento:
+              {errors.fecha_nacimiento && (
+                <span className="msg-error-std">{errors.fecha_nacimiento}</span>
+              )}
+            </label>
+            <input
+              id="fecha_nacimiento"
+              name="fecha_nacimiento"
+              type="date"
+              className={`input-std${errors.fecha_nacimiento ? ' error' : ''}`}
+              value={formData.fecha_nacimiento}
+              onChange={handleChange}
+              disabled={loading}
+              onBlur={() => setTouched(prev => ({ ...prev, fecha_nacimiento: true }))}
+            />
+          </div>
+
+          {/* Género */}
+          <div className="form-group-std">
+            <label className="form-label-std" htmlFor="genero">
+              Género:
+              {errors.genero && (
+                <span className="msg-error-std">{errors.genero}</span>
+              )}
+            </label>
+            <select
+              id="genero"
+              name="genero"
+              className={`select-std${errors.genero ? ' error' : ''}`}
+              value={formData.genero}
+              onChange={handleChange}
+              disabled={loading}
+              onBlur={() => setTouched(prev => ({ ...prev, genero: true }))}
+            >
+              <option value="">Seleccione un género</option>
+              {subdominiosGenero.map(g => (
+                <option key={g.id} value={g.id}>
+                  {g.descripcion}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Estado laboral */}
+          <div className="form-group-std">
+            <label className="form-label-std" htmlFor="estado_laboral">
+              Estado laboral:
+              {errors.estado_laboral && (
+                <span className="msg-error-std">{errors.estado_laboral}</span>
+              )}
+            </label>
+            <select
+              id="estado_laboral"
+              name="estado_laboral"
+              className={`select-std${errors.estado_laboral ? ' error' : ''}`}
+              value={formData.estado_laboral}
+              onChange={handleChange}
+              disabled={loading}
+              onBlur={() => setTouched(prev => ({ ...prev, estado_laboral: true }))}
+            >
+              <option value="">Seleccione estado</option>
+              {estadosLaborales.map(e => (
+                <option key={e.id} value={e.id}>
+                  {e.descripcion}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Botón guardar */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-save-std"
+          >
+            {loading ? 'Guardando...' : 'Guardar datos'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
