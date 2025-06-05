@@ -7,10 +7,9 @@ interface Item {
 
 interface Usuario {
   id_usuario: number;
-  // Puedes agregar más campos si los necesitas
 }
 
-function Cuenta() {
+const Cuenta: React.FC = () => {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [areas, setAreas] = useState<Item[]>([]);
   const [paises, setPaises] = useState<Item[]>([]);
@@ -21,9 +20,26 @@ function Cuenta() {
   const [paisSeleccionado, setPaisSeleccionado] = useState('');
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState('');
 
+  const [touched, setTouched] = useState({
+    nombreEmpresa: false,
+    areaSeleccionada: false,
+    paisSeleccionado: false,
+    ciudadSeleccionada: false,
+    contrasenaNueva: false,
+  });
+
   const [contrasenaNueva, setContrasenaNueva] = useState('');
   const [loading, setLoading] = useState(false);
   const [showFormRepresentante, setShowFormRepresentante] = useState(false);
+  const [errorGeneral, setErrorGeneral] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
+  // Validaciones
+  const validNombre = !!nombreEmpresa.trim();
+  const validArea = !!areaSeleccionada;
+  const validPais = !!paisSeleccionado;
+  const validCiudad = !!ciudadSeleccionada;
+  const validNuevaPass = !!contrasenaNueva;
 
   // Carga usuario de localStorage al montar
   useEffect(() => {
@@ -37,13 +53,10 @@ function Cuenta() {
   useEffect(() => {
     fetch('http://127.0.0.1:8000/subdominios/areas')
       .then(res => res.json())
-      .then((data: Item[]) => setAreas(data))
-      .catch(() => alert('Error cargando áreas'));
-
+      .then((data: Item[]) => setAreas(data));
     fetch('http://127.0.0.1:8000/politicos_ubicacion/paises')
       .then(res => res.json())
-      .then((data: Item[]) => setPaises(data))
-      .catch(() => alert('Error cargando países'));
+      .then((data: Item[]) => setPaises(data));
   }, []);
 
   // Carga ciudades al cambiar país seleccionado
@@ -55,15 +68,25 @@ function Cuenta() {
     }
     fetch(`http://127.0.0.1:8000/politicos_ubicacion/ciudades/${paisSeleccionado}`)
       .then(res => res.json())
-      .then((data: Item[]) => setCiudades(data))
-      .catch(() => alert('Error cargando ciudades'));
+      .then((data: Item[]) => setCiudades(data));
   }, [paisSeleccionado]);
 
   // Solicitar ser representante
-  const handleSolicitarRepresentante = async () => {
-    if (!usuario) return alert('Usuario no cargado');
-    if (!nombreEmpresa || !areaSeleccionada || !paisSeleccionado || !ciudadSeleccionada) {
-      return alert('Complete todos los campos para solicitar representante');
+  const handleSolicitarRepresentante = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setTouched(t => ({
+      ...t,
+      nombreEmpresa: true,
+      areaSeleccionada: true,
+      paisSeleccionado: true,
+      ciudadSeleccionada: true,
+    }));
+    setErrorGeneral('');
+    setSuccessMsg('');
+    if (!usuario) return setErrorGeneral('Usuario no cargado');
+    if (!validNombre || !validArea || !validPais || !validCiudad) {
+      setErrorGeneral('Completa todos los campos obligatorios');
+      return;
     }
 
     setLoading(true);
@@ -80,27 +103,40 @@ function Cuenta() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert('Solicitud enviada correctamente, pendiente de aprobación');
+        setSuccessMsg('Solicitud enviada correctamente, pendiente de aprobación');
         setShowFormRepresentante(false);
         setNombreEmpresa('');
         setAreaSeleccionada('');
         setPaisSeleccionado('');
         setCiudadSeleccionada('');
+        setTouched({
+          nombreEmpresa: false,
+          areaSeleccionada: false,
+          paisSeleccionado: false,
+          ciudadSeleccionada: false,
+          contrasenaNueva: false,
+        });
       } else {
-        alert(`Error: ${data.message || 'Error desconocido'}`);
+        setErrorGeneral(data.message || 'Error desconocido');
       }
-    } catch (error) {
-      alert('Error de conexión con el servidor');
+    } catch {
+      setErrorGeneral('Error de conexión con el servidor');
     } finally {
       setLoading(false);
     }
   };
 
   // Actualizar contraseña
-  const handleActualizarContrasena = async () => {
-    if (!usuario) return alert('Usuario no cargado');
-    if (!contrasenaNueva) return alert('Ingrese una nueva contraseña');
-
+  const handleActualizarContrasena = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setTouched(t => ({ ...t, contrasenaNueva: true }));
+    setErrorGeneral('');
+    setSuccessMsg('');
+    if (!usuario) return setErrorGeneral('Usuario no cargado');
+    if (!validNuevaPass) {
+      setErrorGeneral('Ingrese una nueva contraseña');
+      return;
+    }
     if (!confirm('¿Está seguro de cambiar su contraseña?')) return;
 
     setLoading(true);
@@ -115,13 +151,14 @@ function Cuenta() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert('Contraseña actualizada correctamente');
+        setSuccessMsg('Contraseña actualizada correctamente');
         setContrasenaNueva('');
+        setTouched(t => ({ ...t, contrasenaNueva: false }));
       } else {
-        alert(`Error: ${data.message || 'Error desconocido'}`);
+        setErrorGeneral(data.message || 'Error desconocido');
       }
-    } catch (error) {
-      alert('Error de conexión con el servidor');
+    } catch {
+      setErrorGeneral('Error de conexión con el servidor');
     } finally {
       setLoading(false);
     }
@@ -130,186 +167,195 @@ function Cuenta() {
   // Cerrar sesión
   const handleCerrarSesion = () => {
     localStorage.removeItem('usuario');
-    window.location.href = '/Login'; // O la ruta de login que tengas
+    window.location.href = '/Login';
+  };
+
+  // Manejadores de blur
+  const handleBlur = (field: keyof typeof touched) => {
+    setTouched(t => ({ ...t, [field]: true }));
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', padding: 20, fontFamily: 'Arial, sans-serif' }}>
-      <h2 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 20 }}>
-        Solicitar ser representante de empresa
-      </h2>
+    <div className="form-container-std">
+      <div className="form-card-std">
+        <h2 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 20 }}>
+          Solicitar ser representante de empresa
+        </h2>
 
-      {!showFormRepresentante ? (
-        <button
-          onClick={() => setShowFormRepresentante(true)}
-          disabled={loading}
-          style={{
-            display: 'block',
-            margin: '0 auto 20px auto',
-            padding: '10px 20px',
-            backgroundColor: '#143D8D',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            fontWeight: 'bold',
-          }}
-        >
-          Solicitar ser representante
-        </button>
-      ) : (
-        <div style={{ marginBottom: 20 }}>
-          <label>
-            Nombre empresa:
+        {/* BOTÓN para mostrar el formulario */}
+        {!showFormRepresentante ? (
+          <button
+            className="btn-save-std"
+            onClick={() => setShowFormRepresentante(true)}
+            disabled={loading}
+            style={{ marginBottom: 18 }}
+          >
+            Solicitar ser representante
+          </button>
+        ) : (
+          <form onSubmit={handleSolicitarRepresentante} autoComplete="off">
+            {/* Nombre empresa */}
+            <div className="form-group-std">
+              <label className="form-label-std">
+                Nombre empresa
+                {touched.nombreEmpresa && !validNombre && (
+                  <span className="msg-error-std">Campo obligatorio*</span>
+                )}
+              </label>
+              <input
+                className={`input-std${touched.nombreEmpresa && !validNombre ? ' error' : ''}`}
+                type="text"
+                value={nombreEmpresa}
+                onChange={e => setNombreEmpresa(e.target.value)}
+                onBlur={() => handleBlur('nombreEmpresa')}
+                disabled={loading}
+                placeholder="Nombre de la empresa"
+              />
+            </div>
+            {/* Área */}
+            <div className="form-group-std">
+              <label className="form-label-std">
+                Área
+                {touched.areaSeleccionada && !validArea && (
+                  <span className="msg-error-std">Campo obligatorio*</span>
+                )}
+              </label>
+              <select
+                className={`select-std${touched.areaSeleccionada && !validArea ? ' error' : ''}`}
+                value={areaSeleccionada}
+                onChange={e => setAreaSeleccionada(e.target.value)}
+                onBlur={() => handleBlur('areaSeleccionada')}
+                disabled={loading}
+              >
+                <option value="">Seleccione un área</option>
+                {areas.map(area => (
+                  <option key={area.id} value={area.id}>
+                    {area.descripcion}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* País */}
+            <div className="form-group-std">
+              <label className="form-label-std">
+                País
+                {touched.paisSeleccionado && !validPais && (
+                  <span className="msg-error-std">Campo obligatorio*</span>
+                )}
+              </label>
+              <select
+                className={`select-std${touched.paisSeleccionado && !validPais ? ' error' : ''}`}
+                value={paisSeleccionado}
+                onChange={e => setPaisSeleccionado(e.target.value)}
+                onBlur={() => handleBlur('paisSeleccionado')}
+                disabled={loading}
+              >
+                <option value="">Seleccione un país</option>
+                {paises.map(pais => (
+                  <option key={pais.id} value={pais.id}>
+                    {pais.descripcion}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Ciudad */}
+            <div className="form-group-std">
+              <label className="form-label-std">
+                Ciudad
+                {touched.ciudadSeleccionada && !validCiudad && (
+                  <span className="msg-error-std">Campo obligatorio*</span>
+                )}
+              </label>
+              <select
+                className={`select-std${touched.ciudadSeleccionada && !validCiudad ? ' error' : ''}`}
+                value={ciudadSeleccionada}
+                onChange={e => setCiudadSeleccionada(e.target.value)}
+                onBlur={() => handleBlur('ciudadSeleccionada')}
+                disabled={loading || ciudades.length === 0}
+              >
+                <option value="">Seleccione una ciudad</option>
+                {ciudades.map(ciudad => (
+                  <option key={ciudad.id} value={ciudad.id}>
+                    {ciudad.descripcion}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Mensaje error */}
+            {errorGeneral && <div className="msg-error-std" style={{ marginBottom: 12 }}>{errorGeneral}</div>}
+            {successMsg && <div style={{ color: '#10b981', marginBottom: 12 }}>{successMsg}</div>}
+            {/* Botones */}
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                className="btn-save-std"
+                type="submit"
+                disabled={loading}
+                style={{ flex: 1 }}
+              >
+                {loading ? 'Enviando...' : 'Enviar solicitud'}
+              </button>
+              <button
+                type="button"
+                className="btn-save-std"
+                style={{ background: '#999', flex: 1 }}
+                disabled={loading}
+                onClick={() => setShowFormRepresentante(false)}
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        )}
+
+        <hr style={{ margin: '30px 0' }} />
+
+        {/* Cambiar contraseña */}
+        <form onSubmit={handleActualizarContrasena} autoComplete="off">
+          <div className="form-group-std">
+            <label className="form-label-std">
+              Nueva contraseña
+              {touched.contrasenaNueva && !validNuevaPass && (
+                <span className="msg-error-std">Campo obligatorio*</span>
+              )}
+            </label>
             <input
-              type="text"
-              value={nombreEmpresa}
-              onChange={e => setNombreEmpresa(e.target.value)}
+              className={`input-std${touched.contrasenaNueva && !validNuevaPass ? ' error' : ''}`}
+              type="password"
+              value={contrasenaNueva}
+              onChange={e => setContrasenaNueva(e.target.value)}
+              onBlur={() => handleBlur('contrasenaNueva')}
               disabled={loading}
-              style={{ width: '100%', padding: 8, marginTop: 4, borderRadius: 8, border: '1px solid #ccc' }}
+              placeholder="Nueva contraseña"
             />
-          </label>
-
-          <label>
-            Área:
-            <select
-              value={areaSeleccionada}
-              onChange={e => setAreaSeleccionada(e.target.value)}
-              disabled={loading}
-              style={{ width: '100%', padding: 8, marginTop: 4, borderRadius: 8, border: '1px solid #ccc' }}
-            >
-              <option value="">Seleccione un área</option>
-              {areas.map(area => (
-                <option key={area.id} value={area.id}>
-                  {area.descripcion}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label>
-            País:
-            <select
-              value={paisSeleccionado}
-              onChange={e => setPaisSeleccionado(e.target.value)}
-              disabled={loading}
-              style={{ width: '100%', padding: 8, marginTop: 4, borderRadius: 8, border: '1px solid #ccc' }}
-            >
-              <option value="">Seleccione un país</option>
-              {paises.map(pais => (
-                <option key={pais.id} value={pais.id}>
-                  {pais.descripcion}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label>
-            Ciudad:
-            <select
-              value={ciudadSeleccionada}
-              onChange={e => setCiudadSeleccionada(e.target.value)}
-              disabled={loading || ciudades.length === 0}
-              style={{ width: '100%', padding: 8, marginTop: 4, borderRadius: 8, border: '1px solid #ccc' }}
-            >
-              <option value="">Seleccione una ciudad</option>
-              {ciudades.map(ciudad => (
-                <option key={ciudad.id} value={ciudad.id}>
-                  {ciudad.descripcion}
-                </option>
-              ))}
-            </select>
-          </label>
-
+          </div>
           <button
-            onClick={handleSolicitarRepresentante}
+            className="btn-save-std"
+            type="submit"
             disabled={loading}
-            style={{
-              marginTop: 10,
-              padding: '10px 20px',
-              backgroundColor: '#143D8D',
-              color: 'white',
-              border: 'none',
-              borderRadius: 8,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontWeight: 'bold',
-            }}
+            style={{ width: '100%' }}
           >
-            Enviar solicitud
+            Cambiar contraseña
           </button>
+        </form>
 
-          <button
-            onClick={() => setShowFormRepresentante(false)}
-            disabled={loading}
-            style={{
-              marginTop: 10,
-              marginLeft: 10,
-              padding: '10px 20px',
-              backgroundColor: '#999',
-              color: 'white',
-              border: 'none',
-              borderRadius: 8,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontWeight: 'bold',
-            }}
-          >
-            Cancelar
-          </button>
-        </div>
-      )}
+        <hr style={{ margin: '30px 0' }} />
 
-      <hr style={{ margin: '30px 0' }} />
-
-      <div>
-        <label>
-          Nueva contraseña:
-          <input
-            type="password"
-            value={contrasenaNueva}
-            onChange={e => setContrasenaNueva(e.target.value)}
-            disabled={loading}
-            style={{ width: '100%', padding: 8, marginTop: 4, borderRadius: 8, border: '1px solid #ccc' }}
-          />
-        </label>
-
+        {/* Cerrar sesión */}
         <button
-          onClick={handleActualizarContrasena}
-          disabled={loading}
+          className="btn-save-std"
+          onClick={handleCerrarSesion}
           style={{
-            marginTop: 10,
-            padding: '10px 20px',
-            backgroundColor: '#143D8D',
+            backgroundColor: '#e53e3e',
             color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            fontWeight: 'bold',
+            display: 'block',
+            width: '100%',
           }}
         >
-          Cambiar contraseña
+          Cerrar sesión
         </button>
       </div>
-
-      <hr style={{ margin: '30px 0' }} />
-
-      <button
-        onClick={handleCerrarSesion}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#e53e3e',
-          color: 'white',
-          border: 'none',
-          borderRadius: 8,
-          cursor: 'pointer',
-          fontWeight: 'bold',
-          display: 'block',
-          margin: '0 auto',
-        }}
-      >
-        Cerrar sesión
-      </button>
     </div>
   );
-}
+};
 
 export default Cuenta;
