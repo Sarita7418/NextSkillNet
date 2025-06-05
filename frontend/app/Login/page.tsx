@@ -2,17 +2,16 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
-import styles from './page.module.css';
 import Footer from '../components/organism/Footer';
-import Header from '../components/organism/Header';
 import HeaderMain from '../components/organism/HeaderMain';
+import styles from './page.module.css'; // Puedes seguir usando tu CSS local
 
 export default function LoginPage() {
   const [nombre, setNombre] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Manejadores para actualizar el estado de los inputs
   const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,13 +25,10 @@ export default function LoginPage() {
   // Función para manejar el submit del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true); // Activar loading
-    setError(''); // Limpiar error previo
+    setIsLoading(true);
+    setError('');
 
     try {
-      console.log('Nombre:', nombre);
-      console.log('Contraseña:', contraseña);
-      // Hacer la solicitud de login
       const response = await fetch('http://127.0.0.1:8000/login', {
         method: 'POST',
         headers: {
@@ -40,11 +36,10 @@ export default function LoginPage() {
         },
         body: JSON.stringify({
           nombre,
-          contrasena: contraseña, // ojo aquí, contrasena sin tilde
+          contrasena: contraseña,
         }),
       });
 
-      // Verificar si la respuesta es exitosa
       const data = await response.json();
 
       if (response.ok) {
@@ -52,25 +47,23 @@ export default function LoginPage() {
         alert('Login exitoso!');
         window.location.href = '/Inicio';
       } else {
-        // Si hubo un error, mostrar mensaje con alert
         alert('Credenciales incorrectas!');
       }
     } catch (error) {
       setError('Hubo un problema al conectar con el servidor');
       alert('Error al conectar con el servidor!');
     } finally {
-      setIsLoading(false); // Desactivar loading
+      setIsLoading(false);
     }
   };
 
   return (
     <div className={styles.container}>
-      <HeaderMain/>
+      <HeaderMain />
 
       <main className={styles.main}>
         <div className={styles.card}>
           <h1>Bienvenido/a a Skillnet</h1>
-
 
           <input
             className={styles.inputField}
@@ -78,22 +71,49 @@ export default function LoginPage() {
             placeholder="Nombre"
             value={nombre}
             onChange={handleNombreChange}
-          />
-          <input
-            className={styles.inputField}
-            type="password"
-            placeholder="Contraseña"
-            value={contraseña}
-            onChange={handleContraseñaChange}
+            autoComplete="username"
           />
 
-          {/* Mostrar mensaje de error si existe */}
+          {/* Campo de contraseña con mostrar/ocultar */}
+          <div style={{ position: 'relative', width: '100%' }}>
+            <input
+              className={styles.inputField}
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Contraseña"
+              value={contraseña}
+              onChange={handleContraseñaChange}
+              autoComplete="current-password"
+              style={{ paddingRight: '42px' }}
+            />
+            <button
+              type="button"
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              onClick={() => setShowPassword(v => !v)}
+              tabIndex={-1}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '22px',
+                color: '#22223b',
+                padding: 0,
+                lineHeight: 1,
+              }}
+            >
+              {showPassword ? '👁️' : '🙈'}
+            </button>
+          </div>
+
           {error && <p className={styles.errorMessage}>{error}</p>}
 
           <button
             className={styles.submitButton}
             onClick={handleSubmit}
-            disabled={isLoading} // Deshabilitar botón mientras carga
+            disabled={isLoading}
           >
             {isLoading ? 'Cargando...' : 'Iniciar sesión'}
           </button>
@@ -104,7 +124,6 @@ export default function LoginPage() {
           >
             Crear una cuenta
           </button>
-
         </div>
       </main>
 

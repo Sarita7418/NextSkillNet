@@ -1,5 +1,7 @@
 "use client";
 
+import fotoperfil from '@/public/FotoPerfil.png';
+
 import React, { useEffect, useState } from 'react';
 import {
   FaHome,
@@ -137,7 +139,7 @@ const Header: React.FC = () => {
           }}
         >
           <img
-            src="/user-avatar.png"
+            src={fotoperfil.src}
             alt="Perfil de usuario"
             className="profile-avatar"
           />

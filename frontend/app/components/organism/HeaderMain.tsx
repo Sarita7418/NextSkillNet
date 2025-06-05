@@ -3,10 +3,10 @@
 import React from 'react';
 import {
   FaHome,
-  FaBell,
-  FaFileAlt,
-  FaCogs,
-  FaUsers
+  FaInfoCircle,
+  FaBullseye,
+  FaStar,
+  FaEnvelope
 } from 'react-icons/fa';
 import './HeaderMain.css';
 
@@ -37,56 +37,42 @@ const HeaderMain: React.FC = () => {
         <nav className="nav">
           <ul>
             <li>
-              {/* Link a la home */}
               <a href="/Institucional">
                 <FaHome className="icon" />
                 <span>Inicio</span>
               </a>
             </li>
             <li>
-              {/* Scroll a sección "about-container" */}
               <button
                 type="button"
                 className="nav-button"
                 onClick={() => scrollToSection('about-container')}
               >
-                <FaBell className="icon" />
+                <FaInfoCircle className="icon" />
                 <span>Quienes Somos</span>
               </button>
             </li>
             <li>
-              {/* Scroll a sección "objective-container" */}
               <button
                 type="button"
                 className="nav-button"
                 onClick={() => scrollToSection('objective-container')}
               >
-                <FaFileAlt className="icon" />
+                <FaBullseye className="icon" />
                 <span>Objetivos</span>
               </button>
             </li>
             <li>
-              {/* Scroll a sección "features-container" */}
               <button
                 type="button"
                 className="nav-button"
                 onClick={() => scrollToSection('features-skillnet')}
               >
-                <FaCogs className="icon" />
-                <span>Caracteristicas</span>
+                <FaStar className="icon" />
+                <span>Características</span>
               </button>
             </li>
-            <li>
-              {/* Scroll a sección "footer" */}
-              <button
-                type="button"
-                className="nav-button"
-                onClick={() => scrollToSection('Footer')}
-              >
-                <FaUsers className="icon" />
-                <span>Contactenos</span>
-              </button>
-            </li>
+            
           </ul>
         </nav>
 
