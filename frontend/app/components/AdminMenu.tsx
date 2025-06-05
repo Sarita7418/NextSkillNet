@@ -5,10 +5,10 @@ import Personas from './Personas';
 import NuevoUAdmin from './NuevoUAdmin';
 import Solicitudes from './Solicitudes';
 import Empresas from './Empresas';
-import EmpresasForm from './EmpresasForm';
+import EmpresaNuevo from './EmpresaNuevo';
 
 function AdminMenu() {
-  const [tab, setTab] = useState<'usuarios' | 'añadir' | 'solicitudes' | 'empresas'>('usuarios');
+  const [tab, setTab] = useState<'usuarios' | 'añadir' | 'solicitudes' | 'empresas' | 'añadirEmpresa'>('usuarios');
 
   return (
     <div className="usuario-menu-container" style={{ display: 'flex', height: '100vh' }}>
@@ -29,7 +29,8 @@ function AdminMenu() {
               { key: 'usuarios', label: 'Usuarios' },
               { key: 'añadir', label: 'Añadir usuario' },
               { key: 'solicitudes', label: 'Solicitudes representantes' },
-              { key: 'empresas', label: 'Empresas' }, // NUEVA OPCIÓN
+              { key: 'empresas', label: 'Empresas' },
+              { key: 'añadirEmpresa', label: 'Añadir empresa' }, // NUEVA OPCIÓN
             ].map(({ key, label }) => (
               <li key={key} className="usuario-menu__item" style={{ marginBottom: '10px' }}>
                 <button
@@ -66,21 +67,12 @@ function AdminMenu() {
           backgroundColor: 'white',
         }}
       >
-        {tab === 'usuarios' && (
-          <div>
-            <Personas/>
-          </div>
-        )}
-        {tab === 'añadir' && (
-          <div>
-            <NuevoUAdmin/>
-          </div>
-        )}
-        {tab === 'solicitudes' && (
-          <Solicitudes/>
-        )}
-        {tab === 'empresas' && (
-          <Empresas/>
+        {tab === 'usuarios' && <Personas />}
+        {tab === 'añadir' && <NuevoUAdmin />}
+        {tab === 'solicitudes' && <Solicitudes />}
+        {tab === 'empresas' && <Empresas />}
+        {tab === 'añadirEmpresa' && (
+          <EmpresaNuevo/>
         )}
       </main>
     </div>

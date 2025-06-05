@@ -67,6 +67,9 @@ Route::post('/usuario/registrar_empresa', [CuentaController::class, 'registrarEm
 
 Route::post('/admin/aprobar-representante', [AdminController::class, 'aprobarRepresentante']);
 
+Route::post('/admin/empresa/anadir', [AdminController::class, 'anadirEmpresa']);
+
+
 
 Route::get('/admin/empresas', [AdminController::class, 'listarEmpresasConRepresentantes']);
 
@@ -80,3 +83,5 @@ Route::get('/', function () {
 
 //para subir archivos
 Route::post('/subir-curriculum', [AuthController::class, 'subirCurriculum']);
+
+

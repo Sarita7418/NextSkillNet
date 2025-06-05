@@ -8,6 +8,45 @@ use Illuminate\Support\Facades\DB;
 class AdminController extends Controller
 {
 
+    //Añadir empresa
+    public function anadirEmpresa(\Illuminate\Http\Request $request)
+{
+    $nombre = $request->input('nombre');
+    $id_area = $request->input('id_area');
+    $id_ciudad = $request->input('id_ciudad');
+
+    // Validación simple
+    if (!$nombre || !$id_area || !$id_ciudad) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Faltan datos obligatorios'
+        ], 400);
+    }
+
+    // Verifica que no exista otra empresa con el mismo nombre
+    $existe = \DB::table('empresa')->where('nombre', $nombre)->exists();
+    if ($existe) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Ya existe una empresa con ese nombre'
+        ], 409);
+    }
+
+    // Insertar en la tabla empresa
+    $id = \DB::table('empresa')->insertGetId([
+        'nombre'    => $nombre,
+        'id_area'   => $id_area,
+        'id_ciudad' => $id_ciudad,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Empresa registrada correctamente',
+        'id_empresa' => $id
+    ]);
+}
+
+
     //Listar Empresas
     public function listarEmpresasConRepresentantes()
 {
