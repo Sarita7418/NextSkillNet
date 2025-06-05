@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
+interface ResumenProps {
+  userId: string;
+}
+
 // Subdominios para género (idPadre=1)
 const subdominiosGenero = [
   { id: 1, descripcion: 'masculino' },
@@ -12,7 +16,7 @@ const estadosLaborales = [
   { id: 1, descripcion: 'Empleado' },
 ];
 
-function Resumen() {
+const Resumen: React.FC<ResumenProps> = ({ userId }) => {
   const [usuario, setUsuario] = useState<any>(null);
   const [formData, setFormData] = useState({
     nombre: '',
@@ -24,25 +28,53 @@ function Resumen() {
   });
   const [loading, setLoading] = useState(false);
 
+  // Al montarse o cuando cambie userId, hacemos fetch al endpoint /usuario/completo/{userId}
   useEffect(() => {
-    const u = localStorage.getItem('usuario');
-    if (u) {
-      const usuarioObj = JSON.parse(u);
-      setUsuario(usuarioObj);
-      setFormData({
-        nombre: usuarioObj.nombre || '',
-        apellido: usuarioObj.apellido || '',
-        correo: usuarioObj.correos && usuarioObj.correos.length > 0 ? usuarioObj.correos[0] : '',
-        fecha_nacimiento: usuarioObj.fecha_nacimiento ? usuarioObj.fecha_nacimiento.split('T')[0] : '',
-        genero: usuarioObj.id_genero ? usuarioObj.id_genero.toString() : '',
-        estado_laboral: usuarioObj.estado_empleado !== undefined ? usuarioObj.estado_empleado.toString() : '',
-      });
-    }
-  }, []);
+    if (!userId) return;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setLoading(true);
+    fetch(`http://127.0.0.1:8000/usuario/completo/${userId}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Respuesta no OK');
+        return res.json();
+      })
+      .then((data: any) => {
+        // data viene plano, campo "correo" ya es el primer correo o null
+        setUsuario(data);
+
+        // Convertir fecha a formato yyyy-MM-dd para el input[type=date]
+        // (asumimos que data.fecha_nacimiento viene como "YYYY-MM-DD HH:MM:SS.000")
+        let fechaFormateada = '';
+        if (data.fecha_nacimiento) {
+          const raw = data.fecha_nacimiento.split(' ')[0]; // "YYYY-MM-DD"
+          fechaFormateada = raw;
+        }
+
+        setFormData({
+          nombre: data.nombre || '',
+          apellido: data.apellido || '',
+          correo: data.correo || '',
+          fecha_nacimiento: fechaFormateada,
+          genero: data.id_genero ? data.id_genero.toString() : '',
+          estado_laboral:
+            data.estado_empleado !== undefined
+              ? data.estado_empleado.toString()
+              : '',
+        });
+      })
+      .catch(err => {
+        console.error('Error al obtener perfil completo:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [userId]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,7 +87,7 @@ function Resumen() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id_usuario: usuario.id_usuario,
+          id_usuario: userId,
           nombre: formData.nombre,
           apellido: formData.apellido,
           correo: formData.correo,
@@ -69,6 +101,7 @@ function Resumen() {
 
       if (res.ok) {
         alert('Datos actualizados correctamente');
+        // Actualizamos localmente el estado "usuario" y formData
         const usuarioActualizado = {
           ...usuario,
           nombre: formData.nombre,
@@ -76,9 +109,8 @@ function Resumen() {
           fecha_nacimiento: formData.fecha_nacimiento,
           id_genero: parseInt(formData.genero, 10),
           estado_empleado: parseInt(formData.estado_laboral, 10),
-          correos: [formData.correo],
+          correo: formData.correo,
         };
-        localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
         setUsuario(usuarioActualizado);
       } else {
         alert(`Error al actualizar: ${data.message || 'Error desconocido'}`);
@@ -250,7 +282,7 @@ function Resumen() {
             }}
           >
             <option value="">Seleccione un género</option>
-            {subdominiosGenero.map((g) => (
+            {subdominiosGenero.map(g => (
               <option key={g.id} value={g.id}>
                 {g.descripcion}
               </option>
@@ -279,7 +311,7 @@ function Resumen() {
             }}
           >
             <option value="">Seleccione estado</option>
-            {estadosLaborales.map((e) => (
+            {estadosLaborales.map(e => (
               <option key={e.id} value={e.id}>
                 {e.descripcion}
               </option>
@@ -303,10 +335,10 @@ function Resumen() {
             marginTop: 10,
             transition: 'background-color 0.3s ease',
           }}
-          onMouseEnter={(e) => {
+          onMouseEnter={e => {
             if (!loading) e.currentTarget.style.backgroundColor = '#1e40af';
           }}
-          onMouseLeave={(e) => {
+          onMouseLeave={e => {
             if (!loading) e.currentTarget.style.backgroundColor = '#2563eb';
           }}
         >
@@ -315,6 +347,6 @@ function Resumen() {
       </form>
     </div>
   );
-}
+};
 
 export default Resumen;

@@ -75,6 +75,48 @@ class CuentaController extends Controller
     }
 }
 
+//Registrar empresa (sin rol, solo persona y empresa)
+public function registrarEmpresa(Request $request)
+{
+    $request->validate([
+        'id_persona' => 'required|integer',
+        'nombre_empresa' => 'required|string',
+        'id_area' => 'required|integer',
+        'id_ciudad' => 'required|integer',
+    ]);
+
+    // Buscar la persona asociada al usuario
+    $id_persona = DB::table('usuarios')->where('id_usuario', $request->id_usuario)->value('id_persona');
+
+    if (!$id_persona) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    // Insertar la empresa
+    $id_empresa = DB::table('empresa')->insertGetId([
+        'nombre' => $request->nombre_empresa,
+        'id_area' => $request->id_area,
+        'id_ciudad' => $request->id_ciudad,
+    ]);
+
+    if (!$id_empresa) {
+        return response()->json(['message' => 'Error al crear la empresa'], 500);
+    }
+
+    // Relacionar persona con empresa (no se toca el rol)
+    $inserted = DB::table('representante_empresa')->insert([
+        'id_persona' => $id_persona,
+        'id_empresa' => $id_empresa,
+    ]);
+
+    if ($inserted) {
+        return response()->json(['message' => 'Empresa registrada correctamente', 'id_empresa' => $id_empresa]);
+    } else {
+        return response()->json(['message' => 'Error al registrar representante de empresa'], 500);
+    }
+}
+
+
 
     public function actualizarContrasena(Request $request)
     {

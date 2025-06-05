@@ -77,12 +77,12 @@
   flex-direction: column;
   text-align: left;
   font-size: 0.85rem;
-  color: #333;
+  color: white;
 }
 
 .rol-text {
   font-size: 0.75rem;
-  color: #666;
+  color: whitesmoke;
 }
 
 /* Responsive móvil: mantén tus media queries existentes */

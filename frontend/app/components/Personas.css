@@ -1,67 +1,116 @@
+/* frontend/app/components/Personas.css */
+
+/* Contenedor general */
 .personas-container {
-  padding: 30px;
-  background-color: #f8f9fb;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 0 20px;
+  font-family: Arial, sans-serif;
 }
 
 .titulo {
-  text-align: center;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #143D8D;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  color: #143D8D; /* Azul principal */
+  text-align: center;
 }
 
 .usuarios-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
 }
 
+/* Tarjeta de cada usuario */
 .usuario-card {
-  background-color: #fff;
+  background-color: #f9fafb; /* Gris muy claro */
   border: 1px solid #ddd;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(20, 61, 141, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .usuario-card h3 {
-  margin: 0 0 10px;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
   color: #143D8D;
 }
 
 .usuario-card p {
-  margin: 5px 0;
+  margin: 4px 0;
+  font-size: 0.95rem;
   color: #333;
 }
 
 .acciones {
-  margin-top: 10px;
+  margin-top: 12px;
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
-.btn-editar,
-.btn-toggle {
+/* Botones dentro de cada tarjeta */
+.btn-editar {
   flex: 1;
-  padding: 8px 10px;
+  padding: 8px;
+  background-color: #143D8D; /* Azul */
+  color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.btn-editar {
-  background-color: #143D8D;
-  color: white;
+.btn-editar:hover {
+  background-color: #0f326a; /* Azul más oscuro */
 }
 
 .btn-toggle {
-  background-color: #ccc;
-  color: #333;
+  flex: 1;
+  padding: 8px;
+  background-color: #e53e3e; /* Rojo para cambiar estado */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .btn-toggle:hover {
-  background-color: #999;
+  background-color: #b32b2b;
+}
+
+/* Mensajes de estado */
+.cargando,
+.error {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 40px;
+  color: #333;
+}
+
+/* Estilos para la sección de edición */
+.resumen-wrapper {
+  margin-bottom: 16px;
+}
+
+/* Botón “Cancelar” (color plomo) */
+.btn-cancelar {
+  display: block;
+  margin: 0 auto 20px;
+  padding: 10px 20px;
+  background-color: #999; /* Gris oscuro (plomo) */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-cancelar:hover {
+  background-color: #777;
 }

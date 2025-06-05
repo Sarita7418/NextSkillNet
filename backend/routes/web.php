@@ -54,6 +54,19 @@ Route::get('/convocatorias', [AuthController::class, 'listarConvocatorias']);
 // routes/api.php
 Route::get('/admin/usuarios', [AdminController::class, 'listarUsuarios']);
 
+// Endpoint para obtener todos los datos de una persona (usuario + persona + correos)
+Route::get('/usuario/completo/{id}', [AuthController::class, 'perfil']);
+
+// Nueva ruta para eliminar un usuario completo (persona + correos + cuenta)
+Route::delete('/admin/eliminar/{id}', [AdminController::class, 'eliminarUsuario']);
+
+// Si está en AdminController
+Route::post('/admin/anadir', [AuthController::class, 'anadirAdmin']);
+
+Route::post('/usuario/registrar_empresa', [CuentaController::class, 'registrarEmpresa']);
+
+
+
 
 
 Route::get('/', function () {

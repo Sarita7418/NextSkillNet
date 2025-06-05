@@ -1,22 +1,29 @@
-"useclient";
-import EnviarArchivo from './organism/EnviarArchivo';
+"use client";
+
 import React, { useState } from 'react';
-import './UsuarioMenu.css';
+import EnviarArchivo from './organism/EnviarArchivo';
 import Resumen from './Resumen';
 import Habilidades from './Habilidades';
 import Cuenta from './Cuenta';
 import ExperienciaLaboral from './organism/ExperianciaLaboral';
 import Educacion from './organism/Educacion';
-import SkillsSection from './organism/SkillsSection';
 
-function UsuarioMenu() {
-  const [tab, setTab] = useState<'resumen' | 'documentos' | 'experiencia' | 'educacion' | 'habilidades' | 'cuenta'>('resumen');
+interface UsuarioMenuProps {
+  userId: string;
+}
+
+const UsuarioMenu: React.FC<UsuarioMenuProps> = ({ userId }) => {
+  const [tab, setTab] = useState<
+    'resumen' | 'documentos' | 'experiencia' | 'educacion' | 'habilidades' | 'cuenta'
+  >('resumen');
 
   return (
     <div className="usuario-menu-container" style={{ display: 'flex', height: '100vh' }}>
       {/* Menú lateral */}
-      <aside className="usuario-menu" style={{ width: '220px', borderRight: '1px solid #ddd', padding: '20px', boxSizing: 'border-box' }}>
-
+      <aside
+        className="usuario-menu"
+        style={{ width: '220px', borderRight: '1px solid #ddd', padding: '20px', boxSizing: 'border-box' }}
+      >
         <nav className="usuario-menu__nav">
           <ul className="usuario-menu__list" style={{ listStyle: 'none', padding: 0 }}>
             {[
@@ -63,9 +70,10 @@ function UsuarioMenu() {
       >
         {tab === 'resumen' && (
           <div>
-            <Resumen />
+            <Resumen userId={userId} />
           </div>
         )}
+
         {tab === 'documentos' && (
           <EnviarArchivo />
         )}
@@ -73,22 +81,25 @@ function UsuarioMenu() {
         {tab === 'experiencia' && (
           <ExperienciaLaboral />
         )}
+
         {tab === 'educacion' && (
           <Educacion />
         )}
+
         {tab === 'habilidades' && (
           <div>
-            <Habilidades/>
+            <Habilidades />
           </div>
         )}
+
         {tab === 'cuenta' && (
           <div>
-            <Cuenta/>
+            <Cuenta />
           </div>
         )}
       </main>
     </div>
   );
-}
+};
 
 export default UsuarioMenu;
