@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -28,15 +28,16 @@ const Header: React.FC = () => {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [rol, setRol] = useState('');
+  const [rolId, setRolId] = useState<number | null>(null); // Guardamos también el id_rol
 
   const convertirRol = (rolId: number) => {
     switch (rolId) {
       case 1:
         return 'Usuario';
       case 2:
-        return 'Administrador';            // <-- Aquí mapeamos 2 → Administrador
+        return 'Administrador';
       case 3:
-        return 'Representante';            // <-- Y 3 → Representante
+        return 'Representante';
       case 4:
         return 'Aspirante a Representante';
       default:
@@ -60,6 +61,7 @@ const Header: React.FC = () => {
         setNombre(data.nombre);
         setApellido(data.apellido);
         setRol(convertirRol(Number(data.id_rol)));
+        setRolId(Number(data.id_rol)); // <-- Guardamos el id
       })
       .catch(err => {
         console.error('Error al obtener perfil completo:', err);
@@ -105,12 +107,15 @@ const Header: React.FC = () => {
                 <span>Candidatos</span>
               </a>
             </li>
-            <li>
-              <a href="/Administracion">
-                <FaCogs className="icon" />
-                <span>Administración</span>
-              </a>
-            </li>
+            {/* Mostrar solo si es admin */}
+            {rolId === 2 && (
+              <li>
+                <a href="/Administracion">
+                  <FaCogs className="icon" />
+                  <span>Administración</span>
+                </a>
+              </li>
+            )}
             <li>
               <a href="/cont">
                 <FaUsers className="icon" />

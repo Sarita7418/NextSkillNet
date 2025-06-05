@@ -182,7 +182,6 @@ const RegistroFormularioA: React.FC = () => {
       }
 
       alert('Usuario registrado con éxito');
-      router.push('/Login');
     } catch (err) {
       setError('Error de conexión con el servidor');
       console.error(err);

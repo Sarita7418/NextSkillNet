@@ -92,7 +92,7 @@ const HeaderMain: React.FC = () => {
 
         {/* Botones de registro e inicio de sesión */}
         <div className="auth-buttons">
-          <a href="/frame197" className="btn-register">Registrarse</a>
+          <a href="/nuevoUsuario" className="btn-register">Registrarse</a>
           <a href="/Login" className="btn-login">Iniciar Sesión</a>
         </div>
       </div>
