@@ -68,7 +68,9 @@ Route::post('/usuario/registrar_empresa', [CuentaController::class, 'registrarEm
 Route::post('/admin/aprobar-representante', [AdminController::class, 'aprobarRepresentante']);
 
 
+Route::get('/admin/empresas', [AdminController::class, 'listarEmpresasConRepresentantes']);
 
+Route::post('/admin/empresa/actualizar', [AdminController::class, 'actualizarEmpresa']);
 
 
 

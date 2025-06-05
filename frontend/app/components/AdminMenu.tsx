@@ -4,9 +4,11 @@ import './AdminMenu.css';
 import Personas from './Personas';
 import NuevoUAdmin from './NuevoUAdmin';
 import Solicitudes from './Solicitudes';
+import Empresas from './Empresas';
+import EmpresasForm from './EmpresasForm';
 
 function AdminMenu() {
-  const [tab, setTab] = useState<'usuarios' | 'añadir' | 'solicitudes'>('usuarios');
+  const [tab, setTab] = useState<'usuarios' | 'añadir' | 'solicitudes' | 'empresas'>('usuarios');
 
   return (
     <div className="usuario-menu-container" style={{ display: 'flex', height: '100vh' }}>
@@ -27,6 +29,7 @@ function AdminMenu() {
               { key: 'usuarios', label: 'Usuarios' },
               { key: 'añadir', label: 'Añadir usuario' },
               { key: 'solicitudes', label: 'Solicitudes representantes' },
+              { key: 'empresas', label: 'Empresas' }, // NUEVA OPCIÓN
             ].map(({ key, label }) => (
               <li key={key} className="usuario-menu__item" style={{ marginBottom: '10px' }}>
                 <button
@@ -75,6 +78,9 @@ function AdminMenu() {
         )}
         {tab === 'solicitudes' && (
           <Solicitudes/>
+        )}
+        {tab === 'empresas' && (
+          <Empresas/>
         )}
       </main>
     </div>
