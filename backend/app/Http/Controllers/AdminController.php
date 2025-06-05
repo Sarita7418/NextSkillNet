@@ -72,4 +72,37 @@ class AdminController extends Controller
         }
     }
 
+    //Aprobacion
+    public function aprobarRepresentante(Request $request)
+{
+    $request->validate([
+        'id_usuario' => 'required|integer',
+        'aprobacion' => 'required|in:0,1'
+    ]);
+
+    $id_usuario = $request->input('id_usuario');
+    $aprobacion = $request->input('aprobacion');
+
+    // Si aprobacion es 1, ponemos el rol 3 (Representante Empresa)
+    // Si es 0, ponemos el rol 1 (Postulante)
+    $nuevo_rol = $aprobacion == 1 ? 3 : 1;
+
+    $updated = DB::table('usuarios')
+        ->where('id_usuario', $id_usuario)
+        ->update(['id_rol' => $nuevo_rol]);
+
+    if ($updated) {
+        return response()->json([
+            'message' => 'Rol actualizado correctamente',
+            'id_usuario' => $id_usuario,
+            'nuevo_rol' => $nuevo_rol
+        ]);
+    } else {
+        return response()->json([
+            'message' => 'No se pudo actualizar el rol o el usuario no existe'
+        ], 404);
+    }
+}
+
+
 }

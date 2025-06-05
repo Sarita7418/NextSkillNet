@@ -20,7 +20,7 @@ const mostrarRol = (rol: string) => {
       return 'Postulante';
     case 'administrador':
       return 'Administrador';
-    case 'representante':
+    case 'representante empresa':
       return 'Representante';
     case 'aspirante_representante':
       return 'Aspirante a Representante';

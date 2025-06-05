@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './AdminMenu.css';
 import Personas from './Personas';
 import NuevoUAdmin from './NuevoUAdmin';
+import Solicitudes from './Solicitudes';
 
 function AdminMenu() {
   const [tab, setTab] = useState<'usuarios' | 'añadir' | 'solicitudes'>('usuarios');
@@ -73,7 +74,7 @@ function AdminMenu() {
           </div>
         )}
         {tab === 'solicitudes' && (
-          <h2>En proceso</h2>
+          <Solicitudes/>
         )}
       </main>
     </div>

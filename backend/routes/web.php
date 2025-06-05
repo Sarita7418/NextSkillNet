@@ -65,6 +65,9 @@ Route::post('/admin/anadir', [AuthController::class, 'anadirAdmin']);
 
 Route::post('/usuario/registrar_empresa', [CuentaController::class, 'registrarEmpresa']);
 
+Route::post('/admin/aprobar-representante', [AdminController::class, 'aprobarRepresentante']);
+
+
 
 
 
