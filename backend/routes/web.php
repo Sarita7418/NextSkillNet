@@ -7,6 +7,7 @@ use App\Http\Controllers\IdiomaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CandidatoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,6 +40,8 @@ Route::post('/usuario/habilidades', [UsuarioController::class, 'guardarHabilidad
 // Guardar idiomas de un usuario
 Route::post('/usuario/idiomas', [UsuarioController::class, 'guardarIdiomas']);
 
+// Nueva ruta para listar candidatos
+Route::get('/candidatos', [CandidatoController::class, 'listar']);
 
 
 Route::get('/subdominios/areas', [CuentaController::class, 'getAreas']);
