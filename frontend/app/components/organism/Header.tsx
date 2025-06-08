@@ -119,9 +119,9 @@ const Header: React.FC = () => {
               </li>
             )}
             <li>
-              <a href="/cont">
+              <a href="/Chats">
                 <FaUsers className="icon" />
-                <span>Contactos</span>
+                <span>Chats</span>
               </a>
             </li>
           </ul>

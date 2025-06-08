@@ -9,7 +9,7 @@ class AdminController extends Controller
 {
 
     //Añadir empresa
-    public function anadirEmpresa(\Illuminate\Http\Request $request)
+    public function anadirEmpresa($request)
 {
     $nombre = $request->input('nombre');
     $id_area = $request->input('id_area');

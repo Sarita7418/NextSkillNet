@@ -131,8 +131,6 @@ class AuthController extends Controller
         }
     }
 
-
-
     //Metodo del Registro
 
     public function register(Request $request)

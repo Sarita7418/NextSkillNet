@@ -7,6 +7,7 @@ use App\Http\Controllers\IdiomaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ChatController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -74,6 +75,15 @@ Route::post('/admin/empresa/anadir', [AdminController::class, 'anadirEmpresa']);
 Route::get('/admin/empresas', [AdminController::class, 'listarEmpresasConRepresentantes']);
 
 Route::post('/admin/empresa/actualizar', [AdminController::class, 'actualizarEmpresa']);
+
+
+Route::get('/chats/listar', [ChatController::class, 'listarChats']);
+
+Route::get('/chats/{id_chat}/mensajes', [ChatController::class, 'mensajesPorChat']);
+
+Route::post('/chats/mensajes/agregar', [ChatController::class, 'agregarMensaje']);
+
+
 
 
 
