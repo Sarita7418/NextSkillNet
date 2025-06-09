@@ -12,7 +12,7 @@ class CandidatoController extends Controller
      * MÉTODO PRIVADO para obtener los perfiles de candidatos.
      * Esta es ahora nuestra ÚNICA fuente de datos.
      */
-    private function obtenerPerfilesDeCandidatos()
+    public function obtenerPerfilesDeCandidatos()
     {
         // Esta es la consulta SQL que ya habíamos perfeccionado
         $candidatos = DB::select("
@@ -167,4 +167,97 @@ class CandidatoController extends Controller
         ], 500);
     }
 }
+private function cosineSimilarity(array $vec1, array $vec2): float
+    {
+        $dotProduct = 0.0;
+        $mag1 = 0.0;
+        $mag2 = 0.0;
+        foreach ($vec1 as $key => $value) {
+            $dotProduct += $value * ($vec2[$key] ?? 0);
+            $mag1 += $value * $value;
+        }
+        $mag2 = count($vec2);
+        if ($mag1 == 0 || $mag2 == 0) {
+            return 0.0;
+        }
+        return $dotProduct / (sqrt($mag1) * sqrt($mag2));
+    }
+
+    /**
+     * Nuevo método para obtener recomendaciones basadas en O*NET.
+     */
+    public function recomendarPorCargo(Request $request)
+    {
+        $request->validate(['cargo' => 'required|string|max:100']);
+        $cargoBuscado = $request->input('cargo');
+
+        try {
+            $datasetPath = storage_path('app/onet_skills.csv');
+            if (!file_exists($datasetPath)) {
+                return response()->json(['error' => 'Dataset O*NET no encontrado.'], 500);
+            }
+
+            // 1. Crear el "Perfil Ideal" desde el dataset O*NET
+            $perfilIdeal = [];
+            $handle = fopen($datasetPath, "r");
+            $header = fgetcsv($handle);
+            $titleIndex = array_search('Title', $header);
+            $elementNameIndex = array_search('Element Name', $header);
+            $dataValueIndex = array_search('Data Value', $header);
+
+            if ($titleIndex === false || $elementNameIndex === false || $dataValueIndex === false) {
+                return response()->json(['error' => 'Las columnas requeridas no se encontraron en el CSV.'], 500);
+            }
+
+            while (($data = fgetcsv($handle)) !== FALSE) {
+                if (count($data) > max($titleIndex, $elementNameIndex, $dataValueIndex)) {
+                    if (strtolower($data[$titleIndex]) == strtolower($cargoBuscado)) {
+                        $skillName = $data[$elementNameIndex];
+                        $skillValue = floatval(str_replace(',', '.', $data[$dataValueIndex]));
+                        $perfilIdeal[$skillName] = $skillValue;
+                    }
+                }
+            }
+            fclose($handle);
+
+            if (empty($perfilIdeal)) {
+                return response()->json(['message' => "No se encontró el cargo '{$cargoBuscado}' en nuestro dataset de perfiles."], 404);
+            }
+
+            // 2. Obtener NUESTROS candidatos
+            $nuestrosCandidatos = $this->obtenerPerfilesDeCandidatos();
+            $resultadosSimilitud = [];
+
+            // 3. Comparar cada candidato con el Perfil Ideal
+            foreach ($nuestrosCandidatos as $candidato) {
+                $vectorCandidato = [];
+                if (!empty($candidato->skills)) {
+                    foreach ($candidato->skills as $skill) {
+                        $vectorCandidato[$skill] = 1;
+                    }
+                }
+                
+                $similitud = $this->cosineSimilarity($perfilIdeal, $vectorCandidato);
+                
+                if ($similitud > 0) {
+                    $resultadosSimilitud[] = [
+                        'candidato' => $candidato,
+                        'score' => $similitud
+                    ];
+                }
+            }
+
+            // 4. Ordenar y devolver los 5 mejores
+            usort($resultadosSimilitud, fn($a, $b) => $b['score'] <=> $a['score']);
+            $topRecomendaciones = array_slice($resultadosSimilitud, 0, 5);
+
+            return response()->json([
+                'message' => 'Recomendación generada con O*NET y Similitud de Coseno.',
+                'recomendaciones' => $topRecomendaciones
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Ocurrió un error al procesar la recomendación.', 'mensaje' => $e->getMessage(), 'linea' => $e->getLine()], 500);
+        }
+    }
 }
