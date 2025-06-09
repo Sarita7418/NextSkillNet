@@ -1,0 +1,35 @@
+/* app/components/organism/OnetSearch.css */
+.onet-search-section {
+  background-color: #f8fafc; /* Un gris muy claro */
+  border: 1px solid #e2e8f0;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  margin-top: var(--spacing-3xl);
+}
+.onet-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: var(--spacing-sm);
+}
+.onet-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #4a5568;
+  max-width: 600px;
+  margin: 0 auto var(--spacing-2xl) auto;
+}
+.onet-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  max-width: 600px;
+  margin: 0 auto;
+}
+.onet-search-button {
+  padding: 12px 24px; /* Un poco más grande */
+  font-size: 1rem;
+  background: var(--gradient-blue);
+  flex-shrink: 0; /* Evita que el botón se encoja */
+}

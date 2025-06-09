@@ -12,6 +12,9 @@
   width: 100%;
   max-width: 100%;
   min-width: 320px;
+  display: flex;              /* 1. Habilita Flexbox para controlar el espacio interior */
+  flex-direction: column;     /* 2. Organiza los elementos internos verticalmente */
+  min-height: 650px;
 }
 
 /* =============================================================================

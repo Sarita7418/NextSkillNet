@@ -1,6 +1,6 @@
-// components/organism/SearchFilters.tsx
 'use client';
-import React, { useState } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import SearchInput from '../molecules/SearchInput';
 import FilterSelect from '../molecules/FilterSelect';
 import RangeSlider from '../molecules/RangeSlider';
@@ -28,6 +28,13 @@ interface SearchFiltersProps {
   loading?: boolean;
 }
 
+interface OpcionesFiltro {
+  posiciones: { value: string; label: string }[];
+  ubicaciones: { value: string; label: string }[];
+  habilidades: string[];
+  disponibilidades: { value: string; label: string }[];
+}
+
 const SearchFilters: React.FC<SearchFiltersProps> = ({
   filters,
   onFiltersChange,
@@ -35,49 +42,62 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   loading = false,
 }) => {
   const [localFilters, setLocalFilters] = useState<FilterOptions>(filters);
+  const [isMounted, setIsMounted] = useState(false);
+  const [opciones, setOpciones] = useState<OpcionesFiltro>({
+    posiciones: [],
+    ubicaciones: [],
+    habilidades: [],
+    disponibilidades: [],
+  });
+  
+  // Ref para guardar el estado anterior de los filtros y optimizar el debounce
+  const prevFiltersRef = useRef(filters);
 
-  const positionOptions = [
-    { value: '', label: 'Todas las posiciones' },
-    { value: 'frontend', label: 'Desarrollador Frontend' },
-    { value: 'backend', label: 'Desarrollador Backend' },
-    { value: 'fullstack', label: 'Desarrollador Fullstack' },
-    { value: 'designer', label: 'UI/UX Designer' },
-    { value: 'ux researcher', label: 'UX Researcher' },
-    { value: 'devops', label: 'DevOps Engineer' },
-    { value: 'qa', label: 'QA Engineer' },
-    { value: 'mobile', label: 'Mobile Developer' },
-    { value: 'data scientist', label: 'Data Scientist' },
-    { value: 'ai/ml engineer', label: 'AI/ML Engineer' },
-    { value: 'product manager', label: 'Product Manager' },
-    { value: 'scrum master', label: 'Scrum Master' },
-    { value: 'cybersecurity', label: 'Cybersecurity Specialist' },
-    { value: 'business analyst', label: 'Business Analyst' },
-    { value: 'database administrator', label: 'Database Administrator' },
-    { value: 'cloud architect', label: 'Cloud Architect' },
-    { value: 'game developer', label: 'Game Developer' },
-    { value: 'blockchain developer', label: 'Blockchain Developer' },
-    { value: 'technical writer', label: 'Technical Writer' },
-    { value: 'network engineer', label: 'Network Engineer' },
-    { value: 'seo specialist', label: 'SEO Specialist' },
-    { value: 'digital marketing', label: 'Digital Marketing Specialist' },
-    { value: 'systems administrator', label: 'Systems Administrator' }
-  ];
+  // Carga las opciones dinámicas de la API al montar
+  useEffect(() => {
+    const fetchOpciones = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/filtros/opciones');
+        if (!response.ok) throw new Error('Error al cargar opciones');
+        const data = await response.json();
+        setOpciones({
+          posiciones: [{ value: '', label: 'Todas las posiciones' }, ...data.posiciones],
+          ubicaciones: [{ value: '', label: 'Todas las ubicaciones' }, ...data.ubicaciones],
+          habilidades: data.habilidades,
+          disponibilidades: [{ value: '', label: 'Cualquier disponibilidad' }, ...data.disponibilidades],
+        });
+      } catch (error) {
+        console.error("No se pudieron cargar las opciones de filtro:", error);
+      }
+    };
+    fetchOpciones();
+  }, []);
 
-  const locationOptions = [
-    { value: '', label: 'Todas las ubicaciones' },
-    { value: 'la paz', label: 'La Paz' },
-    { value: 'cochabamba', label: 'Cochabamba' },
-    { value: 'santa cruz', label: 'Santa Cruz' },
-    { value: 'sucre', label: 'Sucre' },
-    { value: 'remoto', label: 'Remoto' }
-  ];
+  // Sincroniza el estado local si los filtros del padre cambian
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
+  
+  // Efecto "Debounce" que ignora los cambios del campo de texto
+  useEffect(() => {
+    const { searchTerm: localSearch, ...localRest } = localFilters;
+    const { searchTerm: globalSearch, ...globalRest } = prevFiltersRef.current;
 
-  const availabilityOptions = [
-    { value: '', label: 'Cualquier disponibilidad' },
-    { value: 'immediate', label: 'Inmediata' },
-    { value: 'two-weeks', label: 'Dos semanas' },
-    { value: 'one-month', label: 'Un mes' }
-  ];
+    if (JSON.stringify(localRest) === JSON.stringify(globalRest)) {
+      return; // No activa el debounce si solo cambió el texto de búsqueda
+    }
+    
+    const handler = setTimeout(() => {
+      onFiltersChange(localFilters);
+      prevFiltersRef.current = localFilters;
+    }, 500); 
+
+    return () => clearTimeout(handler);
+  }, [localFilters, onFiltersChange]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const educationOptions = [
     { value: '', label: 'Cualquier educación' },
@@ -88,79 +108,35 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     { value: 'mba', label: 'MBA' },
     { value: 'especialización', label: 'Especialización' },
     { value: 'certificación', label: 'Certificación' },
-    { value: 'diseño', label: 'Diseño' },
-    { value: 'psicología', label: 'Psicología' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'comunicación', label: 'Comunicación Social' }
   ];
 
-  const availableSkills = [
-    'React', 'Vue.js', 'Angular', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'SASS',
-    'Node.js', 'Express', 'Python', 'Django', 'FastAPI', 'Java', 'Spring Boot',
-    'C#', '.NET', 'PHP', 'Laravel', 'Ruby', 'Go', 'Rust', 'Solidity',
-    'PostgreSQL', 'MySQL', 'MongoDB', 'Redis', 'Oracle', 'SQLite',
-    'Docker', 'Kubernetes', 'Jenkins', 'CI/CD', 'Terraform',
-    'AWS', 'Azure', 'Google Cloud', 'Microservices', 'Serverless',
-    'React Native', 'Flutter', 'iOS', 'Android', 'Unity', 'Firebase',
-    'TensorFlow', 'PyTorch', 'Machine Learning', 'Deep Learning', 'Computer Vision', 'NLP',
-    'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Blender', 'Prototyping',
-    'Git', 'GitHub', 'GitLab', 'Jira', 'Confluence',
-    'Scrum', 'Agile', 'Kanban', 'Team Leadership', 'Coaching',
-    'SEO', 'SEM', 'Google Analytics', 'Social Media', 'Content Marketing',
-    'Selenium', 'JUnit', 'TestNG', 'Usability Testing',
-    'Linux', 'Windows Server', 'VMware', 'Networking', 'Monitoring',
-    'Ethical Hacking', 'CISSP', 'Network Security', 'Penetration Testing',
-    'Power BI', 'Excel', 'SQL', 'R', 'Pandas', 'Analytics',
-    'Web3', 'Ethereum', 'Smart Contracts', 'DeFi', 'Blockchain',
-    'Cisco', 'CCNA', 'Routing', 'Switching', 'Kafka'
-  ];
-
-  const updateFilter = (key: keyof FilterOptions, value: any) => {
-    const newFilters = { ...localFilters, [key]: value };
-    setLocalFilters(newFilters);
-    onFiltersChange(newFilters);
+  // AÑADIDO: Manejador para aplicar la búsqueda de texto con la tecla Enter
+  const handleSearchSubmit = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onFiltersChange(localFilters); // Aplica todos los filtros actuales inmediatamente
+      prevFiltersRef.current = localFilters;
+    }
   };
 
   const handleClearFilters = () => {
-    const emptyFilters: FilterOptions = {
-      searchTerm: '',
-      position: '',
-      minExperience: 0,
-      maxExperience: 20,
-      skills: [],
-      location: '',
-      minSalary: 0,
-      maxSalary: 100000,
-      availability: '',
-      education: ''
-    };
-    setLocalFilters(emptyFilters);
-    onClearFilters();
+    onClearFilters(); 
   };
-
+  
   const hasActiveFilters = Object.entries(localFilters).some(([key, value]) => {
     if (key === 'minExperience' && value !== 0) return true;
     if (key === 'maxExperience' && value !== 20) return true;
     if (key === 'minSalary' && value !== 0) return true;
     if (key === 'maxSalary' && value !== 100000) return true;
     if (Array.isArray(value)) return value.length > 0;
-    return value !== '';
+    return !!value;
   });
 
   return (
     <div className="search-filters">
       <div className="filters-header">
         <h3 className="filters-title">Filtros de búsqueda</h3>
-        {hasActiveFilters && (
-          <Button
-            variant="outline"
-            size="small"
-            onClick={handleClearFilters}
-            disabled={loading}
-          >
-            Limpiar
-          </Button>
-        )}
+        {hasActiveFilters && (<Button variant="outline" size="small" onClick={handleClearFilters} disabled={loading}>Limpiar</Button>)}
       </div>
 
       <div className="filters-content">
@@ -168,7 +144,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           <SearchInput
             placeholder="Buscar por nombre, email o posición..."
             value={localFilters.searchTerm}
-            onChange={(value) => updateFilter('searchTerm', value)}
+            onChange={(value) => setLocalFilters(prev => ({ ...prev, searchTerm: value }))}
+            onKeyDown={handleSearchSubmit} // <-- AÑADIDO
             disabled={loading}
           />
         </div>
@@ -176,20 +153,20 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         <div className="filter-group">
           <FilterSelect
             label="Posición"
-            options={positionOptions}
+            options={opciones.posiciones}
             value={localFilters.position}
-            onChange={(value) => updateFilter('position', value)}
-            disabled={loading}
+            onChange={(value) => setLocalFilters(prev => ({ ...prev, position: value }))}
+            disabled={loading || opciones.posiciones.length <= 1}
           />
         </div>
 
         <div className="filter-group">
           <FilterSelect
             label="Ubicación"
-            options={locationOptions}
+            options={opciones.ubicaciones}
             value={localFilters.location}
-            onChange={(value) => updateFilter('location', value)}
-            disabled={loading}
+            onChange={(value) => setLocalFilters(prev => ({ ...prev, location: value }))}
+            disabled={loading || opciones.ubicaciones.length <= 1}
           />
         </div>
 
@@ -200,10 +177,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             max={20}
             minValue={localFilters.minExperience}
             maxValue={localFilters.maxExperience}
-            onChange={(min, max) => {
-              updateFilter('minExperience', min);
-              updateFilter('maxExperience', max);
-            }}
+            onChange={(min, max) => setLocalFilters(prev => ({ ...prev, minExperience: min, maxExperience: max }))}
             disabled={loading}
             formatValue={(value) => `${value} año${value !== 1 ? 's' : ''}`}
           />
@@ -217,32 +191,32 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             step={1000}
             minValue={localFilters.minSalary}
             maxValue={localFilters.maxSalary}
-            onChange={(min, max) => {
-              updateFilter('minSalary', min);
-              updateFilter('maxSalary', max);
-            }}
+            onChange={(min, max) => setLocalFilters(prev => ({ ...prev, minSalary: min, maxSalary: max }))}
             disabled={loading}
-            formatValue={(value) => `Bs. ${value.toLocaleString()}`}
+            formatValue={(value) => {
+              if (!isMounted) { return `Bs. ${value}`; }
+              return `Bs. ${value.toLocaleString('es-BO')}`;
+            }}
           />
         </div>
 
         <div className="filter-group">
           <SkillsSelector
             label="Habilidades"
-            availableSkills={availableSkills}
+            availableSkills={opciones.habilidades}
             selectedSkills={localFilters.skills}
-            onChange={(skills) => updateFilter('skills', skills)}
-            disabled={loading}
+            onChange={(skills) => setLocalFilters(prev => ({ ...prev, skills: skills }))}
+            disabled={loading || opciones.habilidades.length === 0}
           />
         </div>
 
         <div className="filter-group">
           <FilterSelect
             label="Disponibilidad"
-            options={availabilityOptions}
+            options={opciones.disponibilidades}
             value={localFilters.availability}
-            onChange={(value) => updateFilter('availability', value)}
-            disabled={loading}
+            onChange={(value) => setLocalFilters(prev => ({ ...prev, availability: value }))}
+            disabled={loading || opciones.disponibilidades.length <= 1}
           />
         </div>
 
@@ -251,29 +225,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             label="Educación"
             options={educationOptions}
             value={localFilters.education}
-            onChange={(value) => updateFilter('education', value)}
+            onChange={(value) => setLocalFilters(prev => ({ ...prev, education: value }))}
             disabled={loading}
           />
         </div>
       </div>
-
-      {hasActiveFilters && (
-        <div className="active-filters">
-          <p className="active-filters-count">
-            {Object.values(localFilters).filter(v => 
-              (Array.isArray(v) && v.length > 0) || 
-              (typeof v === 'string' && v !== '') ||
-              (typeof v === 'number' && ((v !== 0 && v !== 100000) || (v !== 20 && v !== 0)))
-            ).length} filtro{Object.values(localFilters).filter(v => 
-              (Array.isArray(v) && v.length > 0) || 
-              (typeof v === 'string' && v !== '')
-            ).length !== 1 ? 's' : ''} activo{Object.values(localFilters).filter(v => 
-              (Array.isArray(v) && v.length > 0) || 
-              (typeof v === 'string' && v !== '')
-            ).length !== 1 ? 's' : ''}
-          </p>
-        </div>
-      )}
     </div>
   );
 };
