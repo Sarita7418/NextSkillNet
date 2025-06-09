@@ -101,6 +101,10 @@ Route::post('/candidatos/recomendacion-knn', [RecomendacionController::class, 'o
 
 Route::post('/candidatos/recomendacion-onet', [OnetController::class, 'obtenerRecomendacion']);
 
+Route::get('/entrevista/{id_chat}', [ChatController::class, 'obtenerEntrevista']);
+Route::post('/entrevista/{id_chat}', [ChatController::class, 'insertarEntrevista']);
+Route::put('/entrevista/{id_chat}', [ChatController::class, 'modificarEntrevista']);
+
 Route::get('/', function () {
     return view('welcome');
 });

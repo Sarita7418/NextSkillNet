@@ -118,12 +118,26 @@ const Header: React.FC = () => {
                 </a>
               </li>
             )}
-            <li>
+            {/* Mostrar solo si es representante o candidato*/}
+            {rolId === 1 && (
+              <li>
               <a href="/Chats">
                 <FaUsers className="icon" />
                 <span>Chats</span>
               </a>
             </li>
+            )}
+
+            {/* Mostrar solo si es representante o candidato*/}
+            {rolId === 3 && (
+              <li>
+              <a href="/Chats">
+                <FaUsers className="icon" />
+                <span>Chats</span>
+              </a>
+            </li>
+            )}
+
           </ul>
         </nav>
 

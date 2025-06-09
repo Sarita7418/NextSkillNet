@@ -123,7 +123,7 @@ const azul = "#143D8D";
 const containerStyle: React.CSSProperties = {
     width: '80vw',
     margin: '40px auto',
-
+    minHeight: '50vh',
 };
 
 const volverBtnStyle: React.CSSProperties = {

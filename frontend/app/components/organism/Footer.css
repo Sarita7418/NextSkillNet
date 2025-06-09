@@ -14,12 +14,15 @@
   padding: 0;
   margin-top: auto;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  /*Para que siempre este abajo, sticky*/
+  position: sticky;
 }
 
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px 40px 20px;
+  position: sticky;
 }
 
 .footer-main {
