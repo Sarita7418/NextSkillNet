@@ -21,6 +21,8 @@ use App\Http\Controllers\OnetController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+// En routes/web.php
+Route::post('/candidatos/recomendar-cargo', [App\Http\Controllers\CandidatoController::class, 'recomendarPorCargo']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/actualizar', [AuthController::class, 'actualizarDatos']);
