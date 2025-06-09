@@ -13,7 +13,7 @@ import { FaBriefcase } from "react-icons/fa";
 
 const Header: React.FC = () => {
   const handleClick = () => {
-    window.location.href = "/PerfilUsuario"; // Redirige a la página de Login
+    window.location.href = "/PerfilUsuario";
   };
 
   return (
@@ -27,7 +27,7 @@ const Header: React.FC = () => {
           />
         </div>
 
-        {/* Navegación con iconos encima del texto */}
+        {/* Navegación */}
         <nav className="nav">
           <ul>
             <li>
@@ -62,18 +62,17 @@ const Header: React.FC = () => {
             </li>
           </ul>
         </nav>
-
-        {/* Icono de perfil en círculo */}
-        <div className="profile-avatar-container">
-          <a href="/PerfilUsuario">
-            <img
-              src="/user-avatar.png"
-              alt="Perfil de usuario"
-              className="profile-avatar"
-            />
-          </a>
-        </div>
-
+      </div>
+      {/* Contenedor para la foto de perfil y las opciones */}
+      <div className="profile-section">
+        <a href="/PerfilUsuario" className="profile-link-expanded">
+          <img
+            src="/user-avatar.png"
+            alt="Perfil de usuario"
+            className="profile-avatar-expanded"
+          />
+          <div className="profile-options-expanded">Más opciones</div>
+        </a>
       </div>
     </header>
   );

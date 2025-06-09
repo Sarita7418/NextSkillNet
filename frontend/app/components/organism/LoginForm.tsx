@@ -1,76 +1,54 @@
+// src/components/pages/LoginForm.tsx
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './LoginForm.css';
 import bienvenida from '../../../public/image 389.svg';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const LoginForm: React.FC = () => {
   const [showPassword1, setShowPassword1] = useState(false);
-  const [showPassword2, setShowPassword2] = useState(false);
-
+  const [nombre, setNombre] = useState('');
   const [contraseña, setContraseña] = useState('');
-  const [confirmarContraseña, setConfirmarContraseña] = useState('');
-  const [registerData, setRegisterData] = useState<any>(null);
+  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    const storedData = localStorage.getItem('registerData');
-    if (storedData) {
-      setRegisterData(JSON.parse(storedData));
-    }
-  }, []);
+  const router = useRouter();
 
   const handleSubmit = async () => {
-    if (!registerData) {
-      alert('Datos de registro no encontrados. Por favor vuelva a registrarse.');
+    setError('');
+
+    if (!nombre || !contraseña) {
+      setError('Por favor, ingrese su nombre de usuario y contraseña.');
       return;
     }
-
-    // Validación básica de campos esenciales
-    const { nombre, apellido, fechaNacimiento, genero, estadoEmpleado, correo } = registerData;
-    if (!nombre || !apellido || !fechaNacimiento || !genero || !estadoEmpleado || !correo) {
-      alert('Datos incompletos en el registro. Por favor vuelva a registrarse.');
-      return;
-    }
-
-    if (contraseña !== confirmarContraseña) {
-      alert('Las contraseñas no coinciden.');
-      return;
-    }
-
-    const finalData = {
-      nombre,
-      apellido,
-      fecha_nacimiento: fechaNacimiento,
-      genero,
-      estado_empleado: estadoEmpleado, // ✅ Corrección aquí
-      correo,
-      contraseña
-    };
 
     try {
       setIsSubmitting(true);
-      const response = await fetch('http://127.0.0.1:8000/register', {
+      const response = await fetch('http://127.0.0.1:8000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(finalData)
+        body: JSON.stringify({
+          nombre: nombre,
+          contrasena: contraseña
+        })
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
-        alert('Usuario registrado exitosamente!');
-        localStorage.removeItem('registerData');
-        window.location.href = '/Inicio'; // Cambia según tu ruta
+        localStorage.setItem('id_persona', data.usuario.id_usuario);
+        alert('Inicio de sesión exitoso!');
+        router.push('/Inicio');
       } else {
-        alert('Error en el registro. Verifica los datos o intenta más tarde.');
+        setError(data.message || 'Credenciales incorrectas. Intente nuevamente.');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error de conexión. Intenta nuevamente.');
+      setError('Error de conexión. Intenta nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -81,15 +59,23 @@ const LoginForm: React.FC = () => {
       <div className="form-container">
         <div className="login-form">
           <div className="form-field">
+            <label>Nombre de usuario</label>
+            <input
+              type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+            />
+          </div>
+          <div className="form-field">
             <label>Contraseña</label>
             <div className="password-field">
-              <input 
+              <input
                 type={showPassword1 ? "text" : "password"}
                 value={contraseña}
                 onChange={(e) => setContraseña(e.target.value)}
               />
-              <button 
-                className="password-toggle" 
+              <button
+                className="password-toggle"
                 type="button"
                 onClick={() => setShowPassword1(!showPassword1)}
               >
@@ -98,31 +84,15 @@ const LoginForm: React.FC = () => {
             </div>
           </div>
 
-          <div className="form-field">
-            <label>Confirmar contraseña</label>
-            <div className="password-field">
-              <input 
-                type={showPassword2 ? "text" : "password"}
-                value={confirmarContraseña}
-                onChange={(e) => setConfirmarContraseña(e.target.value)}
-              />
-              <button 
-                className="password-toggle" 
-                type="button"
-                onClick={() => setShowPassword2(!showPassword2)}
-              >
-                {showPassword2 ? "○" : "⦿"}
-              </button>
-            </div>
-          </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
-          <button 
-            className="create-button" 
-            type="button" 
+          <button
+            className="create-button"
+            type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'}
+            {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </button>
         </div>
       </div>

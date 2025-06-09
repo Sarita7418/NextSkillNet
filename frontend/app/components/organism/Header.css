@@ -2,6 +2,8 @@
 .header {
   background-color: #143D8D;
   width: 100%;
+  position: relative;
+  /* Necesario para posicionar absolute el .profile-section */
 }
 
 .header-container {
@@ -9,6 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Mantener space-between para logo y el espacio para la navegación */
   padding: 0 20px;
 }
 
@@ -16,15 +19,25 @@
   background-color: #FFFFFF;
   padding: 5px;
 }
+
 .logo img {
   display: block;
   height: 50px;
 }
 
+.nav {
+  flex-grow: 1;
+  /* Permite que la navegación se expanda para ocupar el espacio central */
+  display: flex;
+  justify-content: center;
+  /* Centra los elementos de la lista */
+}
+
 .nav ul {
   list-style: none;
   display: flex;
-  gap: 120px;
+  gap: 100px;
+  /* Aumenté bastante el gap para mucho más espacio */
   margin: 0;
   padding: 0;
 }
@@ -52,17 +65,101 @@
   color: #00AEEF;
 }
 
-/* Contenedor y estilo del avatar */
-.profile-avatar-container {
-  margin-right: 14px;
+/* Sección expandida para el perfil */
+.profile-section {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-right: 45px;
+  /* Reduje el padding a cero para mover la foto bien a la izquierda del borde derecho */
 }
 
-.profile-avatar {
-  width: 32px;
-  height: 32px;
+.profile-link-expanded {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
+}
+
+.profile-avatar-expanded {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
+  border: 2px solid #FFFFFF;
+  display: block;
+  transition: height 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
-/* Responsive móvil: mantén tus media queries existentes */
+.profile-options-expanded {
+  background-color: #FFFFFF;
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  font-size: 0.9em;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transform: translateY(15px);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 15px);
+  z-index: 10;
+}
+
+.profile-link-expanded:hover .profile-avatar-expanded {
+    width: 55px;
+    height: 55px; 
+}
+
+.profile-link-expanded:hover .profile-options-expanded {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Ajustes para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .nav ul {
+    gap: 30px;
+    /* Ajusté el gap también en pantallas pequeñas */
+  }
+
+  .nav li a span {
+    display: none;
+  }
+
+  .nav li a .icon {
+    font-size: 1.2em;
+  }
+
+  .profile-avatar-expanded {
+    width: 40px;
+    height: 40px;
+  }
+
+  .profile-options-expanded {
+    font-size: 0.8em;
+    padding: 8px 12px;
+    margin-top: 8px;
+  }
+
+  .profile-section {
+    padding-right: 0px;
+    /* También lo dejé en cero en pantallas pequeñas */
+  }
+}
+
+/* Ajustes para pantallas aún más pequeñas (opcional) */
+@media (max-width: 480px) {
+  .nav ul {
+    gap: 15px;
+  }
+}

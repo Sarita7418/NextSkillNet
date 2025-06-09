@@ -6,6 +6,8 @@ use App\Http\Controllers\HabilidadController;
 use App\Http\Controllers\IdiomaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CuentaController;
+use App\Http\Controllers\DocumentoController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -55,4 +57,6 @@ Route::get('/', function () {
 });
 
 //para subir archivos
-Route::post('/subir-curriculum', [AuthController::class, 'subirCurriculum']);
+Route::post('/documentos', [DocumentoController::class, 'upload'])->middleware('auth');
+Route::get('/documentos/{id_persona}', [DocumentoController::class, 'listarPorUsuario']);
+Route::delete('/documentos/{id}', [DocumentoController::class, 'eliminar']);
