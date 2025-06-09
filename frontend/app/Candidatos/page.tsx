@@ -8,7 +8,7 @@ import CandidateCard from '../components/molecules/CandidateCard';
 import StatsCards from '../components/organism/StatsCards';
 import LoadingSpinner from '../components/atoms/LoadingSpinner';
 import ExportButtons from '../components/molecules/ExportButtons';
-
+import { AISearchSection } from '../components/organism/AISearchSection';
 // Tipos de datos
 interface Candidate {
   id: string;
@@ -71,6 +71,7 @@ const CandidateGrid: React.FC<CandidateGridProps> = ({
   }
 
   return (
+    
     <div className="candidate-grid-container">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
         {/* ... (código de la cabecera de la grilla sin cambios) ... */}
@@ -280,7 +281,7 @@ const Candidatos = () => {
 
           <div className="content-layout mt-8 lg:flex lg:gap-8">
             <aside className="filters-sidebar lg:w-1/4 mb-8 lg:mb-0">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div >
                 <h2 className="text-xl font-semibold mb-4 text-gray-800">Filtros de Búsqueda</h2>
                 <SearchFilters
                   filters={filters}
@@ -313,8 +314,11 @@ const Candidatos = () => {
           </div>
         </div>
         
+     {/* AÑADIR LA NUEVA SECCIÓN DEBAJO DEL LAYOUT PRINCIPAL */}
+        <div className="container mt-8">
+           <AISearchSection />
+        </div>
       </main>
-
       <Footer />
     </div>
   );

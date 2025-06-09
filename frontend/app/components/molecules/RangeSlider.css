@@ -1,4 +1,4 @@
-/* components/molecules/RangeSlider.css */
+/* app/components/molecules/RangeSlider.css */
 .range-slider {
   display: flex;
   flex-direction: column;
@@ -8,7 +8,7 @@
 .range-label {
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--primary-blue);
+  color: #334155; /* Color ajustado para mejor contraste */
   margin: 0;
 }
 
@@ -22,14 +22,14 @@
 .range-value {
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--secondary-blue);
-  background: var(--light-gray);
-  padding: 2px 6px;
-  border-radius: 4px;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 6px;
 }
 
 .range-separator {
-  color: #6c757d;
+  color: #94a3b8;
   font-weight: 500;
 }
 
@@ -40,76 +40,84 @@
   align-items: center;
 }
 
-.slider-track {
+.slider-track, .slider-range {
   position: absolute;
+  left: 0;
+  height: 5px;
+  border-radius: 3px;
   width: 100%;
-  height: 4px;
-  background: var(--border-color);
-  border-radius: 2px;
+}
+
+.slider-track {
+  background-color: #e2e8f0;
 }
 
 .slider-range {
-  position: absolute;
-  height: 4px;
-  background: var(--gradient-blue);
-  border-radius: 2px;
+  background-color: #3b82f6;
 }
 
 .slider-input {
   position: absolute;
   width: 100%;
   height: 20px;
-  background: transparent;
-  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
-  pointer-events: auto;
+  background: transparent;
+  margin: 0;
+  /* --- CAMBIO CLAVE --- */
+  /* Hacemos que la barra sea "invisible" a los clics para poder acceder al slider de abajo */
+  pointer-events: none;
 }
 
+/* Oculta la barra del input por defecto */
+.slider-input::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  height: 5px;
+}
+.slider-input::-moz-range-track {
+  -moz-appearance: none;
+  height: 5px;
+}
+
+/* Hacemos que la esfera (el thumb) vuelva a ser clicable */
 .slider-input::-webkit-slider-thumb {
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: var(--white);
-  border: 2px solid var(--secondary-blue);
+  pointer-events: auto; /* <-- IMPORTANTE */
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
   border-radius: 50%;
+  background-color: white;
+  border: 2px solid #3b82f6;
   cursor: pointer;
-  pointer-events: auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  margin-top: -7px; /* Centra el thumb verticalmente sobre la barra */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.slider-input::-moz-range-thumb {
+  pointer-events: auto; /* <-- IMPORTANTE */
+  height: 14px; /* Ajuste para Firefox */
+  width: 14px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #3b82f6;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .slider-input::-webkit-slider-thumb:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-.slider-input::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: var(--white);
-  border: 2px solid var(--secondary-blue);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+.slider-input:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
-.slider-input:disabled {
-  cursor: not-allowed;
-}
-
-.slider-input:disabled::-webkit-slider-thumb {
-  background: var(--light-gray);
-  border-color: #6c757d;
-  cursor: not-allowed;
-}
-
+.slider-input:disabled::-webkit-slider-thumb,
 .slider-input:disabled::-moz-range-thumb {
-  background: var(--light-gray);
-  border-color: #6c757d;
+  background: #e2e8f0;
+  border-color: #94a3b8;
   cursor: not-allowed;
-}
-.slider-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }

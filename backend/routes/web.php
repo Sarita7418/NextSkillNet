@@ -8,6 +8,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CandidatoController;
+use App\Http\Controllers\FiltroController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,7 +43,8 @@ Route::post('/usuario/idiomas', [UsuarioController::class, 'guardarIdiomas']);
 
 // Nueva ruta para listar candidatos
 Route::get('/candidatos', [CandidatoController::class, 'listar']);
-
+// Nueva ruta para obtener las opciones de los filtros
+Route::get('/filtros/opciones', [FiltroController::class, 'getOpciones']);
 
 Route::get('/subdominios/areas', [CuentaController::class, 'getAreas']);
 Route::get('/politicos_ubicacion/paises', [CuentaController::class, 'getPaises']);
@@ -65,6 +67,9 @@ Route::delete('/admin/eliminar/{id}', [AdminController::class, 'eliminarUsuario'
 
 // Si está en AdminController
 Route::post('/admin/anadir', [AuthController::class, 'anadirAdmin']);
+
+Route::post('/candidatos/busqueda-ia', [CandidatoController::class, 'busquedaIA']);
+
 
 Route::post('/usuario/registrar_empresa', [CuentaController::class, 'registrarEmpresa']);
 
