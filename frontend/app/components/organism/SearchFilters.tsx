@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SearchInput from '../molecules/SearchInput';
 import FilterSelect from '../molecules/FilterSelect';
 import RangeSlider from '../molecules/RangeSlider';
@@ -28,7 +28,6 @@ interface SearchFiltersProps {
   loading?: boolean;
 }
 
-// MODIFICADO: La interfaz ya no necesita 'educacion' porque será una lista fija
 interface OpcionesFiltro {
   posiciones: { value: string; label: string }[];
   ubicaciones: { value: string; label: string }[];
@@ -44,24 +43,23 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 }) => {
   const [localFilters, setLocalFilters] = useState<FilterOptions>(filters);
   const [isMounted, setIsMounted] = useState(false);
-
-  // Estado para guardar las opciones que vienen de la API
   const [opciones, setOpciones] = useState<OpcionesFiltro>({
     posiciones: [],
     ubicaciones: [],
     habilidades: [],
     disponibilidades: [],
   });
+  
+  // Ref para guardar el estado anterior de los filtros y optimizar el debounce
+  const prevFiltersRef = useRef(filters);
 
-  // Efecto para cargar las opciones de la API al montar el componente
+  // Carga las opciones dinámicas de la API al montar
   useEffect(() => {
     const fetchOpciones = async () => {
       try {
         const response = await fetch('http://127.0.0.1:8000/filtros/opciones');
         if (!response.ok) throw new Error('Error al cargar opciones');
         const data = await response.json();
-        
-        // MODIFICADO: Ya no se establece 'educacion' desde la API
         setOpciones({
           posiciones: [{ value: '', label: 'Todas las posiciones' }, ...data.posiciones],
           ubicaciones: [{ value: '', label: 'Todas las ubicaciones' }, ...data.ubicaciones],
@@ -80,22 +78,27 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     setLocalFilters(filters);
   }, [filters]);
   
-  // Efecto "Debounce" para aplicar filtros con fluidez
+  // Efecto "Debounce" que ignora los cambios del campo de texto
   useEffect(() => {
-    if (JSON.stringify(localFilters) === JSON.stringify(filters)) {
-      return;
+    const { searchTerm: localSearch, ...localRest } = localFilters;
+    const { searchTerm: globalSearch, ...globalRest } = prevFiltersRef.current;
+
+    if (JSON.stringify(localRest) === JSON.stringify(globalRest)) {
+      return; // No activa el debounce si solo cambió el texto de búsqueda
     }
+    
     const handler = setTimeout(() => {
       onFiltersChange(localFilters);
-    }, 500);
+      prevFiltersRef.current = localFilters;
+    }, 500); 
+
     return () => clearTimeout(handler);
-  }, [localFilters, filters, onFiltersChange]);
+  }, [localFilters, onFiltersChange]);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // RE-AÑADIDO: La lista fija para las opciones de educación
   const educationOptions = [
     { value: '', label: 'Cualquier educación' },
     { value: 'técnico', label: 'Técnico Superior' },
@@ -106,6 +109,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     { value: 'especialización', label: 'Especialización' },
     { value: 'certificación', label: 'Certificación' },
   ];
+
+  // AÑADIDO: Manejador para aplicar la búsqueda de texto con la tecla Enter
+  const handleSearchSubmit = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onFiltersChange(localFilters); // Aplica todos los filtros actuales inmediatamente
+      prevFiltersRef.current = localFilters;
+    }
+  };
 
   const handleClearFilters = () => {
     onClearFilters(); 
@@ -133,6 +145,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             placeholder="Buscar por nombre, email o posición..."
             value={localFilters.searchTerm}
             onChange={(value) => setLocalFilters(prev => ({ ...prev, searchTerm: value }))}
+            onKeyDown={handleSearchSubmit} // <-- AÑADIDO
             disabled={loading}
           />
         </div>
@@ -210,7 +223,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         <div className="filter-group">
           <FilterSelect
             label="Educación"
-            options={educationOptions} // <-- MODIFICADO: Usa la lista fija
+            options={educationOptions}
             value={localFilters.education}
             onChange={(value) => setLocalFilters(prev => ({ ...prev, education: value }))}
             disabled={loading}

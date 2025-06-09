@@ -7,6 +7,7 @@ interface SearchInputProps {
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void; // <-- AÑADIDO 1/3
   disabled?: boolean;
   className?: string;
 }
@@ -15,6 +16,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   placeholder = 'Buscar...',
   value,
   onChange,
+  onKeyDown, // <-- AÑADIDO 2/3
   disabled = false,
   className = ''
 }) => {
@@ -32,6 +34,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={onKeyDown} // <-- AÑADIDO 3/3
         disabled={disabled}
       />
       {value && (

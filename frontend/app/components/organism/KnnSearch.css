@@ -1,0 +1,40 @@
+/* app/components/organism/KnnSearch.css */
+.knn-search-section {
+  background-color: #f0f7ff; /* Un azul muy claro */
+  border: 1px solid #cce1ff;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  margin-top: var(--spacing-3xl);
+}
+
+.knn-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: var(--spacing-sm);
+}
+
+.knn-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #4a5568;
+  max-width: 600px;
+  margin: 0 auto var(--spacing-2xl) auto;
+}
+
+.knn-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.knn-search-button {
+  width: 100%;
+  padding: var(--spacing-md) 0;
+  font-size: 1.1rem;
+  background: var(--gradient-blue);
+}

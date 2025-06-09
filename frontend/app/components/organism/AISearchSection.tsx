@@ -3,24 +3,9 @@ import React, { useState } from 'react';
 import CandidateCard from '../molecules/CandidateCard';
 import LoadingSpinner from '../atoms/LoadingSpinner';
 import './AISearchSection.css';
+import type { Candidate } from '@/app/types'; // Correcto: Importando el tipo centralizado
 
-// Interfaz para el objeto Candidate (asegúrate que coincida con la de tu página principal)
-interface Candidate {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  position: string;
-  experience: number;
-  skills: string[];
-  education: string;
-  location: string;
-  createdAt: Date;
-  profileImage?: string;
-  [key: string]: any;
-}
-
-// Interfaz para la nueva respuesta de la API de IA
+// Interfaz para la respuesta de la API de IA
 interface AIResult {
   candidato: Candidate;
   puntos_clave: string[];
@@ -33,7 +18,8 @@ export const AISearchSection = () => {
   const [result, setResult] = useState<AIResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [notFound, setNotFound] = useState(false);
+  // MODIFICADO: Cambiamos 'notFound' por un estado que guardará el mensaje
+  const [infoMessage, setInfoMessage] = useState('');
 
   // Manejador del envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,7 +30,7 @@ export const AISearchSection = () => {
     setLoading(true);
     setError('');
     setResult(null);
-    setNotFound(false);
+    setInfoMessage(''); // Limpiamos el mensaje de información
 
     try {
       const response = await fetch('http://127.0.0.1:8000/candidatos/busqueda-ia', {
@@ -56,15 +42,20 @@ export const AISearchSection = () => {
         body: JSON.stringify({ prompt }),
       });
 
+      // --- LÓGICA CORREGIDA PARA MANEJAR RESPUESTAS NEGATIVAS ---
       if (!response.ok) {
+        // Si el servidor responde con 404 (No Encontrado)
         if (response.status === 404) {
-          setNotFound(true);
+          const errorData = await response.json(); // Leemos el cuerpo del error
+          // Guardamos el mensaje personalizado de la IA en el estado 'infoMessage'
+          setInfoMessage(errorData.message); 
         } else {
+          // Para cualquier otro error (ej. 500)
           throw new Error(`Error en la respuesta del servidor. Estado: ${response.status}`);
         }
       } else {
+        // Si la respuesta es exitosa (200 OK)
         const data: AIResult = await response.json();
-        // Aseguramos que la fecha sea un objeto Date para el componente CandidateCard
         if (data.candidato && data.candidato.createdAt) {
             data.candidato.createdAt = new Date(data.candidato.createdAt);
         }
@@ -100,7 +91,7 @@ export const AISearchSection = () => {
         </div>
       </form>
 
-      {/* Renderizado condicional de los resultados */}
+      {/* --- RENDERIZADO CORREGIDO DE RESULTADOS --- */}
       {loading && (
         <div className="ai-loading-container">
           <LoadingSpinner />
@@ -109,11 +100,20 @@ export const AISearchSection = () => {
       )}
 
       {error && <p className="ai-error-message">{error}</p>}
-      {notFound && <p className="ai-not-found-message">No se encontró un candidato que cumpla con los criterios.</p>}
+      
+      {/* Muestra el mensaje de información (ej. "Fuera de mis parámetros") en la sección de resumen */}
+      {infoMessage && (
+        <div className="ai-result-wrapper">
+          <div className="ai-result-summary">
+            <h3 className="result-title">Respuesta del Asistente IA</h3>
+            <p>{infoMessage}</p>
+          </div>
+        </div>
+      )}
 
+      {/* Muestra el resultado exitoso cuando se encuentra un candidato */}
       {result && (
         <div className="ai-result-wrapper">
-          {/* Layout de dos columnas para la tarjeta y los puntos clave */}
           <div className="ai-result-top-row">
             <div className="ai-result-card">
               <h3 className="result-title">Candidato Recomendado</h3>
@@ -128,7 +128,6 @@ export const AISearchSection = () => {
               </ul>
             </div>
           </div>
-          {/* Layout de una columna para el resumen */}
           {result.resumen_ia && (
             <div className="ai-result-summary">
               <h3 className="result-title">Resumen del Asistente IA</h3>

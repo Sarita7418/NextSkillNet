@@ -9,23 +9,10 @@ import StatsCards from '../components/organism/StatsCards';
 import LoadingSpinner from '../components/atoms/LoadingSpinner';
 import ExportButtons from '../components/molecules/ExportButtons';
 import { AISearchSection } from '../components/organism/AISearchSection';
+import KnnSearch from '../components/organism/KnnSearch';
+import OnetSearch from '../components/organism/OnetSearch';
 // Tipos de datos
-interface Candidate {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  position: string;
-  experience: number;
-  skills: string[];
-  location: string;
-  salary: number;
-  availability: 'immediate' | 'two-weeks' | 'one-month';
-  education: string;
-  profileImage?: string;
-  resumeUrl?: string;
-  createdAt: Date;
-}
+import type { Candidate } from '../types'; // Importando el tipo centralizado
 
 interface FilterOptions {
   searchTerm: string;
@@ -139,38 +126,103 @@ const Candidatos = () => {
   const [sortBy, setSortBy] = useState<'name' | 'experience' | 'salary' | 'date'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null); // <-- AÑADIDO: Estado para la selección
-
+  const [knnSelectedSkills, setKnnSelectedSkills] = useState<string[]>([]);
+  const [knnResults, setKnnResults] = useState<Candidate[]>([]);
+  const [knnLoading, setKnnLoading] = useState(false);
+  const [opcionesFiltro, setOpcionesFiltro] = useState<{ habilidades: string[] }>({ habilidades: [] }); 
+  const [onetResults, setOnetResults] = useState<any[]>([]); // Usamos 'any' por ahora
+  const [onetLoading, setOnetLoading] = useState(false);
   // Hook para cargar los datos desde la API de Laravel al montar el componente
-  useEffect(() => {
-    const fetchCandidates = async () => {
-        setLoading(true);
-        try {
-            const response = await fetch('http://127.0.0.1:8000/candidatos');
-            if (!response.ok) {
-                throw new Error('Error al cargar los datos desde el servidor.');
-            }
-            const data: any[] = await response.json(); // Usamos any[] temporalmente
-            
-            const formattedData: Candidate[] = data.map(c => ({
-              ...c,
-              // Aseguramos que los campos que pueden ser nulos tengan un valor por defecto
-              phone: c.phone || 'N/A',
-              salary: c.salary || 0,
-              availability: c.availability || 'not-specified',
-              skills: Array.isArray(c.skills) ? c.skills : (c.skills ? c.skills.split(', ') : []),
-              createdAt: new Date(c.createdAt) 
-            }));
+  // Move handleOnetSearch to component scope
+  const handleOnetSearch = async (cargo: string) => {
+    if (!cargo.trim()) return;
+    setOnetLoading(true);
+    setOnetResults([]);
+    try {
+        const response = await fetch('http://127.0.0.1:8000/candidatos/recomendacion-onet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ cargo: cargo }),
+        });
+        if (!response.ok) throw new Error('Error en la respuesta del servidor O*NET');
+        
+        const data = await response.json();
+        // Mapeamos los resultados para asegurarnos que la fecha sea un objeto Date
+        const formattedResults = data.recomendaciones.map((res: any) => ({
+            ...res.candidato,
+            score: res.score, // Guardamos el puntaje de similitud
+            createdAt: new Date(res.candidato.createdAt),
+        }));
+        setOnetResults(formattedResults);
 
-            setCandidates(formattedData);
-            setFilteredCandidates(formattedData);
-        } catch (error) {
-            console.error("Error fetching candidates:", error);
-        } finally {
-            setLoading(false);
+    } catch (error) {
+        console.error("Error al obtener recomendaciones O*NET:", error);
+    } finally {
+        setOnetLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleKnnSearch = async () => {
+    if (knnSelectedSkills.length === 0) return;
+    setKnnLoading(true);
+    setKnnResults([]);
+    try {
+        const response = await fetch('http://127.0.0.1:8000/candidatos/recomendacion-knn', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ habilidades: knnSelectedSkills }),
+        });
+        if (!response.ok) throw new Error('Error en la respuesta del servidor k-NN');
+
+        const data = await response.json();
+        // Mapeamos los resultados para asegurarnos que la fecha sea un objeto Date
+        const formattedResults = data.recomendaciones.map((c: any) => ({
+            ...c,
+            createdAt: new Date(c.createdAt),
+        }));
+        setKnnResults(formattedResults);
+
+    } catch (error) {
+        console.error("Error al obtener recomendaciones k-NN:", error);
+    } finally {
+        setKnnLoading(false);
+    }
+};
+    const fetchInitialData = async () => {
+      setLoading(true);
+      try {
+        // Hacemos las dos llamadas a la API en paralelo para más eficiencia
+        const [candidatosRes, opcionesRes] = await Promise.all([
+          fetch('http://127.0.0.1:8000/candidatos'),
+          fetch('http://127.0.0.1:8000/filtros/opciones')
+        ]);
+
+        if (!candidatosRes.ok || !opcionesRes.ok) {
+            throw new Error('Error al cargar los datos iniciales.');
         }
+
+        const candidatosData = await candidatosRes.json();
+        const opcionesData = await opcionesRes.json();
+
+        const formattedCandidates: Candidate[] = candidatosData.map((c: any) => ({
+          ...c,
+          createdAt: new Date(c.createdAt),
+          skills: Array.isArray(c.skills) ? c.skills : (c.skills ? c.skills.split(', ') : [])
+        }));
+
+        setCandidates(formattedCandidates);
+        setFilteredCandidates(formattedCandidates);
+        setOpcionesFiltro(opcionesData); // Guardamos las opciones de filtros
+
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchCandidates();
+    fetchInitialData();
   }, []);
 
   // Función para aplicar filtros y ordenamiento
@@ -251,7 +303,31 @@ const Candidatos = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [candidates]);
+const handleKnnSearch = async () => {
+    if (knnSelectedSkills.length === 0) return;
+    setKnnLoading(true);
+    setKnnResults([]);
+    try {
+        const response = await fetch('http://127.0.0.1:8000/candidatos/recomendacion-knn', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ habilidades: knnSelectedSkills }),
+        });
+        if (!response.ok) throw new Error('Error en la respuesta del servidor k-NN');
 
+        const data = await response.json();
+        const formattedResults = data.recomendaciones.map((c: any) => ({
+            ...c,
+            createdAt: new Date(c.createdAt),
+        }));
+        setKnnResults(formattedResults);
+
+    } catch (error) {
+        console.error("Error al obtener recomendaciones k-NN:", error);
+    } finally {
+        setKnnLoading(false);
+    }
+};
 
   return (
     <div className="candidatos-page bg-gray-50 min-h-screen flex flex-col">
@@ -290,6 +366,7 @@ const Candidatos = () => {
                   loading={loading}
                 />
               </div>
+
             </aside>
 
             <div className="candidates-content lg:w-3/4">
@@ -316,12 +393,43 @@ const Candidatos = () => {
         
      {/* AÑADIR LA NUEVA SECCIÓN DEBAJO DEL LAYOUT PRINCIPAL */}
         <div className="container mt-8">
-           <AISearchSection />
-        </div>
-      </main>
-      <Footer />
+        <OnetSearch
+    onSearch={handleOnetSearch}
+    isLoading={onetLoading}
+  />
+  
+  {/* --- SECCIÓN PARA MOSTRAR RESULTADOS O*NET --- */}
+  {onetLoading && <div className="knn-results-container flex justify-center py-8"><LoadingSpinner /></div>}
+  {onetResults.length > 0 && (
+      <div className="knn-results-container">
+          <h3 className="knn-results-title">Recomendaciones por Perfil Ideal (O*NET)</h3>
+          <div className="grid">
+              {onetResults.map((result) => (
+                  <div key={`onet-${result.id}`} className="relative">
+                      <CandidateCard
+                          candidate={result}
+                          onSelect={handleSelectCandidate}
+                          isSelected={result.id === selectedCandidateId}
+                      />
+                      {/* Mostramos el puntaje de similitud */}
+                      <div className="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                          Score: {result.score.toFixed(2)}
+                      </div>
+                  </div>
+              ))}
+          </div>
+      </div>
+  )}
+
+  <hr className="my-12 border-t-2 border-gray-200" />
+  
+  {/* --- SECCIÓN DE BÚSQUEDA CON IA GENERATIVA (GEMINI) --- */}
+  <AISearchSection />
     </div>
-  );
+  </main>
+  <Footer />
+</div>
+);
 };
 
 export default Candidatos;
