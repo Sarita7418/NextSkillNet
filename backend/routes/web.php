@@ -9,6 +9,8 @@ use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CandidatoController;
 use App\Http\Controllers\FiltroController;
+use App\Http\Controllers\RecomendacionController;
+use App\Http\Controllers\OnetController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -83,7 +85,9 @@ Route::get('/admin/empresas', [AdminController::class, 'listarEmpresasConReprese
 
 Route::post('/admin/empresa/actualizar', [AdminController::class, 'actualizarEmpresa']);
 
+Route::post('/candidatos/recomendacion-knn', [RecomendacionController::class, 'obtenerRecomendaciones']);
 
+Route::post('/candidatos/recomendacion-onet', [OnetController::class, 'obtenerRecomendacion']);
 
 Route::get('/', function () {
     return view('welcome');
