@@ -62,9 +62,14 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
     }
   };
 
-  const formatSalary = (salary: number) => {
-    return `Bs. ${salary.toLocaleString()}`;
-  };
+  const formatSalary = (salary: number | null | undefined) => {
+  // Si el salario es nulo, indefinido o cero, muestra un texto alternativo
+  if (!salary) {
+    return 'No especificado'; 
+  }
+  // Si sí hay un salario, lo formatea correctamente
+  return `Bs. ${salary.toLocaleString('es-BO')}`; // Añadimos 'es-BO' para el formato boliviano
+};
 
   const displayedSkills = candidate.skills.slice(0, 3);
   const remainingSkills = candidate.skills.length - 3;
