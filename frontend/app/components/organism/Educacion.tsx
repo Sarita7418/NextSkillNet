@@ -1,255 +1,374 @@
-// src/components/pages/Educacion.tsx
 'use client';
 
-import React, { useState } from 'react';
-import './Educacion.css'; // Importa el archivo CSS
-import { FaGraduationCap, FaAward, FaGlobeAmericas, FaPlus, FaEdit, FaTrashAlt, FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Iconos de React Icons
+import React, { useState, useEffect } from 'react';
+import './Educacion.css';
+import {
+  FaGraduationCap, FaPlus, FaEdit, FaTrashAlt, FaChevronDown, FaChevronUp, FaTimes
+} from 'react-icons/fa';
 
-// Definición de las interfaces para los tipos de educación
+interface EducacionBackend {
+  id: number;
+  fechaInicio: string;         // Cadena de fecha ISO
+  fechaFin: string | null;
+  institucion: string;
+  tipoGrado: string;            // ej: 'Universidad', 'Maestría'
+  ocupacion: string;
+}
+
 interface EstudioGeneral {
   id: string;
   institucion: string;
-  titulo: string;
+  titulo: string; // Asumiendo que 'ocupacion' del backend se mapea a 'titulo' en el frontend por consistencia con lo laboral
   fechaInicio: string;
-  fechaFin: string; // Puede ser 'Actualidad'
-  descripcion?: string; // Opcional, para cursos o detalles
-  tipoEstudio: 'universidad' | 'maestria' | 'doctorado' | 'tecnico';
+  fechaFin: string;
+  tipoEstudio: 'universidad' | 'maestria' | 'doctorado' | 'tecnico' | 'otro'; // Infiriendo tipos basados en el código anterior
+  tipoGradoBackend: string; // Para almacenar el tipoGrado original del backend
+  fechaInicioRaw: string;
+  fechaFinRaw: string | null;
+  descripcion?: string; // Añadiendo descripción para el mock data
 }
 
-interface LogroAcademico {
-  id: string;
-  nombre: string;
-  institucionOtorgante?: string;
-  fecha?: string;
-  descripcion?: string;
-  tipoLogro: 'premio' | 'publicacion' | 'beca' | 'curso' | 'certificacion' | 'exterior';
-}
+const mapTipoGradoToTipoEstudio = (tipoGrado: string): EstudioGeneral['tipoEstudio'] => {
+  switch (tipoGrado.toLowerCase()) {
+    case 'universidad': return 'universidad';
+    case 'maestría':
+    case 'maestria': return 'maestria';
+    case 'doctorado': return 'doctorado';
+    case 'técnico':
+    case 'tecnico': return 'tecnico';
+    default: return 'otro';
+  }
+};
+
+const formatearFecha = (cadenaFecha: string | null) => {
+  if (!cadenaFecha) return 'Actualidad';
+  const fecha = new Date(cadenaFecha);
+  if (isNaN(fecha.getTime())) return 'Fecha inválida';
+  return fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' });
+};
+
+const formatearFechaParaInput = (cadenaFecha: string | null) => {
+  if (!cadenaFecha) return '';
+  const date = new Date(cadenaFecha);
+  if (isNaN(date.getTime())) return '';
+  return date.toISOString().split('T')[0];
+};
+
+const ID_USUARIO = 1; // Cambia por el ID real del usuario logueado o pásalo por props/context
 
 const Educacion: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'general' | 'logros'>('general');
-  const [expandedCard, setExpandedCard] = useState<string | null>(null); // Para tarjetas expandibles
-
-  // Datos de ejemplo para educación general
   const [estudios, setEstudios] = useState<EstudioGeneral[]>([
     {
-      id: 'e1',
-      institucion: 'Universidad Mayor de San Andrés (UMSA)',
+      id: '1',
+      institucion: 'Universidad Mayor de San Andrés',
       titulo: 'Ingeniería de Sistemas',
-      fechaInicio: 'Febrero 2015',
-      fechaFin: 'Diciembre 2020',
-      descripcion: 'Enfoque en desarrollo de software, bases de datos y redes. Proyecto de tesis sobre sistemas de recomendación con inteligencia artificial.',
+      fechaInicio: 'agosto de 2015',
+      fechaFin: 'diciembre de 2020',
       tipoEstudio: 'universidad',
+      tipoGradoBackend: 'Universidad',
+      fechaInicioRaw: '2015-08-01',
+      fechaFinRaw: '2020-12-31',
+      descripcion: 'Graduado con honores. Proyectos destacados en desarrollo web y bases de datos.',
     },
     {
-      id: 'e2',
-      institucion: 'Universidad Politécnica de Madrid (UPM)',
-      titulo: 'Máster en Inteligencia Artificial',
-      fechaInicio: 'Septiembre 2022',
-      fechaFin: 'Julio 2024',
-      descripcion: 'Estudios avanzados en aprendizaje automático, procesamiento de lenguaje natural y visión por computadora. Proyecto final sobre redes neuronales generativas.',
+      id: '2',
+      institucion: 'Instituto Tecnológico de Massachusetts (MIT)',
+      titulo: 'Maestría en Ciencia de la Computación',
+      fechaInicio: 'septiembre de 2022',
+      fechaFin: 'Actualidad',
       tipoEstudio: 'maestria',
-    },
-    {
-      id: 'e3',
-      institucion: 'Instituto Tecnológico Nacional',
-      titulo: 'Técnico Superior en Desarrollo Web',
-      fechaInicio: 'Enero 2013',
-      fechaFin: 'Diciembre 2014',
-      descripcion: 'Formación intensiva en HTML, CSS, JavaScript y frameworks front-end.',
-      tipoEstudio: 'tecnico',
+      tipoGradoBackend: 'Maestría',
+      fechaInicioRaw: '2022-09-01',
+      fechaFinRaw: null,
+      descripcion: 'Especialización en Inteligencia Artificial y Machine Learning.',
     },
   ]);
+  const [cargando, setCargando] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [tarjetaExpandida, setTarjetaExpandida] = useState<string | null>(null);
 
-  // Datos de ejemplo para logros académicos
-  const [logros, setLogros] = useState<LogroAcademico[]>([
-    {
-      id: 'l1',
-      nombre: 'Beca de Excelencia Académica',
-      institucionOtorgante: 'UMSA',
-      fecha: '2020',
-      descripcion: 'Otorgada por el rendimiento académico sobresaliente en la carrera de Ingeniería de Sistemas.',
-      tipoLogro: 'beca',
-    },
-    {
-      id: 'l2',
-      nombre: 'Publicación en Conferencia Internacional de IA',
-      institucionOtorgante: 'IEEE Xplore',
-      fecha: 'Octubre 2023',
-      descripcion: 'Artículo sobre "Optimización de Algoritmos de Machine Learning en Entornos Edge".',
-      tipoLogro: 'publicacion',
-    },
-    {
-      id: 'l3',
-      nombre: 'Certificación Profesional Google Cloud Architect',
-      institucionOtorgante: 'Google',
-      fecha: 'Marzo 2023',
-      descripcion: 'Validación de habilidades en diseño y despliegue de infraestructuras en la nube de Google Cloud.',
-      tipoLogro: 'certificacion',
-    },
-    {
-      id: 'l4',
-      nombre: 'Intercambio Académico en Alemania',
-      institucionOtorgante: 'Universidad de Múnich',
-      fecha: 'Enero - Junio 2018',
-      descripcion: 'Semestre de intercambio cursando asignaturas de Inteligencia Artificial y Robótica.',
-      tipoLogro: 'exterior',
-    },
-  ]);
+  // Estado para formulario (agregar/editar)
+  const [formularioAbierto, setFormularioAbierto] = useState(false);
+  const [modoFormulario, setModoFormulario] = useState<'add' | 'edit'>('add');
+  const [datosFormulario, setDatosFormulario] = useState<Omit<EstudioGeneral, 'id' | 'fechaInicio' | 'fechaFin' | 'tipoGradoBackend' | 'fechaInicioRaw' | 'fechaFinRaw' | 'descripcion'>>({
+    institucion: '',
+    titulo: '',
+    tipoEstudio: 'otro',
+  });
+  const [datosFechasFormulario, setDatosFechasFormulario] = useState<{ fechaInicio: string; fechaFin: string }>({
+    fechaInicio: '',
+    fechaFin: '',
+  });
+  const [descripcionFormulario, setDescripcionFormulario] = useState<string>('');
+  const [idEdicion, setIdEdicion] = useState<string | null>(null);
 
-  // Iconos dinámicos para los tipos de estudio/logro
-  const getStudyIcon = (type: EstudioGeneral['tipoEstudio']) => {
-    switch (type) {
-      case 'universidad': return <FaGraduationCap size={20} className="icon-study university" />;
-      case 'maestria': return <FaGraduationCap size={20} className="icon-study master" />;
-      case 'doctorado': return <FaGraduationCap size={20} className="icon-study doctorate" />;
-      case 'tecnico': return <FaGraduationCap size={20} className="icon-study technical" />;
-      default: return <FaGraduationCap size={20} className="icon-study default" />;
+  useEffect(() => {
+    // Simulación de carga
+    setCargando(true);
+    setTimeout(() => {
+      setCargando(false);
+    }, 1000);
+  }, []);
+
+  const toggleExpandir = (id: string) => {
+    setTarjetaExpandida(tarjetaExpandida === id ? null : id);
+  };
+
+  // --- Formulario controlado ---
+
+  const abrirFormularioAgregar = () => {
+    setModoFormulario('add');
+    setDatosFormulario({
+      institucion: '',
+      titulo: '',
+      tipoEstudio: 'otro',
+    });
+    setDatosFechasFormulario({
+      fechaInicio: '',
+      fechaFin: '',
+    });
+    setDescripcionFormulario('');
+    setIdEdicion(null);
+    setFormularioAbierto(true);
+  };
+
+  const abrirFormularioEditar = (id: string) => {
+    const estudio = estudios.find(e => e.id === id);
+    if (!estudio) return alert('Estudio no encontrado');
+
+    setModoFormulario('edit');
+    setIdEdicion(id);
+    setDatosFormulario({
+      institucion: estudio.institucion,
+      titulo: estudio.titulo,
+      tipoEstudio: estudio.tipoEstudio,
+    });
+    setDatosFechasFormulario({
+      fechaInicio: formatearFechaParaInput(estudio.fechaInicioRaw),
+      fechaFin: formatearFechaParaInput(estudio.fechaFinRaw),
+    });
+    setDescripcionFormulario(estudio.descripcion || '');
+    setFormularioAbierto(true);
+  };
+
+  const manejarCambioFormulario = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setDatosFormulario(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const manejarCambioFecha = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDatosFechasFormulario(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const manejarCambioDescripcion = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescripcionFormulario(e.target.value);
+  };
+
+  const manejarEnvioFormulario = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!datosFormulario.titulo || !datosFormulario.institucion || !datosFechasFormulario.fechaInicio) {
+      return alert('Título, Institución y Fecha de Inicio son obligatorios');
     }
-  };
 
-  const getAchievementIcon = (type: LogroAcademico['tipoLogro']) => {
-    switch (type) {
-      case 'premio': return <FaAward size={20} className="icon-achievement award" />;
-      case 'publicacion': return <FaAward size={20} className="icon-achievement publication" />; // Puedes usar un icono de libro si tienes
-      case 'beca': return <FaAward size={20} className="icon-achievement scholarship" />;
-      case 'curso': return <FaAward size={20} className="icon-achievement course" />;
-      case 'certificacion': return <FaAward size={20} className="icon-achievement certification" />;
-      case 'exterior': return <FaGlobeAmericas size={20} className="icon-achievement external" />;
-      default: return <FaAward size={20} className="icon-achievement default" />;
+    const nuevoEstudio: EstudioGeneral = {
+      id: modoFormulario === 'add' ? Date.now().toString() : idEdicion!,
+      institucion: datosFormulario.institucion,
+      titulo: datosFormulario.titulo,
+      fechaInicio: formatearFecha(datosFechasFormulario.fechaInicio),
+      fechaFin: formatearFecha(datosFechasFormulario.fechaFin),
+      tipoEstudio: datosFormulario.tipoEstudio,
+      tipoGradoBackend: datosFormulario.tipoEstudio.charAt(0).toUpperCase() + datosFormulario.tipoEstudio.slice(1), // Simulación
+      fechaInicioRaw: datosFechasFormulario.fechaInicio,
+      fechaFinRaw: datosFechasFormulario.fechaFin,
+      descripcion: descripcionFormulario,
+    };
+
+    if (modoFormulario === 'add') {
+      setEstudios(prev => [...prev, nuevoEstudio]);
+    } else if (modoFormulario === 'edit' && idEdicion) {
+      setEstudios(prev => prev.map(estudio =>
+        estudio.id === idEdicion ? nuevoEstudio : estudio
+      ));
     }
+
+    setFormularioAbierto(false);
   };
 
-  // Función para expandir/colapsar tarjeta
-  const toggleExpand = (id: string) => {
-    setExpandedCard(expandedCard === id ? null : id);
+  const manejarEliminar = (id: string) => {
+    if (!confirm('¿Seguro que quieres eliminar este estudio?')) return;
+    setEstudios(prev => prev.filter(estudio => estudio.id !== id));
   };
 
-  // Funciones placeholder para acciones (editar, eliminar, añadir)
-  const handleAdd = (type: 'estudio' | 'logro') => {
-    alert(`Funcionalidad para añadir ${type} (por implementar)`);
-  };
-  const handleEdit = (id: string, type: 'estudio' | 'logro') => {
-    alert(`Funcionalidad para editar ${type} ${id} (por implementar)`);
-  };
-  const handleDelete = (id: string, type: 'estudio' | 'logro') => {
-    if (window.confirm(`¿Estás seguro de que quieres eliminar este ${type}?`)) {
-      if (type === 'estudio') {
-        setEstudios(estudios.filter(e => e.id !== id));
-      } else {
-        setLogros(logros.filter(l => l.id !== id));
-      }
-      alert(`${type} eliminado.`);
+  const obtenerIdTipoGrado = (tipoEstudio: EstudioGeneral['tipoEstudio']): number => {
+    switch (tipoEstudio) {
+      case 'universidad': return 1;
+      case 'maestria': return 2;
+      case 'doctorado': return 3;
+      case 'tecnico': return 4;
+      case 'otro': return 5;
+      default: return 0;
     }
   };
 
   return (
     <div className="educacion-container">
-      <h1 className="educacion-titulo">Mi Educación y Logros</h1>
-      <p className="educacion-subtitulo">
-        Destaca tu formación académica y tus logros más importantes.
-      </p>
+      <h1 className="educacion-titulo">Mi Educación</h1>
+      {cargando && <p>Cargando datos...</p>}
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
-      {/* Pestañas de navegación */}
-      <div className="tabs-container">
-        <button 
-          className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
-          onClick={() => setActiveTab('general')}
-        >
-          <FaGraduationCap /> Estudios Generales
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'logros' ? 'active' : ''}`}
-          onClick={() => setActiveTab('logros')}
-        >
-          <FaAward /> Logros Académicos y Especiales
-        </button>
-      </div>
+      {!cargando && !error && (
+        <>
+          <button className="btn-add-item" onClick={abrirFormularioAgregar}>
+            <FaPlus /> Añadir Estudio
+          </button>
 
-      {/* Contenido de la pestaña activa */}
-      <div className="tab-content-wrapper">
-        {activeTab === 'general' && (
-          <div className="tab-content general-education">
-            <button className="btn-add-item" onClick={() => handleAdd('estudio')}>
-              <FaPlus /> Añadir Estudio
-            </button>
-            {estudios.length === 0 ? (
-              <p className="no-items">Aún no has añadido estudios. ¡Hazlo ahora!</p>
-            ) : (
-              <div className="education-grid">
-                {estudios.map((estudio) => (
-                  <div key={estudio.id} className={`education-card ${expandedCard === estudio.id ? 'expanded' : ''}`}>
-                    <div className="card-header">
-                      {getStudyIcon(estudio.tipoEstudio)}
-                      <div className="header-info">
-                        <h3 className="card-title">{estudio.titulo}</h3>
-                        <p className="card-subtitle">{estudio.institucion}</p>
-                      </div>
-                      <div className="card-actions">
-                        <button className="btn-action btn-edit" onClick={() => handleEdit(estudio.id, 'estudio')} title="Editar"><FaEdit /></button>
-                        <button className="btn-action btn-delete" onClick={() => handleDelete(estudio.id, 'estudio')} title="Eliminar"><FaTrashAlt /></button>
-                      </div>
+          {estudios.length === 0 ? (
+            <p className="no-items">No tienes estudios registrados.</p>
+          ) : (
+            <div className="education-grid">
+              {estudios.map(estudio => (
+                <div
+                  key={estudio.id}
+                  className={`education-card ${tarjetaExpandida === estudio.id ? 'expanded' : ''}`}
+                >
+                  <div className="card-header">
+                    <FaGraduationCap
+                      size={20}
+                      className={`icon-study ${estudio.tipoEstudio}`}
+                    />
+                    <div className="header-info">
+                      <h3 className="card-title">{estudio.titulo}</h3>
+                      <p className="card-subtitle">{estudio.institucion}</p>
                     </div>
-                    <p className="card-dates">{estudio.fechaInicio} - {estudio.fechaFin}</p>
-                    {estudio.descripcion && (
-                      <div className="card-details">
-                        {expandedCard === estudio.id && (
-                          <p className="card-description">{estudio.descripcion}</p>
-                        )}
-                        <button className="btn-expand" onClick={() => toggleExpand(estudio.id)}>
-                          {expandedCard === estudio.id ? <FaChevronUp /> : <FaChevronDown />}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'logros' && (
-          <div className="tab-content academic-achievements">
-            <button className="btn-add-item" onClick={() => handleAdd('logro')}>
-              <FaPlus /> Añadir Logro
-            </button>
-            {logros.length === 0 ? (
-              <p className="no-items">Aún no has añadido logros. ¡Sé el primero!</p>
-            ) : (
-              <div className="achievement-grid">
-                {logros.map((logro) => (
-                  <div key={logro.id} className={`achievement-card ${expandedCard === logro.id ? 'expanded' : ''}`}>
-                    <div className="card-header">
-                      {getAchievementIcon(logro.tipoLogro)}
-                      <div className="header-info">
-                        <h3 className="card-title">{logro.nombre}</h3>
-                        {(logro.institucionOtorgante || logro.fecha) && (
-                          <p className="card-subtitle">
-                            {logro.institucionOtorgante}{logro.institucionOtorgante && logro.fecha && ' - '}{logro.fecha}
-                          </p>
-                        )}
-                      </div>
-                      <div className="card-actions">
-                        <button className="btn-action btn-edit" onClick={() => handleEdit(logro.id, 'logro')} title="Editar"><FaEdit /></button>
-                        <button className="btn-action btn-delete" onClick={() => handleDelete(logro.id, 'logro')} title="Eliminar"><FaTrashAlt /></button>
-                      </div>
+                    <div className="card-actions">
+                      <button
+                        className="btn-action btn-edit"
+                        onClick={() => abrirFormularioEditar(estudio.id)}
+                        title="Editar"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        className="btn-action btn-delete"
+                        onClick={() => manejarEliminar(estudio.id)}
+                        title="Eliminar"
+                      >
+                        <FaTrashAlt />
+                      </button>
                     </div>
-                    {logro.descripcion && (
-                      <div className="card-details">
-                        {expandedCard === logro.id && (
-                          <p className="card-description">{logro.descripcion}</p>
-                        )}
-                        <button className="btn-expand" onClick={() => toggleExpand(logro.id)}>
-                          {expandedCard === logro.id ? <FaChevronUp /> : <FaChevronDown />}
-                        </button>
-                      </div>
-                    )}
                   </div>
-                ))}
+                  <p className="card-dates">{estudio.fechaInicio} - {estudio.fechaFin}</p>
+                  {estudio.descripcion && (
+                    <div className="card-details">
+                      {tarjetaExpandida === estudio.id && (
+                        <p className="card-description">{estudio.descripcion}</p>
+                      )}
+                      <button
+                        className="btn-expand"
+                        onClick={() => toggleExpandir(estudio.id)}
+                        aria-label={tarjetaExpandida === estudio.id ? 'Colapsar detalles' : 'Expandir detalles'}
+                      >
+                        {tarjetaExpandida === estudio.id ? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {formularioAbierto && (
+            <div className="modal-form">
+              <div className="modal-content">
+                <h2>{modoFormulario === 'add' ? 'Añadir Estudio' : 'Editar Estudio'}</h2>
+                <form onSubmit={manejarEnvioFormulario}>
+                  <label>
+                    Institución*:
+                    <input
+                      type="text"
+                      name="institucion"
+                      value={datosFormulario.institucion || ''}
+                      onChange={manejarCambioFormulario}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Título*:
+                    <input
+                      type="text"
+                      name="titulo"
+                      value={datosFormulario.titulo || ''}
+                      onChange={manejarCambioFormulario}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Fecha Inicio*:
+                    <input
+                      type="date"
+                      name="fechaInicio"
+                      value={datosFechasFormulario.fechaInicio || ''}
+                      onChange={manejarCambioFecha}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Fecha Fin:
+                    <input
+                      type="date"
+                      name="fechaFin"
+                      value={datosFechasFormulario.fechaFin || ''}
+                      onChange={manejarCambioFecha}
+                    />
+                  </label>
+                  <label>
+                    Tipo de Estudio:
+                    <select
+                      name="tipoEstudio"
+                      value={datosFormulario.tipoEstudio}
+                      onChange={manejarCambioFormulario}
+                    >
+                      <option key="universidad" value="universidad">Universidad</option>
+                      <option key="maestria" value="maestria">Maestría</option>
+                      <option key="doctorado" value="doctorado">Doctorado</option>
+                      <option key="tecnico" value="tecnico">Técnico</option>
+                      <option key="otro" value="otro">Otro</option>
+                    </select>
+                  </label>
+                  <label>
+                    Descripción:
+                    <textarea
+                      name="descripcion"
+                      value={descripcionFormulario}
+                      onChange={manejarCambioDescripcion}
+                    />
+                  </label>
+                  <div className="form-buttons">
+                    <button type="submit" disabled={cargando}>
+                      {modoFormulario === 'add' ? 'Agregar' : 'Guardar'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormularioAbierto(false)}
+                      disabled={cargando}
+                    >
+                      Cancelar <FaTimes />
+                    </button>
+                  </div>
+                </form>
               </div>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };
