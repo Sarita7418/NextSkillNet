@@ -77,10 +77,8 @@ class AuthController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'error' => 'Datos incorrectos',
-                    'message' => $validator->errors()
-                ], 400);
+                // Usamos ->first() para obtener solo el primer mensaje de error como texto.
+                return response()->json(['message' => $validator->errors()->first()], 400);
             }
 
             // Buscar persona por nombre (sin tilde)
@@ -144,8 +142,11 @@ class AuthController extends Controller
                 'genero' => 'required|string',
                 'estadoEmpleado' => 'required|in:0,1',
                 'correo' => 'required|email',
-                'contraseña' => 'required|string|min:4'
-            ]);
+                'contraseña' => 'required|string|min:4',
+                // --- AÑADIDO: Validación para los nuevos campos opcionales ---
+                'telefono' => 'nullable|string|max:25',
+                'disponibilidad' => 'nullable|string|in:immediate,two-weeks,one-month',
+        ]);
 
             if ($validator->fails()) {
                 return response()->json([
@@ -172,8 +173,10 @@ class AuthController extends Controller
                 'apellido' => $request->apellido,
                 'fecha_nacimiento' => $request->fechaNacimiento,
                 'id_genero' => $id_genero,
-                'estado_empleado' => $request->estadoEmpleado
-            ]);
+                'estado_empleado' => $request->estadoEmpleado,
+                'telefono' => $request->telefono,
+                'disponibilidad' => $request->disponibilidad,
+        ]);
 
             // Insertar en correo
             DB::table('correo')->insert([

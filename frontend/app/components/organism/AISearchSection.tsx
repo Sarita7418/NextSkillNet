@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import CandidateCard from '../molecules/CandidateCard';
 import LoadingSpinner from '../atoms/LoadingSpinner';
 import './AISearchSection.css';
-import type { Candidate } from '@/app/types'; // Correcto: Importando el tipo centralizado
+import type { Candidate } from '@/app/types';
 
 // Interfaz para la respuesta de la API de IA
 interface AIResult {
@@ -18,7 +18,6 @@ export const AISearchSection = () => {
   const [result, setResult] = useState<AIResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  // MODIFICADO: Cambiamos 'notFound' por un estado que guardará el mensaje
   const [infoMessage, setInfoMessage] = useState('');
 
   // Manejador del envío del formulario
@@ -26,11 +25,10 @@ export const AISearchSection = () => {
     e.preventDefault();
     if (!prompt.trim() || loading) return;
 
-    // Reiniciar estados antes de cada búsqueda
     setLoading(true);
     setError('');
     setResult(null);
-    setInfoMessage(''); // Limpiamos el mensaje de información
+    setInfoMessage('');
 
     try {
       const response = await fetch('http://127.0.0.1:8000/candidatos/busqueda-ia', {
@@ -42,28 +40,30 @@ export const AISearchSection = () => {
         body: JSON.stringify({ prompt }),
       });
 
-      // --- LÓGICA CORREGIDA PARA MANEJAR RESPUESTAS NEGATIVAS ---
+      // --- LÓGICA DE MANEJO DE ERRORES CORREGIDA ---
       if (!response.ok) {
-        // Si el servidor responde con 404 (No Encontrado)
-        if (response.status === 404) {
-          const errorData = await response.json(); // Leemos el cuerpo del error
-          // Guardamos el mensaje personalizado de la IA en el estado 'infoMessage'
-          setInfoMessage(errorData.message); 
-        } else {
-          // Para cualquier otro error (ej. 500)
-          throw new Error(`Error en la respuesta del servidor. Estado: ${response.status}`);
-        }
-      } else {
-        // Si la respuesta es exitosa (200 OK)
-        const data: AIResult = await response.json();
-        if (data.candidato && data.candidato.createdAt) {
-            data.candidato.createdAt = new Date(data.candidato.createdAt);
-        }
-        setResult(data);
+        // Intentamos leer el cuerpo de la respuesta de error
+        const errorData = await response.json();
+        // Usamos el mensaje específico del servidor si existe
+        const message = errorData.message || `Error inesperado del servidor. Estado: ${response.status}`;
+        // Lo mostramos como un mensaje de información, no como un error crítico
+        setInfoMessage(message);
+        // Salimos de la función sin lanzar un error para que no caiga en el bloque catch
+        setLoading(false);
+        return; 
       }
+      
+      // Si la respuesta es exitosa (200 OK)
+      const data: AIResult = await response.json();
+      if (data.candidato && data.candidato.createdAt) {
+          data.candidato.createdAt = new Date(data.candidato.createdAt);
+      }
+      setResult(data);
+
     } catch (err) {
-      setError('Ocurrió un error al procesar la solicitud. Inténtalo de nuevo.');
-      console.error("Error detallado en el fetch:", err);
+      // El bloque catch ahora solo se activará para errores de red (ej. si el servidor está caído)
+      setError('Ocurrió un error de conexión al procesar la solicitud.');
+      console.error("Error detallado de conexión:", err);
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ export const AISearchSection = () => {
         </div>
       </form>
 
-      {/* --- RENDERIZADO CORREGIDO DE RESULTADOS --- */}
+      {/* Renderizado condicional de los resultados */}
       {loading && (
         <div className="ai-loading-container">
           <LoadingSpinner />
@@ -99,9 +99,10 @@ export const AISearchSection = () => {
         </div>
       )}
 
+      {/* Muestra errores críticos (rojo) */}
       {error && <p className="ai-error-message">{error}</p>}
       
-      {/* Muestra el mensaje de información (ej. "Fuera de mis parámetros") en la sección de resumen */}
+      {/* Muestra mensajes informativos (ej. "No encontrado" o "Formato incorrecto") */}
       {infoMessage && (
         <div className="ai-result-wrapper">
           <div className="ai-result-summary">

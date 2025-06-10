@@ -10,6 +10,11 @@ class FiltroController extends Controller
     public function getOpciones()
     {
         try {
+            $generos = DB::table('subdominios as s')
+            ->join('dominios as d', 's.idPadre', '=', 'd.idPadre')
+            ->where('d.descripcion', '=', 'generos')
+            ->select('s.id as value', 's.descripcion as label') // Devolvemos id y descripción
+            ->get();
             // Obtener Cargos/Posiciones (sin cambios)
             $posiciones = DB::table('subdominios as s')
                 ->join('dominios as d', 's.idPadre', '=', 'd.idPadre')
@@ -63,6 +68,7 @@ class FiltroController extends Controller
                 'habilidades' => $habilidades,
                 'disponibilidades' => $disponibilidades,
                 //'educacion' => $educacion,
+                'generos' => $generos,
             ]);
 
         } catch (\Exception $e) {
