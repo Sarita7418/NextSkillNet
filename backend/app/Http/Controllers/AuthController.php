@@ -133,7 +133,109 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    //Metodo del chat
+    public function agendarEntrevista(Request $request) {
+    try {
+        // Validación
+        $validator = Validator::make($request->all(), [
+            'empresa' => 'required|string|max:100',
+            'fecha' => 'required|date',
+            'hora' => 'required|date_format:H:i',
+            'id_usuario' => 'required|exists:usuarios,id' // Asegura que el usuario existe
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => 'Datos inválidos',
+                'message' => $validator->errors()
+            ], 400);
+        }
 
+        // Insertar en tabla entrevistas
+        $id_entrevista = DB::table('entrevistas')->insertGetId([
+            'id_empresa' => $this->getEmpresaId($request->empresa), // Función auxiliar para obtener ID
+            'id_usuario' => $request->id_usuario,
+            'fecha' => $request->fecha,
+            'hora' => $request->hora,
+            'estado' => 'pendiente',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
 
+        return response()->json([
+            'message' => 'Entrevista agendada con éxito',
+            'id_entrevista' => $id_entrevista
+        ], 201);
+
+        } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error al agendar entrevista',
+            'error' => $e->getMessage()
+        ], 500);
+        }
+    }
+    
+    //Metodo del convocatoria
+
+    public function crearConvocatoria(Request $request) {
+        try {
+            // Validación
+            $validator = Validator::make($request->all(), [
+                'titulo' => 'required|string|max:255',
+                'descripcion' => 'required|string',
+                'fecha_limite' => 'required|date',
+                'id_empresa' => 'required|exists:empresas,id', // Asegura que la empresa existe
+                'id_usuario' => 'required|exists:usuarios,id' // Asegura que el usuario existe
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'error' => 'Datos inválidos',
+                    'message' => $validator->errors()
+                ], 400);
+            }
+
+            // Insertar en tabla convocatorias
+            $id_convocatoria = DB::table('convocatorias')->insertGetId([
+                'titulo' => $request->titulo,
+                'descripcion' => $request->descripcion,
+                'fecha_limite' => $request->fecha_limite,
+                'id_empresa' => $request->id_empresa,
+                'id_usuario' => $request->id_usuario,
+                'estado' => 'abierta',
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            return response()->json([
+                'message' => 'Convocatoria creada con éxito',
+                'id_convocatoria' => $id_convocatoria
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al crear convocatoria',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    public function listarConvocatorias() {
+        try {
+            $convocatorias = DB::table('convocatorias')
+                ->join('empresas', 'convocatorias.id_empresa', '=', 'empresas.id')
+                ->select('convocatorias.*', 'empresas.nombre as empresa')
+                ->where('convocatorias.estado', 'activa')
+                ->get();
+
+            return response()->json([
+                'data' => $convocatorias
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener convocatorias',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    }
 }
