@@ -265,4 +265,28 @@ private function cosineSimilarity(array $vec1, array $vec2): float
             return response()->json(['error' => 'Ocurrió un error al procesar la recomendación.', 'mensaje' => $e->getMessage(), 'linea' => $e->getLine()], 500);
         }
     }
+    public function getPerfil($id)
+{
+    try {
+        // Reutilizamos la lógica de obtener perfiles que ya teníamos
+        $todosLosCandidatos = $this->obtenerPerfilesDeCandidatos();
+        
+        $perfilEncontrado = null;
+        foreach ($todosLosCandidatos as $candidato) {
+            if ($candidato->id == $id) {
+                $perfilEncontrado = $candidato;
+                break;
+            }
+        }
+
+        if ($perfilEncontrado) {
+            return response()->json($perfilEncontrado);
+        } else {
+            return response()->json(['message' => 'Candidato no encontrado'], 404);
+        }
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error interno del servidor'], 500);
+    }
+}
 }

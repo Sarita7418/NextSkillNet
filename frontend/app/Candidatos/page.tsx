@@ -11,6 +11,7 @@ import ExportButtons from '../components/molecules/ExportButtons';
 import { AISearchSection } from '../components/organism/AISearchSection';
 import KnnSearch from '../components/organism/KnnSearch';
 import OnetSearch from '../components/organism/OnetSearch';
+import UserProfileSection from '../components/organism/UserProfileSection';
 // Tipos de datos
 import type { Candidate } from '../types'; // Importando el tipo centralizado
 
@@ -36,6 +37,7 @@ interface CandidateGridProps {
   totalCount: number;
   selectedCandidateId: string | null;
   onSelectCandidate: (id: string) => void;
+  onViewProfile: (id: string) => void; // <-- AÑADE ESTA LÍNEA
 }
 
 // Definición del componente CandidateGrid
@@ -47,6 +49,7 @@ const CandidateGrid: React.FC<CandidateGridProps> = ({
   totalCount,
   selectedCandidateId, // <-- MODIFICADO: Recibe la prop
   onSelectCandidate,   // <-- MODIFICADO: Recibe la prop
+  onViewProfile,
 }) => {
   if (!candidates || candidates.length === 0) {
     return (
@@ -100,6 +103,7 @@ const CandidateGrid: React.FC<CandidateGridProps> = ({
             candidate={candidate}
             isSelected={candidate.id === selectedCandidateId}
             onSelect={onSelectCandidate}
+            onViewProfile={onViewProfile}
           />
         ))}
       </div>
@@ -108,6 +112,10 @@ const CandidateGrid: React.FC<CandidateGridProps> = ({
 }
 
 const Candidatos = () => {
+  const [viewingProfileId, setViewingProfileId] = useState<string | null>(null);
+  const handleCloseProfile = () => {
+    setViewingProfileId(null);
+};
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
   const [filters, setFilters] = useState<FilterOptions>({
@@ -385,17 +393,26 @@ const handleKnnSearch = async () => {
                   totalCount={candidates.length}
                   selectedCandidateId={selectedCandidateId}
                   onSelectCandidate={handleSelectCandidate}
+                  onViewProfile={setViewingProfileId} // Placeholder
                 />
               )}
             </div>
           </div>
         </div>
-        
+        {/* AÑADIDO: Renderizado condicional del modal de perfil */}
+  {viewingProfileId && (
+    <UserProfileSection 
+      candidateId={viewingProfileId} 
+      onClose={handleCloseProfile} 
+    />
+  )}
      {/* AÑADIR LA NUEVA SECCIÓN DEBAJO DEL LAYOUT PRINCIPAL */}
         <div className="container mt-8">
         <OnetSearch
     onSearch={handleOnetSearch}
     isLoading={onetLoading}
+
+    
   />
   
   {/* --- SECCIÓN PARA MOSTRAR RESULTADOS O*NET --- */}
@@ -410,6 +427,7 @@ const handleKnnSearch = async () => {
                           candidate={result}
                           onSelect={handleSelectCandidate}
                           isSelected={result.id === selectedCandidateId}
+                          onViewProfile={setViewingProfileId} 
                       />
                       {/* Mostramos el puntaje de similitud */}
                       <div className="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
@@ -424,7 +442,7 @@ const handleKnnSearch = async () => {
   <hr className="my-12 border-t-2 border-gray-200" />
   
   {/* --- SECCIÓN DE BÚSQUEDA CON IA GENERATIVA (GEMINI) --- */}
-  <AISearchSection />
+  <AISearchSection onViewProfile={setViewingProfileId} />
     </div>
   </main>
   <Footer />
