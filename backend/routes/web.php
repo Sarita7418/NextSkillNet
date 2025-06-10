@@ -13,6 +13,7 @@ use App\Http\Controllers\FiltroController;
 use App\Http\Controllers\RecomendacionController;
 use App\Http\Controllers\OnetController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\EducacionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -118,3 +119,9 @@ Route::get('/usuario/{id}/experiencias-laborales', [UsuarioController::class, 'g
 Route::post('/usuario/{id_usuario}/experiencias-laborales', [UsuarioController::class, 'storeExperienciaLaboral']);
 Route::put('/usuario/{id_usuario}/experiencias-laborales/{id_experiencia_laboral}', [UsuarioController::class, 'updateExperienciaLaboral']);
 Route::delete('/usuario/{id_usuario}/experiencias-laborales/{id_experiencia_laboral}', [UsuarioController::class, 'destroyExperienciaLaboral']);
+
+// Rutas para educación (CRUD)
+Route::get('/usuario/{id}/educacion', [EducacionController::class, 'getEducacion']); // Obtener educación de un usuario
+Route::post('/usuario/{id_usuario}/educacion', [EducacionController::class, 'storeEducacion']); // Crear nueva educación
+Route::put('/usuario/{id_usuario}/educacion/{id_educacion}', [EducacionController::class, 'updateEducacion']); // Actualizar
+Route::delete('/usuario/{id_usuario}/educacion/{id_educacion}', [EducacionController::class, 'destroyEducacion']); // Eliminar
