@@ -1,4 +1,3 @@
-// src/components/molecules/DocumentoCard.tsx
 import React from 'react';
 import { FaFilePdf, FaFileWord, FaImage, FaEye, FaDownload, FaTrashAlt } from 'react-icons/fa';
 import './DocumentoCard.css'; // Estilos para este componente
@@ -9,7 +8,7 @@ interface DocumentoCardProps {
   tipoDocumento: string; // Ej: "Currículum", "Certificación"
   formato: "PDF" | "DOCX" | "Imagen" | string; // Ej: "PDF", "DOCX", "JPG"
   // Opcional: url del documento para descargar/ver
-  documentoUrl?: string; 
+  documentoUrl?: string;
   onView?: (id: string) => void;
   onDownload?: (id: string, url?: string) => void;
   onDelete?: (id: string) => void;
@@ -54,7 +53,7 @@ const DocumentoCard: React.FC<DocumentoCardProps> = ({
           </button>
         )}
         {onDownload && documentoUrl && (
-          <a href={documentoUrl} target="_blank" rel="noopener noreferrer" className="btn-card-action btn-download" title="Descargar Documento">
+          <a href={documentoUrl} target="_blank" rel="noopener noreferrer" className="btn-card-action btn-download" title="Descargar Documento" download={nombre}>
             <FaDownload />
           </a>
         )}
