@@ -124,15 +124,20 @@ class CandidatoController extends Controller
     ";
 
     try {
-        // La lógica de PHP para llamar a la API y procesar la respuesta no cambia.
         $result = Gemini::generativeModel('gemini-1.5-pro-latest')->generateContent($systemPrompt);
         $aiResponseText = $result->text();
         
         $jsonText = trim(str_replace(['```json', '```'], '', $aiResponseText));
         $aiResponseJSON = json_decode($jsonText, true);
 
+        // --- CORRECCIÓN AQUÍ ---
+        // Si el JSON es inválido o no tiene la clave que esperamos...
         if (json_last_error() !== JSON_ERROR_NONE || !isset($aiResponseJSON['mejor_candidato_id'])) {
-            return response()->json(['message' => 'La IA no devolvió una respuesta con el formato esperado.'], 502);
+            // Creamos un mensaje de error que incluye la respuesta original de la IA
+            $errorMessage = "\"" . $aiResponseText . "\"";
+            
+            // Devolvemos este mensaje detallado. Usamos 422 (Unprocessable Entity) que es más adecuado.
+            return response()->json(['message' => $errorMessage], 422);
         }
         
         $bestCandidateId = $aiResponseJSON['mejor_candidato_id'];

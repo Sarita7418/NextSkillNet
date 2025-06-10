@@ -18,10 +18,10 @@ class RecomendacionController extends Controller
             ]);
 
             $habilidadesRequeridas = $request->input('habilidades');
-            $datasetPath = storage_path('app/abilities.csv');
+            $datasetPath = storage_path('app/onet_skills.csv');
 
             if (!file_exists($datasetPath)) {
-                return response()->json(['error' => 'El archivo del dataset no se encuentra en storage/app/abilities.csv'], 500);
+                return response()->json(['error' => 'El archivo del dataset no se encuentra en storage/app/onet_skills.csv'], 500);
             }
 
             // --- CORRECCIÓN CRÍTICA ---

@@ -15,7 +15,9 @@ const RegisterForm: React.FC = () => {
     fechaNacimiento: '',
     genero: '',
     estadoEmpleado: '',
-    correo: ''
+    correo: '',
+    telefono: '', // <-- AÑADIDO
+    disponibilidad: '', // <-- AÑADIDO
   });
   const [contraseña, setContraseña] = useState('');
   const [confirmarContraseña, setConfirmarContraseña] = useState('');
@@ -69,6 +71,8 @@ const RegisterForm: React.FC = () => {
       estadoEmpleado: true,
       contraseña: true,
       confirmarContraseña: true,
+      telefono: true, // AÑADIDO: Marcar el campo de teléfono como tocado
+      disponibilidad: true, // AÑADIDO: Marcar el campo de disponibilidad como tocado
     });
     setError('');
 
@@ -175,6 +179,19 @@ const RegisterForm: React.FC = () => {
             autoComplete="off"
           />
         </div>
+        {/* AÑADIDO: Campo de Teléfono */}
+        <div className="form-group-std">
+          <label className="form-label-std">Teléfono (Opcional)</label>
+          <input
+            className="input-std"
+            name="telefono"
+            type="tel"
+            value={formData.telefono}
+            onChange={handleInputChange}
+            placeholder="Introduce tu número de teléfono"
+            autoComplete="off"
+          />
+        </div>
         {/* Fecha de Nacimiento */}
         <div className="form-group-std">
           <label className="form-label-std">
@@ -225,6 +242,21 @@ const RegisterForm: React.FC = () => {
             <option value="">Seleccione su situación laboral</option>
             <option value="1">Con trabajo</option>
             <option value="0">Sin trabajo</option>
+          </select>
+        </div>
+        {/* AÑADIDO: Campo de Disponibilidad */}
+        <div className="form-group-std">
+          <label className="form-label-std">Disponibilidad (Opcional)</label>
+          <select
+            className="select-std"
+            name="disponibilidad"
+            value={formData.disponibilidad}
+            onChange={handleInputChange}
+          >
+            <option value="">No especificar</option>
+            <option value="immediate">Inmediata</option>
+            <option value="two-weeks">Dos semanas</option>
+            <option value="one-month">Un mes</option>
           </select>
         </div>
         {/* Contraseña */}
