@@ -12,6 +12,7 @@ import { AISearchSection } from '../components/organism/AISearchSection';
 import KnnSearch from '../components/organism/KnnSearch';
 import OnetSearch from '../components/organism/OnetSearch';
 import UserProfileSection from '../components/organism/UserProfileSection';
+import { useRouter } from 'next/navigation';
 // Tipos de datos
 import type { Candidate } from '../types'; // Importando el tipo centralizado
 
@@ -112,6 +113,9 @@ const CandidateGrid: React.FC<CandidateGridProps> = ({
 }
 
 const Candidatos = () => {
+  
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false); 
   const [viewingProfileId, setViewingProfileId] = useState<string | null>(null);
   const handleCloseProfile = () => {
     setViewingProfileId(null);
@@ -141,8 +145,15 @@ const Candidatos = () => {
   const [onetResults, setOnetResults] = useState<any[]>([]); // Usamos 'any' por ahora
   const [onetLoading, setOnetLoading] = useState(false);
   // Hook para cargar los datos desde la API de Laravel al montar el componente
+
+
+
+  
   // Move handleOnetSearch to component scope
+
+
   const handleOnetSearch = async (cargo: string) => {
+    
     if (!cargo.trim()) return;
     setOnetLoading(true);
     setOnetResults([]);
@@ -169,6 +180,29 @@ const Candidatos = () => {
         setOnetLoading(false);
     }
   };
+useEffect(() => {
+  
+    // Verificamos que estamos en el navegador
+    if (typeof window !== 'undefined') {
+        const storedUsuario = localStorage.getItem('usuario');
+        
+        if (storedUsuario) {
+            const usuario = JSON.parse(storedUsuario);
+            const rolId = Number(usuario.id_rol);
+
+            // Si el rol NO es Administrador (2) NI Representante (3), redirigimos al inicio
+            if (rolId !== 2) {
+          router.push('/Inicio');
+        } else {
+          // Si el rol es correcto, permitimos que la página se muestre
+          setIsAuthorized(true);
+        }
+        } else {
+            // Si no hay usuario en localStorage, también redirigimos
+            router.push('/Login');
+        }
+    }
+}, [router]);
 
   useEffect(() => {
     const handleKnnSearch = async () => {

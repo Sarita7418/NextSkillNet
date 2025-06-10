@@ -74,7 +74,7 @@ class CuentaController extends Controller
         // Actualizar rol del usuario
         DB::table('usuarios')
             ->where('id_usuario', $request->id_usuario)
-            ->update(['id_rol' => 3]);
+            ->update(['id_rol' => 4]);
 
         return response()->json(['message' => 'Solicitud enviada correctamente y rol actualizado']);
     } else {
