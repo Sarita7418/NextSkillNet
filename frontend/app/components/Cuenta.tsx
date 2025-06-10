@@ -19,13 +19,20 @@ const Cuenta: React.FC = () => {
   const [areaSeleccionada, setAreaSeleccionada] = useState('');
   const [paisSeleccionado, setPaisSeleccionado] = useState('');
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState('');
-
+  const [formData, setFormData] = useState({
+    nombreEmpresa: '',
+    areaSeleccionada: '',
+    paisSeleccionado: '',
+    ciudadSeleccionada: '',
+    contrasenaNueva: '',
+  });
   const [touched, setTouched] = useState({
     nombreEmpresa: false,
     areaSeleccionada: false,
     paisSeleccionado: false,
     ciudadSeleccionada: false,
     contrasenaNueva: false,
+    
   });
 
   const [contrasenaNueva, setContrasenaNueva] = useState('');
@@ -42,35 +49,41 @@ const Cuenta: React.FC = () => {
   const validNuevaPass = !!contrasenaNueva;
 
   // Carga usuario de localStorage al montar
+  // Carga el usuario y los datos iniciales de los selectores (áreas y países)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const u = localStorage.getItem('usuario');
       if (u) setUsuario(JSON.parse(u));
     }
-  }, []);
 
-  // Carga áreas y países al montar
-  useEffect(() => {
+    // Cargar Áreas
     fetch('http://127.0.0.1:8000/subdominios/areas')
       .then(res => res.json())
-      .then((data: Item[]) => setAreas(data));
+      .then((data: Item[]) => setAreas(data))
+      .catch(err => console.error("Error al cargar áreas:", err));
+      
+    // Cargar Países
     fetch('http://127.0.0.1:8000/politicos_ubicacion/paises')
       .then(res => res.json())
-      .then((data: Item[]) => setPaises(data));
+      .then((data: Item[]) => setPaises(data))
+      .catch(err => console.error("Error al cargar países:", err));
   }, []);
+
 
   // Carga ciudades al cambiar país seleccionado
   useEffect(() => {
-    if (!paisSeleccionado) {
-      setCiudades([]);
-      setCiudadSeleccionada('');
-      return;
-    }
-    fetch(`http://127.0.0.1:8000/politicos_ubicacion/ciudades/${paisSeleccionado}`)
-      .then(res => res.json())
-      .then((data: Item[]) => setCiudades(data));
-  }, [paisSeleccionado]);
-
+  // Si no hay un país seleccionado, limpia la lista de ciudades
+  if (!paisSeleccionado) {
+    setCiudades([]);
+    setCiudadSeleccionada(''); // También limpia la ciudad seleccionada
+    return;
+  }
+    // Cuando se selecciona un país, busca sus ciudades en la API
+  fetch(`http://127.0.0.1:8000/politicos_ubicacion/ciudades/${paisSeleccionado}`)
+    .then(res => res.json())
+    .then((data: Item[]) => setCiudades(data));
+    
+}, [paisSeleccionado]);
   // Solicitar ser representante
   const handleSolicitarRepresentante = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -259,28 +272,24 @@ const Cuenta: React.FC = () => {
               </select>
             </div>
             {/* Ciudad */}
-            <div className="form-group-std">
-              <label className="form-label-std">
-                Ciudad
-                {touched.ciudadSeleccionada && !validCiudad && (
-                  <span className="msg-error-std">Campo obligatorio*</span>
-                )}
-              </label>
-              <select
-                className={`select-std${touched.ciudadSeleccionada && !validCiudad ? ' error' : ''}`}
-                value={ciudadSeleccionada}
-                onChange={e => setCiudadSeleccionada(e.target.value)}
-                onBlur={() => handleBlur('ciudadSeleccionada')}
-                disabled={loading || ciudades.length === 0}
-              >
-                <option value="">Seleccione una ciudad</option>
-                {ciudades.map(ciudad => (
-                  <option key={ciudad.id} value={ciudad.id}>
-                    {ciudad.descripcion}
-                  </option>
-                ))}
-              </select>
-            </div>
+<div className="form-group-std">
+  <label className="form-label-std">Ciudad</label>
+  <select
+    className={`select-std${touched.ciudadSeleccionada && !validCiudad ? ' error' : ''}`}
+    value={ciudadSeleccionada}
+    onChange={e => setCiudadSeleccionada(e.target.value)}
+    onBlur={() => handleBlur('ciudadSeleccionada')}
+    disabled={loading || ciudades.length === 0} // <-- Se deshabilita si no hay ciudades cargadas
+    required
+  >
+    <option value="">Seleccione una ciudad</option>
+    {ciudades.map(ciudad => (
+      <option key={ciudad.id} value={ciudad.id}>
+        {ciudad.descripcion}
+      </option>
+    ))}
+  </select>
+</div>
             {/* Mensaje error */}
             {errorGeneral && <div className="msg-error-std" style={{ marginBottom: 12 }}>{errorGeneral}</div>}
             {successMsg && <div style={{ color: '#10b981', marginBottom: 12 }}>{successMsg}</div>}

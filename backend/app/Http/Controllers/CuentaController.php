@@ -16,20 +16,27 @@ class CuentaController extends Controller
     }
 
     // Obtener países (politicos_ubicacion donde idPadre es NULL)
+    // Este método debe devolver SOLO los países
     public function getPaises()
-    {
-        $paises = DB::table('politicos_ubicacion')
-            ->whereNotNull('idPadre')  // Solo los que tienen un padre, es decir países
-            ->get();
-        return response()->json($paises);
-    }
+{
+    $paises = DB::table('politicos_ubicacion')
+                ->where('tipo', '=', 'Pais') // <-- La clave es filtrar por tipo 'Pais'
+                ->select('id', 'descripcion')
+                ->get();
+    return response()->json($paises);
+}
 
     // Obtener ciudades por país (idPadre = $idPais)
+    // Este método recibe el ID de un país y devuelve SOLO sus ciudades
     public function getCiudades($idPais)
-    {
-        $ciudades = DB::table('politicos_ubicacion')->where('idPadre', $idPais)->get();
-        return response()->json($ciudades);
-    }
+{
+    $ciudades = DB::table('politicos_ubicacion')
+                  ->where('tipo', '=', 'Ciudad') // Filtramos por tipo 'Ciudad'
+                  ->where('idPadre', '=', $idPais) // Y que pertenezcan al país seleccionado
+                  ->select('id', 'descripcion')
+                  ->get();
+    return response()->json($ciudades);
+}
 
     // Solicitar representante
     public function solicitarRepresentante(Request $request) {
@@ -67,7 +74,7 @@ class CuentaController extends Controller
         // Actualizar rol del usuario
         DB::table('usuarios')
             ->where('id_usuario', $request->id_usuario)
-            ->update(['id_rol' => 4]);
+            ->update(['id_rol' => 3]);
 
         return response()->json(['message' => 'Solicitud enviada correctamente y rol actualizado']);
     } else {
