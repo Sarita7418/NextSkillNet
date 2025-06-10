@@ -1,126 +1,102 @@
 // src/components/pages/SubirDocumento.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import FileInput from '../molecules/SubirArchivo'; // Importa el nuevo FileInput
-import DocumentoCard from '../molecules/DocumentoCard'; // Importa el nuevo DocumentoCard
+import FileInput from '../molecules/SubirArchivo'; // Importa el FileInput
+import DocumentoCard from '../molecules/DocumentoCard'; // Importa el DocumentoCard
 import './EnviarArchivo.css'; // Estilos para el componente principal
 
-// Interfaz para un documento subido (simulado)
-interface DocumentoSubido {
-  id: string;
+// Interfaz para un documento subido
+interface Documento {
+  id?: string; // O number si tu backend usa números
   nombre: string;
-  tipoDocumento: string; // Ej: "Currículum"
-  formato: "PDF" | "DOCX" | "Imagen" | string; // Ej: "PDF"
-  url: string; // URL simulada para descarga/vista
+  url: string;
+  estado: string;
+  tipoDocumento?: string;
+  formato?: string;
 }
 
 const SubirDocumento: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [tipoDocumento, setTipoDocumento] = useState("1"); // Por defecto Currículum
+  const [tipoDocumento, setTipoDocumento] = useState<string>("1"); // Inicializar como string
   const [formatoDocumento, setFormatoDocumento] = useState("2"); // Por defecto PDF
-
-  // Estado para la lista de documentos que ya están "subidos"
-  const [documentosSubidos, setDocumentosSubidos] = useState<DocumentoSubido[]>([
-    // Datos de ejemplo para simular documentos ya subidos
-    { id: 'doc1', nombre: 'Mi_Curriculum_2024.pdf', tipoDocumento: 'Currículum', formato: 'PDF', url: '/docs/cv.pdf' },
-    { id: 'doc2', nombre: 'Carta_Presentacion_EmpresaX.docx', tipoDocumento: 'Carta de Presentación', formato: 'DOCX', url: '/docs/carta.docx' },
-    { id: 'doc3', nombre: 'Certificado_Ingles.png', tipoDocumento: 'Certificación', formato: 'Imagen', url: '/docs/certificado.png' },
-  ]);
-
+  const [documentosSubidos, setDocumentosSubidos] = useState<Documento[]>([]);
+  const [uploading, setUploading] = useState(false);
   const router = useRouter();
 
-  const handleFileUpload = async () => {
-    const id_persona = localStorage.getItem("id_persona");
-
-    if (!id_persona) {
-      alert("Usuario no autenticado. Inicia sesión para continuar.");
-      router.push('/Login');
-      return;
+  useEffect(() => {
+    const storedDocumentos = localStorage.getItem('documentosSubidos');
+    if (storedDocumentos) {
+      setDocumentosSubidos(JSON.parse(storedDocumentos));
     }
+  }, []);
 
+  const handleFileUploadCloudinary = async () => {
     if (!selectedFile) {
       alert('Por favor, selecciona un archivo antes de subir.');
       return;
     }
 
-    // Preparar formData para la API
-    const formData = new FormData();
-    formData.append("cv", selectedFile);
-    formData.append("id_persona", id_persona);
-    formData.append("id_tipoDocumento", tipoDocumento);
-    formData.append("id_formatoDocumento", formatoDocumento);
+    // const personaId = localStorage.getItem("id_persona");
+    // if (!personaId) {
+    //   alert("Usuario no autenticado.");
+    //   return;
+    // }
+
+    setUploading(true);
 
     try {
-      // Simulación de la llamada a la API
-      // Reemplaza esta parte con tu fetch real
-      console.log("Simulando subida de archivo:", selectedFile.name);
-      console.log("Tipo de documento:", tipoDocumento);
-      console.log("Formato de documento:", formatoDocumento);
+      // Preparamos formData para Cloudinary
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("upload_preset", "archivos"); // Reemplaza con tu upload preset
+      formData.append("cloud_name", "dhgrcrs94"); // Reemplaza con tu cloud name
 
-      // Simular una respuesta exitosa del servidor
-      const simulatedResponse = await new Promise((resolve) => setTimeout(() => {
-        resolve({
-          ok: true,
-          json: () => Promise.resolve({ 
-            message: "Archivo subido correctamente", 
-            path: `/uploads/${selectedFile.name}`,
-            // Datos que tu API real debería devolver
-            id: `doc-${Date.now()}`, 
-            nombre: selectedFile.name,
-            tipoDocumento: (document.getElementById('tipoDocumentoSelect') as HTMLSelectElement)?.options[(document.getElementById('tipoDocumentoSelect') as HTMLSelectElement)?.selectedIndex].text || 'Desconocido',
-            formato: (document.getElementById('formatoDocumentoSelect') as HTMLSelectElement)?.options[(document.getElementById('formatoDocumentoSelect') as HTMLSelectElement)?.selectedIndex].text || 'Desconocido',
-            url: `/uploads/${selectedFile.name}` // URL de simulación
-          })
-        });
-      }, 1500)); // Simula un retraso de 1.5 segundos
+      // Llamamos a Cloudinary
+      const res = await fetch("https://api.cloudinary.com/v1_1/dhgrcrs94/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-      // Después de la simulación, procesar la respuesta
-      const response = simulatedResponse as Response; // Casteamos para TypeScript
-      const data = await response.json();
+      const data = await res.json();
 
-      if (!response.ok) throw new Error(data.message || "Error al subir el archivo.");
+      if (data.secure_url) {
+        const nuevoDocumento: Documento = {
+          nombre: selectedFile.name,
+          url: data.secure_url, // Usamos la URL de Cloudinary
+          estado: "En revisión",
+          tipoDocumento: (document.getElementById('tipoDocumentoSelect') as HTMLSelectElement)?.options[(document.getElementById('tipoDocumentoSelect') as HTMLSelectElement)?.selectedIndex].text || 'Desconocido',
+          formato: (document.getElementById('formatoDocumentoSelect') as HTMLSelectElement)?.options[(document.getElementById('formatoDocumentoSelect') as HTMLSelectElement)?.selectedIndex].text || 'Desconocido',
+        };
 
-      alert("📄 Documento subido correctamente ✅");
-      console.log("Ruta del archivo:", data.path);
-      
-      // Añadir el nuevo documento a la lista de documentos subidos
-      setDocumentosSubidos(prevDocs => [...prevDocs, {
-        id: data.id,
-        nombre: data.nombre,
-        tipoDocumento: data.tipoDocumento,
-        formato: data.formato.toUpperCase(), // Asegurar que sea MAYÚSCULAS
-        url: data.url
-      }]);
-
-      setSelectedFile(null); // Limpiar el archivo seleccionado del input
-      // Opcional: resetear los dropdowns a sus valores por defecto si lo deseas
-      // setTipoDocumento("1");
-      // setFormatoDocumento("2");
-
-    } catch (err: any) {
-      alert(`❌ Error al subir el archivo: ${err.message}`);
-      console.error("Error al subir:", err);
+        const updatedDocumentos = [...documentosSubidos, nuevoDocumento];
+        setDocumentosSubidos(updatedDocumentos);
+        localStorage.setItem('documentosSubidos', JSON.stringify(updatedDocumentos));
+        alert("Archivo subido correctamente a Cloudinary.");
+      } else {
+        alert("Error al subir archivo a Cloudinary.");
+        console.error("Cloudinary error:", data);
+      }
+    } catch (error) {
+      alert("Error al subir el archivo.");
+      console.error(error);
+    } finally {
+      setUploading(false);
     }
   };
 
   // Funciones para las acciones de DocumentoCard
-  const handleViewDocument = (id: string) => {
-    const doc = documentosSubidos.find(d => d.id === id);
-    if (doc && doc.url) {
-      alert(`Simulando vista del documento: ${doc.nombre}. URL: ${doc.url}`);
-      // Aquí abrirías el documento en un modal o en una nueva pestaña
-      window.open(doc.url, '_blank');
-    } else {
-      alert("URL del documento no disponible para ver.");
-    }
+  const handleViewDocument = (url: string) => {
+    window.open(url, '_blank');
   };
 
   const handleDeleteDocument = (id: string) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este documento?')) {
-      setDocumentosSubidos(documentosSubidos.filter(doc => doc.id !== id));
-      alert('Documento eliminado correctamente.');
+      const updatedDocumentos = documentosSubidos.filter(doc => doc.id !== id);
+      setDocumentosSubidos(updatedDocumentos);
+      localStorage.setItem('documentosSubidos', JSON.stringify(updatedDocumentos));
+      alert('Documento eliminado correctamente (simulado en frontend).');
       // Aquí también enviarías una solicitud a tu API para eliminar el documento del servidor
     }
   };
@@ -133,7 +109,7 @@ const SubirDocumento: React.FC = () => {
       {/* Sección de Subida de Nuevo Documento */}
       <div className="upload-section">
         <h2 className="section-title">Subir Nuevo Documento</h2>
-        
+
         <div className="form-group">
           <label htmlFor="tipoDocumentoSelect" className="form-label">Tipo de documento</label>
           <select
@@ -164,13 +140,13 @@ const SubirDocumento: React.FC = () => {
           </select>
         </div>
 
-        <FileInput 
-          onFileChange={setSelectedFile} 
+        <FileInput
+          onFileChange={setSelectedFile}
           acceptedFileTypes=".pdf,.docx,.jpg,.jpeg,.png"
           labelText="Arrastra tu archivo aquí o haz clic para seleccionar"
         />
 
-        <button className="btn-upload" onClick={handleFileUpload}>
+        <button className="btn-upload" onClick={handleFileUploadCloudinary}>
           Subir Documento
         </button>
       </div>
@@ -184,13 +160,13 @@ const SubirDocumento: React.FC = () => {
           <div className="documentos-list-grid">
             {documentosSubidos.map(doc => (
               <DocumentoCard
-                key={doc.id}
-                id={doc.id}
+                key={doc.id || doc.url}
+                id={doc.id || doc.url}
                 nombre={doc.nombre}
-                tipoDocumento={doc.tipoDocumento}
-                formato={doc.formato}
+                tipoDocumento={doc.tipoDocumento || 'Desconocido'}
+                formato={doc.formato || 'Desconocido'}
                 documentoUrl={doc.url}
-                onView={handleViewDocument}
+                onView={() => handleViewDocument(doc.url)}
                 onDownload={() => { /* La descarga se hace directamente con el 'a href' */ }}
                 onDelete={handleDeleteDocument}
               />
