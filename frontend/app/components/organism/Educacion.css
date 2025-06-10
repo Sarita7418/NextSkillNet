@@ -303,3 +303,150 @@
     border-bottom: 3px solid #007bff;
   }
 }
+/* src/components/pages/Educacion.css (Complementary Styles) */
+
+/* --- Modal Formulario (Añadir / Editar) --- */
+.modal-form {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que el modal esté por encima de otros elementos */
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-content h2 {
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 2em;
+    letter-spacing: -0.5px;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 15px;
+    color: #555;
+    font-weight: 500;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="date"],
+.modal-content select,
+.modal-content textarea {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    color: #333;
+    margin-top: 5px;
+    transition: border-color 0.3s ease;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content input[type="date"]:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+.modal-content textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+    min-height: 100px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.form-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-buttons button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+}
+
+.form-buttons button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.form-buttons button[type="button"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.form-buttons button[type="button"]:hover {
+    background-color: #5a6268;
+}
+
+.form-buttons button svg {
+    margin-left: 8px;
+}
+
+/* --- Animación de Borrado --- */
+.education-card.deleting {
+    animation: fadeOutScale 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeOutScale {
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* --- Responsive para el Modal --- */
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 20px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    .form-buttons {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .form-buttons button {
+        padding: 12px 0;
+    }
+}
