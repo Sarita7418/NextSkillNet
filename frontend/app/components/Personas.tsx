@@ -73,7 +73,6 @@ function Personas() {
       setUsuarios(prev => prev.filter(u => u.id_usuario !== id));
       alert('Usuario desactivado correctamente.');
     } catch {
-      alert('Error al desactivar el usuario');
     }
   };
 

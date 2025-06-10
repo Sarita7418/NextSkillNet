@@ -5,6 +5,13 @@ interface Item {
   descripcion: string;
 }
 
+interface Empresa {
+  id_empresa: number;
+  nombre: string;
+  area: string;
+  ciudad: string;
+}
+
 interface Usuario {
   id_usuario: number;
 }
@@ -14,7 +21,10 @@ const Cuenta: React.FC = () => {
   const [areas, setAreas] = useState<Item[]>([]);
   const [paises, setPaises] = useState<Item[]>([]);
   const [ciudades, setCiudades] = useState<Item[]>([]);
+  const [empresas, setEmpresas] = useState<Empresa[]>([]);
+  const [empresaSeleccionada, setEmpresaSeleccionada] = useState<string>(''); // almacena el id_empresa o "nueva"
 
+  // Formulario para nueva empresa
   const [nombreEmpresa, setNombreEmpresa] = useState('');
   const [areaSeleccionada, setAreaSeleccionada] = useState('');
   const [paisSeleccionado, setPaisSeleccionado] = useState('');
@@ -26,22 +36,29 @@ const Cuenta: React.FC = () => {
     paisSeleccionado: false,
     ciudadSeleccionada: false,
     contrasenaNueva: false,
+    confirmarContrasena: false,
   });
 
+  // Contraseña
   const [contrasenaNueva, setContrasenaNueva] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [confirmarContrasena, setConfirmarContrasena] = useState('');
   const [showFormRepresentante, setShowFormRepresentante] = useState(false);
   const [errorGeneral, setErrorGeneral] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Validaciones
+  // Validaciones de formulario nueva empresa
   const validNombre = !!nombreEmpresa.trim();
   const validArea = !!areaSeleccionada;
   const validPais = !!paisSeleccionado;
   const validCiudad = !!ciudadSeleccionada;
-  const validNuevaPass = !!contrasenaNueva;
+  const validEmpresaSeleccionada = !!empresaSeleccionada;
 
-  // Carga usuario de localStorage al montar
+  // Contraseña validaciones
+  const validNuevaPass = !!contrasenaNueva;
+  const coincidenPass = contrasenaNueva === confirmarContrasena && contrasenaNueva.length > 0;
+
+  // Carga usuario de localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const u = localStorage.getItem('usuario');
@@ -49,7 +66,7 @@ const Cuenta: React.FC = () => {
     }
   }, []);
 
-  // Carga áreas y países al montar
+  // Carga áreas y países
   useEffect(() => {
     fetch('http://127.0.0.1:8000/subdominios/areas')
       .then(res => res.json())
@@ -57,6 +74,9 @@ const Cuenta: React.FC = () => {
     fetch('http://127.0.0.1:8000/politicos_ubicacion/paises')
       .then(res => res.json())
       .then((data: Item[]) => setPaises(data));
+    fetch('http://127.0.0.1:8000/admin/empresas')
+      .then(res => res.json())
+      .then((data: Empresa[]) => setEmpresas(data));
   }, []);
 
   // Carga ciudades al cambiar país seleccionado
@@ -71,9 +91,12 @@ const Cuenta: React.FC = () => {
       .then((data: Item[]) => setCiudades(data));
   }, [paisSeleccionado]);
 
-  // Solicitar ser representante
+  // ----------- Formulario representante -------------
+
   const handleSolicitarRepresentante = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    setErrorGeneral('');
+    setSuccessMsg('');
     setTouched(t => ({
       ...t,
       nombreEmpresa: true,
@@ -81,12 +104,37 @@ const Cuenta: React.FC = () => {
       paisSeleccionado: true,
       ciudadSeleccionada: true,
     }));
-    setErrorGeneral('');
-    setSuccessMsg('');
+
     if (!usuario) return setErrorGeneral('Usuario no cargado');
-    if (!validNombre || !validArea || !validPais || !validCiudad) {
-      setErrorGeneral('Completa todos los campos obligatorios');
+    if (!validEmpresaSeleccionada) {
+      setErrorGeneral('Seleccione una empresa o la opción para registrar nueva empresa');
       return;
+    }
+
+    let payload: any = {
+      id_usuario: usuario.id_usuario,
+    };
+
+    if (empresaSeleccionada !== 'nueva') {
+      // Empresa EXISTENTE
+      payload = {
+        ...payload,
+        nombre_empresa: `idEmpresa=${empresaSeleccionada}`,
+        id_area: 1,      // Forzados, no se usan realmente
+        id_ciudad: 1,
+      };
+    } else {
+      // Nueva empresa: validar campos
+      if (!validNombre || !validArea || !validPais || !validCiudad) {
+        setErrorGeneral('Completa todos los campos obligatorios de la empresa');
+        return;
+      }
+      payload = {
+        ...payload,
+        nombre_empresa: nombreEmpresa,
+        id_area: parseInt(areaSeleccionada, 10),
+        id_ciudad: parseInt(ciudadSeleccionada, 10),
+      };
     }
 
     setLoading(true);
@@ -94,17 +142,14 @@ const Cuenta: React.FC = () => {
       const res = await fetch('http://127.0.0.1:8000/usuario/solicitar_representante', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id_usuario: usuario.id_usuario,
-          nombre_empresa: nombreEmpresa,
-          id_area: parseInt(areaSeleccionada, 10),
-          id_ciudad: parseInt(ciudadSeleccionada, 10),
-        }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (res.ok) {
         setSuccessMsg('Solicitud enviada correctamente, pendiente de aprobación');
         setShowFormRepresentante(false);
+        // Limpiar todo
+        setEmpresaSeleccionada('');
         setNombreEmpresa('');
         setAreaSeleccionada('');
         setPaisSeleccionado('');
@@ -115,6 +160,7 @@ const Cuenta: React.FC = () => {
           paisSeleccionado: false,
           ciudadSeleccionada: false,
           contrasenaNueva: false,
+          confirmarContrasena: false,
         });
       } else {
         setErrorGeneral(data.message || 'Error desconocido');
@@ -126,17 +172,15 @@ const Cuenta: React.FC = () => {
     }
   };
 
-  // Actualizar contraseña
+  // ----------- Contraseña -----------
   const handleActualizarContrasena = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    setTouched(t => ({ ...t, contrasenaNueva: true }));
+    setTouched(t => ({ ...t, contrasenaNueva: true, confirmarContrasena: true }));
     setErrorGeneral('');
     setSuccessMsg('');
     if (!usuario) return setErrorGeneral('Usuario no cargado');
-    if (!validNuevaPass) {
-      setErrorGeneral('Ingrese una nueva contraseña');
-      return;
-    }
+    if (!validNuevaPass) return setErrorGeneral('Ingrese una nueva contraseña');
+    if (!coincidenPass) return setErrorGeneral('Las contraseñas no coinciden');
     if (!confirm('¿Está seguro de cambiar su contraseña?')) return;
 
     setLoading(true);
@@ -153,7 +197,8 @@ const Cuenta: React.FC = () => {
       if (res.ok) {
         setSuccessMsg('Contraseña actualizada correctamente');
         setContrasenaNueva('');
-        setTouched(t => ({ ...t, contrasenaNueva: false }));
+        setConfirmarContrasena('');
+        setTouched(t => ({ ...t, contrasenaNueva: false, confirmarContrasena: false }));
       } else {
         setErrorGeneral(data.message || 'Error desconocido');
       }
@@ -164,16 +209,18 @@ const Cuenta: React.FC = () => {
     }
   };
 
-  // Cerrar sesión
+  // ----------- Otros -------------
+
   const handleCerrarSesion = () => {
     localStorage.removeItem('usuario');
     window.location.href = '/Login';
   };
 
-  // Manejadores de blur
   const handleBlur = (field: keyof typeof touched) => {
     setTouched(t => ({ ...t, [field]: true }));
   };
+
+  // ----------- Render -------------
 
   return (
     <div className="form-container-std">
@@ -194,94 +241,118 @@ const Cuenta: React.FC = () => {
           </button>
         ) : (
           <form onSubmit={handleSolicitarRepresentante} autoComplete="off">
-            {/* Nombre empresa */}
+            {/* ComboBox empresas */}
             <div className="form-group-std">
               <label className="form-label-std">
-                Nombre empresa
-                {touched.nombreEmpresa && !validNombre && (
-                  <span className="msg-error-std">Campo obligatorio*</span>
-                )}
-              </label>
-              <input
-                className={`input-std${touched.nombreEmpresa && !validNombre ? ' error' : ''}`}
-                type="text"
-                value={nombreEmpresa}
-                onChange={e => setNombreEmpresa(e.target.value)}
-                onBlur={() => handleBlur('nombreEmpresa')}
-                disabled={loading}
-                placeholder="Nombre de la empresa"
-              />
-            </div>
-            {/* Área */}
-            <div className="form-group-std">
-              <label className="form-label-std">
-                Área
-                {touched.areaSeleccionada && !validArea && (
+                Seleccione su empresa
+                {!empresaSeleccionada && (
                   <span className="msg-error-std">Campo obligatorio*</span>
                 )}
               </label>
               <select
-                className={`select-std${touched.areaSeleccionada && !validArea ? ' error' : ''}`}
-                value={areaSeleccionada}
-                onChange={e => setAreaSeleccionada(e.target.value)}
-                onBlur={() => handleBlur('areaSeleccionada')}
+                className={`select-std${!empresaSeleccionada ? ' error' : ''}`}
+                value={empresaSeleccionada}
+                onChange={e => setEmpresaSeleccionada(e.target.value)}
                 disabled={loading}
               >
-                <option value="">Seleccione un área</option>
-                {areas.map(area => (
-                  <option key={area.id} value={area.id}>
-                    {area.descripcion}
+                <option value="">Seleccione una empresa</option>
+                <option value="nueva">MI EMPRESA NO ESTÁ EN ESTE LISTADO</option>
+                {empresas.map(emp => (
+                  <option key={emp.id_empresa} value={emp.id_empresa}>
+                    {emp.nombre} &mdash; {emp.area} ({emp.ciudad})
                   </option>
                 ))}
               </select>
             </div>
-            {/* País */}
-            <div className="form-group-std">
-              <label className="form-label-std">
-                País
-                {touched.paisSeleccionado && !validPais && (
-                  <span className="msg-error-std">Campo obligatorio*</span>
-                )}
-              </label>
-              <select
-                className={`select-std${touched.paisSeleccionado && !validPais ? ' error' : ''}`}
-                value={paisSeleccionado}
-                onChange={e => setPaisSeleccionado(e.target.value)}
-                onBlur={() => handleBlur('paisSeleccionado')}
-                disabled={loading}
-              >
-                <option value="">Seleccione un país</option>
-                {paises.map(pais => (
-                  <option key={pais.id} value={pais.id}>
-                    {pais.descripcion}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* Ciudad */}
-            <div className="form-group-std">
-              <label className="form-label-std">
-                Ciudad
-                {touched.ciudadSeleccionada && !validCiudad && (
-                  <span className="msg-error-std">Campo obligatorio*</span>
-                )}
-              </label>
-              <select
-                className={`select-std${touched.ciudadSeleccionada && !validCiudad ? ' error' : ''}`}
-                value={ciudadSeleccionada}
-                onChange={e => setCiudadSeleccionada(e.target.value)}
-                onBlur={() => handleBlur('ciudadSeleccionada')}
-                disabled={loading || ciudades.length === 0}
-              >
-                <option value="">Seleccione una ciudad</option>
-                {ciudades.map(ciudad => (
-                  <option key={ciudad.id} value={ciudad.id}>
-                    {ciudad.descripcion}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* Mensaje error */}
+            {/* Formulario solo si es nueva empresa */}
+            {empresaSeleccionada === 'nueva' && (
+              <>
+                <div className="form-group-std">
+                  <label className="form-label-std">
+                    Nombre empresa
+                    {touched.nombreEmpresa && !validNombre && (
+                      <span className="msg-error-std">Campo obligatorio*</span>
+                    )}
+                  </label>
+                  <input
+                    className={`input-std${touched.nombreEmpresa && !validNombre ? ' error' : ''}`}
+                    type="text"
+                    value={nombreEmpresa}
+                    onChange={e => setNombreEmpresa(e.target.value)}
+                    onBlur={() => handleBlur('nombreEmpresa')}
+                    disabled={loading}
+                    placeholder="Nombre de la empresa"
+                  />
+                </div>
+                <div className="form-group-std">
+                  <label className="form-label-std">
+                    Área
+                    {touched.areaSeleccionada && !validArea && (
+                      <span className="msg-error-std">Campo obligatorio*</span>
+                    )}
+                  </label>
+                  <select
+                    className={`select-std${touched.areaSeleccionada && !validArea ? ' error' : ''}`}
+                    value={areaSeleccionada}
+                    onChange={e => setAreaSeleccionada(e.target.value)}
+                    onBlur={() => handleBlur('areaSeleccionada')}
+                    disabled={loading}
+                  >
+                    <option value="">Seleccione un área</option>
+                    {areas.map(area => (
+                      <option key={area.id} value={area.id}>
+                        {area.descripcion}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group-std">
+                  <label className="form-label-std">
+                    País
+                    {touched.paisSeleccionado && !validPais && (
+                      <span className="msg-error-std">Campo obligatorio*</span>
+                    )}
+                  </label>
+                  <select
+                    className={`select-std${touched.paisSeleccionado && !validPais ? ' error' : ''}`}
+                    value={paisSeleccionado}
+                    onChange={e => setPaisSeleccionado(e.target.value)}
+                    onBlur={() => handleBlur('paisSeleccionado')}
+                    disabled={loading}
+                  >
+                    <option value="">Seleccione un país</option>
+                    {paises.map(pais => (
+                      <option key={pais.id} value={pais.id}>
+                        {pais.descripcion}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group-std">
+                  <label className="form-label-std">
+                    Ciudad
+                    {touched.ciudadSeleccionada && !validCiudad && (
+                      <span className="msg-error-std">Campo obligatorio*</span>
+                    )}
+                  </label>
+                  <select
+                    className={`select-std${touched.ciudadSeleccionada && !validCiudad ? ' error' : ''}`}
+                    value={ciudadSeleccionada}
+                    onChange={e => setCiudadSeleccionada(e.target.value)}
+                    onBlur={() => handleBlur('ciudadSeleccionada')}
+                    disabled={loading || ciudades.length === 0}
+                  >
+                    <option value="">Seleccione una ciudad</option>
+                    {ciudades.map(ciudad => (
+                      <option key={ciudad.id} value={ciudad.id}>
+                        {ciudad.descripcion}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+            {/* Mensaje error/success */}
             {errorGeneral && <div className="msg-error-std" style={{ marginBottom: 12 }}>{errorGeneral}</div>}
             {successMsg && <div style={{ color: '#10b981', marginBottom: 12 }}>{successMsg}</div>}
             {/* Botones */}
@@ -326,6 +397,25 @@ const Cuenta: React.FC = () => {
               onBlur={() => handleBlur('contrasenaNueva')}
               disabled={loading}
               placeholder="Nueva contraseña"
+            />
+          </div>
+          <div className="form-group-std">
+            <label className="form-label-std">
+              Confirmar nueva contraseña
+              {touched.confirmarContrasena && !coincidenPass && (
+                <span className="msg-error-std">
+                  {confirmarContrasena ? 'Las contraseñas no coinciden' : 'Campo obligatorio*'}
+                </span>
+              )}
+            </label>
+            <input
+              className={`input-std${touched.confirmarContrasena && !coincidenPass ? ' error' : ''}`}
+              type="password"
+              value={confirmarContrasena}
+              onChange={e => setConfirmarContrasena(e.target.value)}
+              onBlur={() => handleBlur('confirmarContrasena')}
+              disabled={loading}
+              placeholder="Confirmar nueva contraseña"
             />
           </div>
           <button

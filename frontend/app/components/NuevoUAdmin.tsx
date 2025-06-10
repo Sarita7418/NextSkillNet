@@ -8,8 +8,11 @@ interface Item {
   id: number;
   descripcion: string;
 }
+interface EmpresaItem {
+  id_empresa: number;
+  nombre: string;
+}
 
-// Valida edad >= 18
 function esMayorDeEdad(fechaISO: string) {
   if (!fechaISO) return false;
   const hoy = new Date();
@@ -53,6 +56,11 @@ const RegistroFormularioA: React.FC = () => {
   const [paisSeleccionado, setPaisSeleccionado] = useState('');
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState('');
 
+  // Para empresas existentes
+  const [empresas, setEmpresas] = useState<EmpresaItem[]>([]);
+  const [empresaSeleccionada, setEmpresaSeleccionada] = useState('');
+  const [mostrarFormularioEmpresa, setMostrarFormularioEmpresa] = useState(false);
+
   useEffect(() => {
     fetch('http://127.0.0.1:8000/subdominios/areas')
       .then(res => res.json())
@@ -60,7 +68,13 @@ const RegistroFormularioA: React.FC = () => {
     fetch('http://127.0.0.1:8000/politicos_ubicacion/paises')
       .then(res => res.json())
       .then((data: Item[]) => setPaises(data));
-  }, []);
+    // Carga empresas solo si se selecciona el rol de representante
+    if (formData.id_rol === '3') {
+      fetch('http://127.0.0.1:8000/admin/empresas')
+        .then(res => res.json())
+        .then((data: EmpresaItem[]) => setEmpresas(data));
+    }
+  }, [formData.id_rol]);
 
   useEffect(() => {
     if (!paisSeleccionado) {
@@ -90,26 +104,55 @@ const RegistroFormularioA: React.FC = () => {
       newErrors.estadoEmpleado = 'Campo obligatorio*';
     if (touched.correo && !formData.correo) newErrors.correo = 'Campo obligatorio*';
     if (touched.id_rol && !formData.id_rol) newErrors.id_rol = 'Campo obligatorio*';
-    // Campos de empresa
+    // Validar empresa solo si elige representante
     if (formData.id_rol === '3') {
-      if (touched.nombreEmpresa && !nombreEmpresa) newErrors.nombreEmpresa = 'Campo obligatorio*';
-      if (touched.areaSeleccionada && !areaSeleccionada) newErrors.areaSeleccionada = 'Campo obligatorio*';
-      if (touched.paisSeleccionado && !paisSeleccionado) newErrors.paisSeleccionado = 'Campo obligatorio*';
-      if (touched.ciudadSeleccionada && !ciudadSeleccionada) newErrors.ciudadSeleccionada = 'Campo obligatorio*';
+      if (touched.empresaSeleccionada && !empresaSeleccionada) newErrors.empresaSeleccionada = 'Campo obligatorio*';
+      if (
+        mostrarFormularioEmpresa
+      ) {
+        if (touched.nombreEmpresa && !nombreEmpresa) newErrors.nombreEmpresa = 'Campo obligatorio*';
+        if (touched.areaSeleccionada && !areaSeleccionada) newErrors.areaSeleccionada = 'Campo obligatorio*';
+        if (touched.paisSeleccionado && !paisSeleccionado) newErrors.paisSeleccionado = 'Campo obligatorio*';
+        if (touched.ciudadSeleccionada && !ciudadSeleccionada) newErrors.ciudadSeleccionada = 'Campo obligatorio*';
+      }
     }
     setErrors(newErrors);
-  }, [formData, touched, nombreEmpresa, areaSeleccionada, paisSeleccionado, ciudadSeleccionada]);
+  }, [
+    formData, touched,
+    nombreEmpresa, areaSeleccionada, paisSeleccionado, ciudadSeleccionada,
+    empresaSeleccionada, mostrarFormularioEmpresa
+  ]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setTouched(prev => ({ ...prev, [name]: true }));
+    // Reset empresa al cambiar rol
+    if (name === 'id_rol') {
+      setEmpresaSeleccionada('');
+      setMostrarFormularioEmpresa(false);
+      setNombreEmpresa('');
+      setAreaSeleccionada('');
+      setPaisSeleccionado('');
+      setCiudadSeleccionada('');
+    }
   };
 
-  // Para campos empresa
+  // Para campos empresa nueva
   const handleEmpresaChange = (setter: any, key: string) => (e: any) => {
     setter(e.target.value);
     setTouched(prev => ({ ...prev, [key]: true }));
+  };
+
+  // Selección combo empresa
+  const handleEmpresaSeleccionada = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEmpresaSeleccionada(e.target.value);
+    setTouched(prev => ({ ...prev, empresaSeleccionada: true }));
+    if (e.target.value === 'NUEVA') {
+      setMostrarFormularioEmpresa(true);
+    } else {
+      setMostrarFormularioEmpresa(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -122,20 +165,37 @@ const RegistroFormularioA: React.FC = () => {
       estadoEmpleado: true,
       correo: true,
       id_rol: true,
+      empresaSeleccionada: true,
       nombreEmpresa: true,
       areaSeleccionada: true,
       paisSeleccionado: true,
       ciudadSeleccionada: true
     });
 
+    // Validar todos los campos principales
     if (
       !formData.nombre || !formData.apellido ||
       !formData.fechaNacimiento || !formData.genero || !formData.estadoEmpleado ||
-      !formData.correo || !formData.id_rol ||
-      (formData.id_rol === '3' && (!nombreEmpresa || !areaSeleccionada || !paisSeleccionado || !ciudadSeleccionada)) ||
-      !esMayorDeEdad(formData.fechaNacimiento)
+      !formData.correo || !formData.id_rol
     ) {
       setError('Por favor completa todos los campos correctamente');
+      return;
+    }
+    // Validar empresas (solo rol 3)
+    if (formData.id_rol === '3') {
+      if (!empresaSeleccionada) {
+        setError('Debes seleccionar una empresa');
+        return;
+      }
+      if (empresaSeleccionada === 'NUEVA') {
+        if (!nombreEmpresa || !areaSeleccionada || !paisSeleccionado || !ciudadSeleccionada) {
+          setError('Por favor completa todos los campos de la empresa');
+          return;
+        }
+      }
+    }
+    if (!esMayorDeEdad(formData.fechaNacimiento)) {
+      setError('Se debe tener al menos 18 años');
       return;
     }
     if (contraseña !== confirmarContraseña) {
@@ -143,6 +203,7 @@ const RegistroFormularioA: React.FC = () => {
       return;
     }
     try {
+      // Registrar usuario
       const response = await fetch('http://127.0.0.1:8000/admin/anadir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -168,19 +229,32 @@ const RegistroFormularioA: React.FC = () => {
         localStorage.setItem('authstore', JSON.stringify({ id_persona: nuevaPersonaId }));
       }
 
+      // Si representante y empresa seleccionada (no nueva)
       if (formData.id_rol === '3') {
-        await fetch('http://127.0.0.1:8000/usuario/registrar_empresa', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id_persona: nuevaPersonaId,
-            nombre_empresa: nombreEmpresa,
-            id_area: parseInt(areaSeleccionada, 10),
-            id_ciudad: parseInt(ciudadSeleccionada, 10)
-          })
-        });
+        if (empresaSeleccionada !== 'NUEVA') {
+          await fetch('http://127.0.0.1:8000/usuario/registrar_empresa', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id_persona: nuevaPersonaId,
+              nombre_empresa: `idEmpresa=${empresaSeleccionada}`,
+              id_area: 1,
+              id_ciudad: 1
+            })
+          });
+        } else {
+          await fetch('http://127.0.0.1:8000/usuario/registrar_empresa', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id_persona: nuevaPersonaId,
+              nombre_empresa: nombreEmpresa,
+              id_area: parseInt(areaSeleccionada, 10),
+              id_ciudad: parseInt(ciudadSeleccionada, 10)
+            })
+          });
+        }
       }
-
       alert('Usuario registrado con éxito');
     } catch (err) {
       setError('Error de conexión con el servidor');
@@ -311,8 +385,33 @@ const RegistroFormularioA: React.FC = () => {
             <option value="3">Representante Empresa</option>
           </select>
         </div>
-        {/* Campos de empresa solo si selecciona "Representante Empresa" */}
+
+        {/* Combo de empresas SOLO si rol es representante */}
         {formData.id_rol === '3' && (
+          <div className="form-group-std">
+            <label className="form-label-std">
+              ¿La empresa ya está registrada?
+              {errors.empresaSeleccionada && <span className="msg-error-std">{errors.empresaSeleccionada}</span>}
+            </label>
+            <select
+              className={`select-std${errors.empresaSeleccionada ? ' error' : ''}`}
+              value={empresaSeleccionada}
+              onChange={handleEmpresaSeleccionada}
+              onBlur={() => setTouched(prev => ({ ...prev, empresaSeleccionada: true }))}
+            >
+              <option value="">Seleccione una opción</option>
+              {empresas.map(emp => (
+                <option key={emp.id_empresa} value={emp.id_empresa}>
+                  {emp.nombre}
+                </option>
+              ))}
+              <option value="NUEVA">LA EMPRESA NO ESTÁ EN EL LISTADO</option>
+            </select>
+          </div>
+        )}
+
+        {/* Formulario para empresa nueva solo si escoge NUEVA */}
+        {formData.id_rol === '3' && mostrarFormularioEmpresa && (
           <>
             <div className="form-group-std">
               <label className="form-label-std">
@@ -400,7 +499,7 @@ const RegistroFormularioA: React.FC = () => {
               style={{ flex: 1 }}
             />
             <button
-             
+              type="button"
               className="password-toggle-std"
               onClick={() => setShowPassword1(!showPassword1)}
               aria-label={showPassword1 ? "Ocultar contraseña" : "Mostrar contraseña"}

@@ -190,40 +190,45 @@ public function actualizarEmpresa(Request $request)
     // Eliminar un usuario (persona + correos + cuenta)
 
     public function eliminarUsuario($id)
-    {
-        try {
-            // 1) Eliminar correos asociados a esta persona
-            DB::table('correo')
-                ->where('id_persona', $id)
-                ->delete();
+{
+    try {
+        // 1) Eliminar correos asociados a esta persona
+        DB::table('correo')
+            ->where('id_persona', $id)
+            ->delete();
 
-            // 2) Eliminar el registro de usuarios que tenga este id_persona
-            DB::table('usuarios')
-                ->where('id_persona', $id)
-                ->delete();
+        // 2) Eliminar registros de representante_empresa asociados a esta persona
+        DB::table('representante_empresa')
+            ->where('id_persona', $id)
+            ->delete();
 
-            // 3) Eliminar la persona de la tabla personas
-            $deleted = DB::table('personas')
-                ->where('id_persona', $id)
-                ->delete();
+        // 3) Eliminar el registro de usuarios que tenga este id_persona
+        DB::table('usuarios')
+            ->where('id_persona', $id)
+            ->delete();
 
-            if ($deleted) {
-                return response()->json([
-                    'message' => 'Usuario (persona + correos + cuenta) eliminado correctamente'
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'No se encontró la persona con id = ' . $id
-                ], 404);
-            }
-        } catch (\Exception $e) {
-            // Si ocurre un error (por ejemplo, integridad referencial o conexión), devolvemos status 500
+        // 4) Eliminar la persona de la tabla personas
+        $deleted = DB::table('personas')
+            ->where('id_persona', $id)
+            ->delete();
+
+        if ($deleted) {
             return response()->json([
-                'error' => 'Error al eliminar usuario',
-                'mensaje' => $e->getMessage()
-            ], 500);
+                'message' => 'Usuario (persona + correos + cuenta + representante_empresa) eliminado correctamente'
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'No se encontró la persona con id = ' . $id
+            ], 404);
         }
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al eliminar usuario',
+            'mensaje' => $e->getMessage()
+        ], 500);
     }
+}
+
 
     //Aprobacion
     public function aprobarRepresentante(Request $request)

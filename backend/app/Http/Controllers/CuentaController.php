@@ -31,8 +31,8 @@ class CuentaController extends Controller
         return response()->json($ciudades);
     }
 
-    // Solicitar representante
-    public function solicitarRepresentante(Request $request) {
+    public function solicitarRepresentante(Request $request)
+{
     $request->validate([
         'id_usuario' => 'required|integer',
         'nombre_empresa' => 'required|string',
@@ -41,20 +41,30 @@ class CuentaController extends Controller
     ]);
 
     $id_persona = DB::table('usuarios')->where('id_usuario', $request->id_usuario)->value('id_persona');
-
     if (!$id_persona) {
         return response()->json(['message' => 'Usuario no encontrado'], 404);
     }
 
-    // Insertar empresa primero
-    $id_empresa = DB::table('empresa')->insertGetId([
-        'nombre' => $request->nombre_empresa,
-        'id_area' => $request->id_area,
-        'id_ciudad' => $request->id_ciudad,
-    ]);
+    $id_empresa = null;
 
-    if (!$id_empresa) {
-        return response()->json(['message' => 'Error al crear la empresa'], 500);
+    // Si el nombre_empresa es del tipo "idEmpresa=x"
+    if (preg_match('/^idEmpresa=(\d+)$/', $request->nombre_empresa, $matches)) {
+        $id_empresa = intval($matches[1]);
+        // Verifica que la empresa realmente existe
+        $empresaExiste = DB::table('empresa')->where('id_empresa', $id_empresa)->exists();
+        if (!$empresaExiste) {
+            return response()->json(['message' => 'La empresa indicada no existe'], 404);
+        }
+    } else {
+        // Crear la empresa normalmente
+        $id_empresa = DB::table('empresa')->insertGetId([
+            'nombre' => $request->nombre_empresa,
+            'id_area' => $request->id_area,
+            'id_ciudad' => $request->id_ciudad,
+        ]);
+        if (!$id_empresa) {
+            return response()->json(['message' => 'Error al crear la empresa'], 500);
+        }
     }
 
     // Insertar representante_empresa vinculado a persona y empresa
@@ -75,6 +85,7 @@ class CuentaController extends Controller
     }
 }
 
+
 //Registrar empresa (sin rol, solo persona y empresa)
 public function registrarEmpresa(Request $request)
 {
@@ -86,13 +97,35 @@ public function registrarEmpresa(Request $request)
     ]);
 
     // Buscar la persona asociada al usuario
-    $id_persona = DB::table('usuarios')->where('id_usuario', $request->id_usuario)->value('id_persona');
+    // (Ahora usas id_persona directamente, asumes que es correcto)
+
+    $id_persona = $request->id_persona;
 
     if (!$id_persona) {
         return response()->json(['message' => 'Usuario no encontrado'], 404);
     }
 
-    // Insertar la empresa
+    // Si nombre_empresa es tipo "idEmpresa=x"
+    if (preg_match('/^idEmpresa=(\d+)$/', $request->nombre_empresa, $match)) {
+        $id_empresa = intval($match[1]);
+        // Chequea si existe la empresa realmente (opcional, pero recomendado)
+        $empresa = DB::table('empresa')->where('id_empresa', $id_empresa)->first();
+        if (!$empresa) {
+            return response()->json(['message' => 'La empresa no existe'], 404);
+        }
+        // Relacionar persona con empresa (no crear nueva)
+        $inserted = DB::table('representante_empresa')->insert([
+            'id_persona' => $id_persona,
+            'id_empresa' => $id_empresa,
+        ]);
+        if ($inserted) {
+            return response()->json(['message' => 'Representante relacionado correctamente', 'id_empresa' => $id_empresa]);
+        } else {
+            return response()->json(['message' => 'Error al registrar representante de empresa'], 500);
+        }
+    }
+
+    // Si NO es un id, crear empresa normalmente
     $id_empresa = DB::table('empresa')->insertGetId([
         'nombre' => $request->nombre_empresa,
         'id_area' => $request->id_area,
@@ -115,6 +148,7 @@ public function registrarEmpresa(Request $request)
         return response()->json(['message' => 'Error al registrar representante de empresa'], 500);
     }
 }
+
 
 
 
