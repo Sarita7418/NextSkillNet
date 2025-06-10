@@ -25,6 +25,8 @@ use App\Http\Controllers\UploadController;
 |
 */
 // En routes/web.php
+// En routes/web.php
+Route::get('/candidato/{id}', [App\Http\Controllers\CandidatoController::class, 'getPerfil']);
 Route::post('/candidatos/recomendar-cargo', [App\Http\Controllers\CandidatoController::class, 'recomendarPorCargo']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);

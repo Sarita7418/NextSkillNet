@@ -29,7 +29,13 @@ const Cuenta: React.FC = () => {
   const [areaSeleccionada, setAreaSeleccionada] = useState('');
   const [paisSeleccionado, setPaisSeleccionado] = useState('');
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState('');
-
+  const [formData, setFormData] = useState({
+    nombreEmpresa: '',
+    areaSeleccionada: '',
+    paisSeleccionado: '',
+    ciudadSeleccionada: '',
+    contrasenaNueva: '',
+  });
   const [touched, setTouched] = useState({
     nombreEmpresa: false,
     areaSeleccionada: false,
@@ -64,13 +70,15 @@ const Cuenta: React.FC = () => {
       const u = localStorage.getItem('usuario');
       if (u) setUsuario(JSON.parse(u));
     }
-  }, []);
 
   // Carga áreas y países
   useEffect(() => {
     fetch('http://127.0.0.1:8000/subdominios/areas')
       .then(res => res.json())
-      .then((data: Item[]) => setAreas(data));
+      .then((data: Item[]) => setAreas(data))
+      .catch(err => console.error("Error al cargar áreas:", err));
+      
+    // Cargar Países
     fetch('http://127.0.0.1:8000/politicos_ubicacion/paises')
       .then(res => res.json())
       .then((data: Item[]) => setPaises(data));
@@ -78,6 +86,7 @@ const Cuenta: React.FC = () => {
       .then(res => res.json())
       .then((data: Empresa[]) => setEmpresas(data));
   }, []);
+
 
   // Carga ciudades al cambiar país seleccionado
   useEffect(() => {

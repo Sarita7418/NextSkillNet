@@ -258,3 +258,11 @@
     height: 18px;
   }
 }
+.footer-link.as-button {
+  background: none;
+  border: none;
+  padding: 5;
+  text-align: left;
+  cursor: pointer;
+  font-size: inherit; /* Hereda el tamaño de fuente de .footer-link */
+}

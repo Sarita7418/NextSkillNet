@@ -11,9 +11,14 @@ interface AIResult {
   puntos_clave: string[];
   resumen_ia: string;
 }
+// AÑADIDO: Interfaz para las props que recibe el componente
+interface AISearchSectionProps {
+  onViewProfile: (id: string) => void;
+}
+
 
 // Componente principal para la sección de búsqueda con IA
-export const AISearchSection = () => {
+export const AISearchSection: React.FC<AISearchSectionProps> = ({ onViewProfile }) => { // <-- AÑADIDO: Recibimos la prop
   const [prompt, setPrompt] = useState('');
   const [result, setResult] = useState<AIResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -118,7 +123,12 @@ export const AISearchSection = () => {
           <div className="ai-result-top-row">
             <div className="ai-result-card">
               <h3 className="result-title">Candidato Recomendado</h3>
-              <CandidateCard candidate={result.candidato} onSelect={() => {}} isSelected={false} />
+              <CandidateCard 
+                candidate={result.candidato} 
+                onSelect={() => {}} // Placeholder si no usas la selección con checkbox aquí
+                isSelected={false}
+                onViewProfile={onViewProfile} // Le pasamos la función que recibimos del padre
+              />
             </div>
             <div className="ai-result-reasons">
               <h3 className="result-title">Puntos Clave</h3>

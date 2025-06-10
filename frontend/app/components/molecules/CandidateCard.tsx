@@ -5,6 +5,7 @@ import Button from '../atoms/Button';
 import Badge from '../atoms/Badge';
 import Avatar from '../atoms/Avatar';
 import './CandidateCard.css';
+//import type { Candidate } from '@/app/types';
 
 interface Candidate {
   id: string;
@@ -27,12 +28,14 @@ interface CandidateCardProps {
   candidate: Candidate;
   isSelected: boolean;
   onSelect: (candidateId: string) => void;
+  onViewProfile: (id: string) => void;
 }
 
 const CandidateCard: React.FC<CandidateCardProps> = ({
   candidate,
   isSelected,
-  onSelect
+  onSelect,
+  onViewProfile,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -62,9 +65,14 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
     }
   };
 
-  const formatSalary = (salary: number) => {
-    return `Bs. ${salary.toLocaleString()}`;
-  };
+  const formatSalary = (salary: number | null | undefined) => {
+  // Si el salario es nulo, indefinido o cero, muestra un texto alternativo
+  if (!salary) {
+    return 'No especificado'; 
+  }
+  // Si sí hay un salario, lo formatea correctamente
+  return `Bs. ${salary.toLocaleString('es-BO')}`; // Añadimos 'es-BO' para el formato boliviano
+};
 
   const displayedSkills = candidate.skills.slice(0, 3);
   const remainingSkills = candidate.skills.length - 3;
@@ -186,10 +194,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
         <Button
           variant="primary"
           size="small"
-          onClick={() => {
-            // Aquí iría la lógica para ver el perfil completo
-            console.log('Ver perfil:', candidate.id);
-          }}
+          onClick={() => onViewProfile(candidate.id)} // Llama a la función del padre con el ID
         >
           Ver perfil
         </Button>
