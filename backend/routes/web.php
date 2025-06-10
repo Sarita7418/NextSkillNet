@@ -12,6 +12,7 @@ use App\Http\Controllers\CandidatoController;
 use App\Http\Controllers\FiltroController;
 use App\Http\Controllers\RecomendacionController;
 use App\Http\Controllers\OnetController;
+use App\Http\Controllers\UploadController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -108,4 +109,4 @@ Route::get('/', function () {
 //para subir archivos
 Route::post('/subir-curriculum', [AuthController::class, 'subirCurriculum']);
 
-
+Route::post('/upload', [UploadController::class, 'upload']);
