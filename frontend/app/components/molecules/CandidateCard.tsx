@@ -1,11 +1,9 @@
-// components/molecules/CandidateCard.tsx
 'use client';
 import React, { useState } from 'react';
 import Button from '../atoms/Button';
 import Badge from '../atoms/Badge';
 import Avatar from '../atoms/Avatar';
 import './CandidateCard.css';
-//import type { Candidate } from '@/app/types';
 
 interface Candidate {
   id: string;
@@ -38,6 +36,8 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
   onViewProfile,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const getAvailabilityText = (availability: string) => {
     switch (availability) {
@@ -66,23 +66,69 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
   };
 
   const formatSalary = (salary: number | null | undefined) => {
-  // Si el salario es nulo, indefinido o cero, muestra un texto alternativo
-  if (!salary) {
-    return 'No especificado'; 
-  }
-  // Si sí hay un salario, lo formatea correctamente
-  return `Bs. ${salary.toLocaleString('es-BO')}`; // Añadimos 'es-BO' para el formato boliviano
-};
+    if (!salary) {
+      return 'No especificado'; 
+    }
+    return `Bs. ${salary.toLocaleString('es-BO')}`;
+  };
 
   const displayedSkills = candidate.skills.slice(0, 3);
   const remainingSkills = candidate.skills.length - 3;
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // No expandir si se hace clic en botones o checkbox
     if ((e.target as HTMLElement).closest('button, input, .card-actions')) {
       return;
     }
     setIsExpanded(!isExpanded);
+  };
+
+  const handleContactClick = async () => {
+    // Obtener el usuario actual del localStorage
+    const storedUsuario = localStorage.getItem('usuario');
+    if (!storedUsuario) {
+      setError('Usuario no cargado');
+      return;
+    }
+
+    const usuarioGuardado = JSON.parse(storedUsuario);
+    const idUsuario = usuarioGuardado.id_usuario;
+
+    try {
+      setLoading(true);
+      // Realizamos la solicitud para obtener el ID del representante
+      const res = await fetch(`http://127.0.0.1:8000/admin/representante_empresa/${idUsuario}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || 'Error al obtener representante');
+        return;
+      }
+
+      const idRepresentante = data.id_rep_empresa; // Este es el ID del representante
+
+      // Realizamos la creación del chat
+      const chatRes = await fetch('http://127.0.0.1:8000/chat/crear', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_rep_empresa: idRepresentante, // ID del representante
+          id_persona_contactada: candidate.id, // ID del candidato (persona contactada)
+        }),
+      });
+
+      const chatData = await chatRes.json();
+      if (chatRes.ok) {
+        window.location.href = '/Chats'; // Redirigir al chat
+      } else {
+        setError(chatData.message || 'Error al crear el chat');
+      }
+    } catch (err) {
+      setError('Error de conexión con el servidor');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -186,15 +232,15 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
         <Button
           variant="outline"
           size="small"
-          onClick={() => window.open(`mailto:${candidate.email}`)}
+          onClick={handleContactClick}
         >
           Contactar
         </Button>
-        
+
         <Button
           variant="primary"
           size="small"
-          onClick={() => onViewProfile(candidate.id)} // Llama a la función del padre con el ID
+          onClick={() => onViewProfile(candidate.id)}
         >
           Ver perfil
         </Button>

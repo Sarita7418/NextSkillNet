@@ -8,6 +8,66 @@ use Illuminate\Support\Facades\DB;
 class AdminController extends Controller
 {
 
+    public function crearChat(Request $request)
+{
+    // Validar que los parámetros necesarios estén presentes
+    $request->validate([
+        'id_rep_empresa' => 'required|integer|exists:representante_empresa,id_rep_empresa', // ID del representante
+        'id_persona_contactada' => 'required|integer|exists:personas,id_persona', // ID de la persona a contactar
+    ]);
+
+    try {
+        // Insertar un nuevo chat en la base de datos
+        $chatId = DB::table('chat')->insertGetId([
+            'id_rep_empresa' => $request->id_rep_empresa, // ID del representante
+            'id_persona' => $request->id_persona_contactada, // ID de la persona a contactar
+            'fecha_hor_creacion' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Chat creado correctamente',
+            'chat_id' => $chatId,
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al crear el chat',
+            'mensaje' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+// AdminController.php
+
+// AdminController.php
+
+public function obtenerRepresentanteEmpresa($id_persona)
+{
+    try {
+        // Primero obtenemos el id_rep_empresa correspondiente a esta persona
+        $representante = DB::table('representante_empresa')
+            ->where('representante_empresa.id_persona', $id_persona)
+            ->join('personas', 'representante_empresa.id_persona', '=', 'personas.id_persona')
+            ->select('representante_empresa.id_rep_empresa', 'personas.id_persona', 'personas.nombre', 'personas.apellido', 'personas.estado_empleado')
+            ->first();
+
+        if (!$representante) {
+            return response()->json([
+                'message' => 'Representante no encontrado para esta persona',
+            ], 404);
+        }
+
+        // Si el id_rep_empresa se encuentra, se devuelve el detalle de la empresa y del representante
+        return response()->json($representante, 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al obtener representante',
+            'mensaje' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+
     //Añadir empresa
     public function anadirEmpresa($request)
     {

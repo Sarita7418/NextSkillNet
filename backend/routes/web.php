@@ -86,6 +86,9 @@ Route::post('/admin/aprobar-representante', [AdminController::class, 'aprobarRep
 Route::post('/admin/empresa/anadir', [AdminController::class, 'anadirEmpresa']);
 
 
+Route::post('/chat/crear', [AdminController::class, 'crearChat']);
+
+
 
 Route::get('/admin/empresas', [AdminController::class, 'listarEmpresasConRepresentantes']);
 
@@ -112,6 +115,8 @@ Route::delete('/admin/eliminar_empresa/{id}', [CuentaController::class, 'elimina
 
 // Ruta para eliminar un representante de una empresa
 Route::delete('/admin/empresa/{id_empresa}/representante/{id_persona}', [EmpresaController::class, 'eliminarRepresentante']);
+
+Route::get('/admin/representante_empresa/{id}', [AdminController::class, 'obtenerRepresentanteEmpresa']);
 
 // Ruta para actualizar los representantes de una empresa
 Route::post('/admin/empresa/actualizar_representantes', [EmpresaController::class, 'actualizarRepresentantes']);

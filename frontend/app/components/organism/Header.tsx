@@ -97,12 +97,6 @@ const Header: React.FC = () => {
                 <span>Inicio</span>
               </a>
             </li>
-            <li>
-              <a href="/notif">
-                <FaBell className="icon" />
-                <span>Notificaciones</span>
-              </a>
-            </li>
             {/* Mostrar "Candidatos" solo si el rol es Representante (3) */}
             {rolId === 3 && (
               <li>
