@@ -1,13 +1,6 @@
 .header {
   background-color: #143D8D;
   width: 100%;
-  position: fixed;
-  /* ✅ Esto mantiene el header fijo */
-  top: 0;
-  /* ✅ Pegado arriba */
-  left: 0;
-  z-index: 1000;
-  /* ✅ Asegura que esté encima de otros elementos */
 }
 
 main,

@@ -219,14 +219,7 @@ const EmpresasForm: React.FC<EmpresaFormProps> = ({
         >
           Confirmar
         </button>
-        <button
-          type="button"
-          className="btn-save-std"
-          style={{ background: 'gray' }}
-          onClick={() => router.push('/Administracion')}
-        >
-          Cancelar
-        </button>
+     
       </div>
     </div>
   );

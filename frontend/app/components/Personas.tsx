@@ -127,7 +127,7 @@ function Personas() {
                 Editar
               </button>
               <button
-                className="btn-toggle"
+                className="btn-toggle" id='eliminarbtn'
                 onClick={() => handleEliminar(usuario.id_usuario)}
               >
                 Desactivar

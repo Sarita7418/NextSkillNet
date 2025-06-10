@@ -114,3 +114,7 @@
 .btn-cancelar:hover {
   background-color: #777;
 }
+
+#eliminarbtn {
+  background-color: rgb(207, 19, 19);
+} 
