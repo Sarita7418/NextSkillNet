@@ -70,6 +70,7 @@ const Cuenta: React.FC = () => {
       const u = localStorage.getItem('usuario');
       if (u) setUsuario(JSON.parse(u));
     }
+  }, []);
 
   // Carga áreas y países
   useEffect(() => {
@@ -87,7 +88,6 @@ const Cuenta: React.FC = () => {
       .then((data: Empresa[]) => setEmpresas(data));
   }, []);
 
-
   // Carga ciudades al cambiar país seleccionado
   useEffect(() => {
     if (!paisSeleccionado) {
@@ -101,7 +101,6 @@ const Cuenta: React.FC = () => {
   }, [paisSeleccionado]);
 
   // ----------- Formulario representante -------------
-
   const handleSolicitarRepresentante = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setErrorGeneral('');
@@ -219,7 +218,6 @@ const Cuenta: React.FC = () => {
   };
 
   // ----------- Otros -------------
-
   const handleCerrarSesion = () => {
     localStorage.removeItem('usuario');
     window.location.href = '/Login';
@@ -230,7 +228,6 @@ const Cuenta: React.FC = () => {
   };
 
   // ----------- Render -------------
-
   return (
     <div className="form-container-std">
       <div className="form-card-std">
