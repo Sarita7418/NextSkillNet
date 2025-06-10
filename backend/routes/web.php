@@ -110,3 +110,11 @@ Route::get('/', function () {
 Route::post('/subir-curriculum', [AuthController::class, 'subirCurriculum']);
 
 Route::post('/upload', [UploadController::class, 'upload']);
+
+
+// Rutas para experiencia laboral
+// Rutas para experiencia laboral
+Route::get('/usuario/{id}/experiencias-laborales', [UsuarioController::class, 'getExperienciasLaborales']);
+Route::post('/usuario/{id_usuario}/experiencias-laborales', [UsuarioController::class, 'storeExperienciaLaboral']);
+Route::put('/usuario/{id_usuario}/experiencias-laborales/{id_experiencia_laboral}', [UsuarioController::class, 'updateExperienciaLaboral']);
+Route::delete('/usuario/{id_usuario}/experiencias-laborales/{id_experiencia_laboral}', [UsuarioController::class, 'destroyExperienciaLaboral']);
