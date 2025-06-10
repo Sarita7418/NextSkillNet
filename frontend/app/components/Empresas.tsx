@@ -48,6 +48,20 @@ function Empresas() {
     setEditingId(null);
   };
 
+  const handleEliminar = async (id: string) => {
+    if (!window.confirm('¿Seguro que deseas eliminar esta empresa? Esto eliminará todos los datos relacionados.')) return;
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/admin/eliminar_empresa/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('No se pudo eliminar la empresa');
+      setEmpresas(prev => prev.filter(e => e.id_empresa !== id));
+      alert('Empresa eliminada correctamente.');
+    } catch {
+      alert('Error al eliminar la empresa. Revise dependencias o intente de nuevo.');
+    }
+  };
+
   if (loading) return <p className="cargando">Cargando empresas…</p>;
   if (error) return <p className="error">{error}</p>;
 
@@ -66,6 +80,12 @@ function Empresas() {
             ciudadInicial={empresa.ciudad}
           />
         </div>
+        <button
+          className="btn-cancelar"
+          onClick={handleCancelarEdicion}
+        >
+          Cancelar
+        </button>
       </div>
     );
   }
@@ -101,6 +121,13 @@ function Empresas() {
                 onClick={() => handleEditar(empresa.id_empresa)}
               >
                 Modificar
+              </button>
+              <button
+                className="btn-toggle"
+                onClick={() => handleEliminar(empresa.id_empresa)}
+                style={{ backgroundColor: '#e53e3e', color: '#fff' }}
+              >
+                Desactivar
               </button>
             </div>
           </div>

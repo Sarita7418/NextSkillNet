@@ -12,6 +12,7 @@ use App\Http\Controllers\CandidatoController;
 use App\Http\Controllers\FiltroController;
 use App\Http\Controllers\RecomendacionController;
 use App\Http\Controllers\OnetController;
+use App\Http\Controllers\EmpresaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -103,6 +104,14 @@ Route::post('/candidatos/recomendacion-onet', [OnetController::class, 'obtenerRe
 Route::get('/entrevista/{id_chat}', [ChatController::class, 'obtenerEntrevista']);
 Route::post('/entrevista/{id_chat}', [ChatController::class, 'insertarEntrevista']);
 Route::put('/entrevista/{id_chat}', [ChatController::class, 'modificarEntrevista']);
+
+Route::delete('/admin/eliminar_empresa/{id}', [CuentaController::class, 'eliminarEmpresa']);
+
+// Ruta para eliminar un representante de una empresa
+Route::delete('/admin/empresa/{id_empresa}/representante/{id_persona}', [EmpresaController::class, 'eliminarRepresentante']);
+
+// Ruta para actualizar los representantes de una empresa
+Route::post('/admin/empresa/actualizar_representantes', [EmpresaController::class, 'actualizarRepresentantes']);
 
 Route::get('/', function () {
     return view('welcome');
