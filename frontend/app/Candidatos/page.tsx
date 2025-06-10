@@ -191,7 +191,7 @@ useEffect(() => {
             const rolId = Number(usuario.id_rol);
 
             // Si el rol NO es Administrador (2) NI Representante (3), redirigimos al inicio
-            if (rolId !== 2) {
+            if (rolId !== 3) {
           router.push('/Inicio');
         } else {
           // Si el rol es correcto, permitimos que la página se muestre

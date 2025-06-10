@@ -104,7 +104,7 @@ const Header: React.FC = () => {
               </a>
             </li>
             {/* Mostrar "Candidatos" solo si el rol es Representante (3) */}
-            {rolId === 2 && (
+            {rolId === 3 && (
               <li>
                 <a href="/Candidatos">
                   <FaBriefcase className="icon" />
